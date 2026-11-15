@@ -5,7 +5,7 @@
 # bars or dashes, because NVDA reads those differently depending on the punctuation level.
 # No NVDA imports, so the tests can use it directly.
 
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, tzinfo
 
 from .models import NewsItem
 
@@ -25,6 +25,10 @@ _MONTHS = (
 )
 
 
+# The time zone to show times in. None means the computer's own zone; tests set it.
+local_zone: tzinfo | None = None
+
+
 def parse_iso(value: str | None) -> datetime | None:
 	"""A stored time as an aware datetime. Times stored without a zone are the computer's local time."""
 	if not value:
@@ -33,7 +37,9 @@ def parse_iso(value: str | None) -> datetime | None:
 		parsed = datetime.fromisoformat(value)
 	except ValueError:
 		return None
-	return parsed if parsed.tzinfo else parsed.astimezone()
+	if parsed.tzinfo:
+		return parsed
+	return parsed.replace(tzinfo=local_zone) if local_zone else parsed.astimezone()
 
 
 def story_time(item: NewsItem) -> datetime | None:
@@ -43,12 +49,12 @@ def story_time(item: NewsItem) -> datetime | None:
 
 def local_now() -> datetime:
 	"""The current local time. Tests replace it."""
-	return datetime.now().astimezone()
+	return datetime.now(local_zone).astimezone(local_zone)
 
 
 def format_date(moment: datetime) -> str:
 	"""For example "13 November 2026 pukul 20.00", in the computer's time zone."""
-	local = moment.astimezone()
+	local = moment.astimezone(local_zone)
 	return f"{local.day} {_MONTHS[local.month - 1]} {local.year} pukul {local.hour:02d}.{local.minute:02d}"
 
 

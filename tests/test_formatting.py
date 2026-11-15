@@ -12,14 +12,8 @@ NOW = datetime(2026, 11, 15, 8, 0, tzinfo=WIB)
 
 @pytest.fixture(autouse=True)
 def wibComputer(monkeypatch):
-	"""Format in WIB whatever the time zone of the computer running the tests."""
-	realAstimezone = datetime.astimezone
-
-	class WibDatetime(datetime):
-		def astimezone(self, tz=None):
-			return realAstimezone(self, tz or WIB)
-
-	monkeypatch.setattr(formatting, "datetime", WibDatetime)
+	"""Format in WIB whatever the time zone of the computer running the tests (CI runs in UTC)."""
+	monkeypatch.setattr(formatting, "local_zone", WIB)
 	monkeypatch.setattr(formatting, "local_now", lambda: NOW)
 
 
