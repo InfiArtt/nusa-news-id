@@ -13,6 +13,10 @@ __pycache__/
 dist/
 build/
 .sconsign.dblite
+addon/manifest.ini
+addon/locale/*/manifest.ini
+addon/doc/*/readme.html
+addon/doc/style.css
 
 # Secrets and local settings: never commit these
 .env
