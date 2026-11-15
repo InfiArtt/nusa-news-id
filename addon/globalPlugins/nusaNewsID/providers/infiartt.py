@@ -4,7 +4,7 @@
 # This source is always on and cannot be turned off.
 # Unlike the news sites, InfiArtt has a JSON API (the one InfiApp uses), so this provider reads it
 # instead of pages: /api/v1/posts for articles and /api/v1/kb for the knowledge base. The knowledge base
-# list has no dates, so they come from the sitemap's lastmod.
+# list has no dates or authors, so each guide's details are read once, the first time it is listed.
 # The news sites' rules on age do not apply: every article and guide is listed, however old, and the
 # cache keeps them (prune_cache leaves the always-on sources alone).
 
@@ -39,6 +39,8 @@ class InfiArttProvider(BaseProvider):
 		# Article addresses already listed by this provider since NVDA started. The first check reads
 		# every page; later checks stop at the first page with an article seen before.
 		self._known_articles: set[str] = set()
+		# Details of each knowledge base guide, by id: address, author and time, read once per NVDA start.
+		self._guides: dict[int, tuple[str, str | None, datetime | None]] = {}
 
 	def fetch_news(self, category: str, bypass_ssl: bool = False, max_age_days: int = 7) -> list[NewsItem]:
 		"""Every article or guide; max_age_days is ignored for InfiArtt."""
@@ -61,7 +63,13 @@ class InfiArttProvider(BaseProvider):
 		return payload.get("data")
 
 	def _item(
-		self, title: str, url: str, category: str, published: datetime | None, summary: str | None
+		self,
+		title: str,
+		url: str,
+		category: str,
+		published: datetime | None,
+		summary: str | None,
+		author: str | None = None,
 	) -> NewsItem:
 		title = clean_title(title)
 		return NewsItem(
@@ -73,6 +81,7 @@ class InfiArttProvider(BaseProvider):
 			summary=summary or None,
 			published_at=published.isoformat(timespec="seconds") if published else None,
 			is_breaking=is_breaking(title),
+			author=author or None,
 		)
 
 	def _articles(self, bypass_ssl: bool) -> list[NewsItem]:
@@ -90,7 +99,16 @@ class InfiArttProvider(BaseProvider):
 				if post["url"] in self._known_articles:
 					reached_known = True
 				published = parse_date(post.get("published_at"))
-				items.append(self._item(post["title"], post["url"], ARTICLES, published, post.get("excerpt")))
+				items.append(
+					self._item(
+						post["title"],
+						post["url"],
+						ARTICLES,
+						published,
+						post.get("excerpt"),
+						_author_name(post.get("author")),
+					)
+				)
 			# The API lists the newest first: after a page with a known article, the rest are known too.
 			if reached_known or not data.get("has_more"):
 				break
@@ -102,20 +120,22 @@ class InfiArttProvider(BaseProvider):
 		tree = self._json(f"{SITE}/api/v1/kb", bypass_ssl)
 		if not tree:
 			return []
-		sitemap = self._request_http(f"{SITE}/sitemap.xml", bypass_ssl) or b""
-		pages: dict[int, tuple[str, datetime | None]] = {}
-		for entry in re.findall(rb"<url>(.*?)</url>", sitemap, re.S):
-			location = re.search(rb"<loc>\s*(https?://[^<\s]+/kb/(\d+)/[^<\s]*)\s*</loc>", entry)
-			if not location:
-				continue
-			modified = re.search(rb"<lastmod>\s*([^<\s]+)\s*</lastmod>", entry)
-			date = parse_date(modified.group(1).decode()) if modified else None
-			pages[int(location.group(2))] = (location.group(1).decode(), date)
 		items: list[NewsItem] = []
 		for node in _leaves(tree.get("items", [])):
-			url, updated = pages.get(node["id"], (f"{SITE}/kb/{node['id']}", None))
-			# A guide the sitemap does not list yet has no date; the list then shows when it was found.
-			items.append(self._item(node["title"], url, KNOWLEDGE_BASE, updated, None))
+			if self._stopped():
+				break
+			details = self._guides.get(node["id"])
+			if details is None:
+				data = self._json(f"{SITE}/api/v1/kb/{node['id']}", bypass_ssl) or {}
+				details = (
+					str(data.get("url") or f"{SITE}/kb/{node['id']}"),
+					_author_name(data.get("author")),
+					parse_date(data.get("updated_at")),
+				)
+				if data:
+					self._guides[node["id"]] = details
+			url, author, updated = details
+			items.append(self._item(node["title"], url, KNOWLEDGE_BASE, updated, None, author))
 		return items
 
 	def fetch_article(self, url: str, bypass_ssl: bool = False) -> Article | None:
@@ -140,6 +160,14 @@ class InfiArttProvider(BaseProvider):
 			)
 			article.locked_note = str(data.get("requirement") or "") or "members"
 		return article if article.blocks or article.locked_note else None
+
+
+def _author_name(author) -> str | None:
+	"""The name to show for an author: the API gives a display name and username for articles, a username
+	for guides."""
+	if isinstance(author, dict):
+		return str(author.get("display_name") or author.get("username") or "") or None
+	return str(author) if author else None
 
 
 def _leaves(nodes: list[dict]) -> list[dict]:

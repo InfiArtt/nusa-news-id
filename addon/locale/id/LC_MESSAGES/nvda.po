@@ -4,7 +4,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: nusaNewsID 1.1.0\n"
 "Report-Msgid-Bugs-To: 'nvda-translations@groups.io'\n"
-"POT-Creation-Date: 2026-11-15 16:51+0700\n"
+"POT-Creation-Date: 2026-11-15 16:59+0700\n"
 "PO-Revision-Date: 2026-11-15 16:00+0700\n"
 "Last-Translator: Rexya Muhamad Rizki <rexya2017@gmail.com>\n"
 "Language-Team: Indonesian\n"
@@ -128,6 +128,11 @@ msgstr[0] "{count} jam lalu"
 msgid "Breaking."
 msgstr "Breaking."
 
+#. Translators: who wrote a story, in the news list, for example "by Rexya".
+#, python-brace-format
+msgid "by {author}"
+msgstr "oleh {author}"
+
 #. Translators: said after a story in the news list that has not been opened or marked read.
 msgid "Unread."
 msgstr "Belum dibaca."
@@ -165,6 +170,11 @@ msgstr[0] ""
 #, python-brace-format
 msgid "{source}, category {category}"
 msgstr "{source}, kategori {category}"
+
+#. Translators: who wrote a story, in the article reader, for example "Written by Rexya".
+#, python-brace-format
+msgid "Written by {author}"
+msgstr "Ditulis oleh {author}"
 
 #. Translators: when the site published the story, for example "Published 13 November 2026, 20:05".
 #, python-brace-format
@@ -544,7 +554,8 @@ msgid ""
 "knowledge base at infiartt.com/kb appear in two new categories, InfiArtt "
 "articles and InfiArtt knowledge base, right below All in the source filter. "
 "Every InfiArtt article and guide is listed, however old, and stays in "
-"storage. The add-on reads them through InfiArtt's own API.\n"
+"storage. The list and the reader name each one's author. The add-on reads "
+"them through InfiArtt's own API.\n"
 "- The reader shows the article as a web page that NVDA reads in browse mode, "
 "with the article's headings, lists, quotes and links, so you can move by "
 "heading with H. The article is marked as Indonesian, so NVDA can switch to "
@@ -621,8 +632,8 @@ msgstr ""
 "pusat pengetahuan di infiartt.com/kb muncul di dua kategori baru, Artikel "
 "InfiArtt dan Pusat Pengetahuan InfiArtt, dan InfiArtt ada tepat di bawah "
 "Semua di filter sumber. Semua artikel dan panduan InfiArtt ditampilkan, "
-"berapa pun umurnya, dan tetap tersimpan. Add-on membacanya lewat API milik "
-"InfiArtt sendiri.\n"
+"berapa pun umurnya, dan tetap tersimpan. Daftar berita dan pembaca artikel "
+"menyebut penulisnya. Add-on membacanya lewat API milik InfiArtt sendiri.\n"
 "- Pembaca artikel menampilkan berita sebagai halaman web yang dibaca NVDA "
 "dalam mode browse, lengkap dengan judul bagian, daftar, kutipan, dan tautan "
 "dari artikel aslinya, jadi Anda bisa berpindah per judul bagian dengan H. "

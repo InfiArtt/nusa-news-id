@@ -30,6 +30,7 @@ PAGES = {
 					"url": "https://infiartt.com/2026/11/14/nvda-2026-3-resmi-rilis/",
 					"published_at": "2026-11-14 07:40:30",
 					"excerpt": "Versi baru NVDA.",
+					"author": {"username": "rexya_mr", "display_name": "Rexya", "avatar": None},
 				},
 				{
 					"title": "Artikel lama sekali",
@@ -73,7 +74,20 @@ PAGES = {
 		}
 	),
 	"https://infiartt.com/api/v1/kb/33": _ok(
-		{"content_html": "<p>Tautan adalah pintu.</p>", "language": "id", "updated_at": "2026-11-12 10:00:00"}
+		{
+			"content_html": "<p>Tautan adalah pintu.</p>",
+			"language": "id",
+			"updated_at": "2026-11-12 10:00:00",
+			"author": "zeus",
+			"url": "https://infiartt.com/kb/33/teks-tautan",
+		}
+	),
+	"https://infiartt.com/api/v1/kb/36": _ok(
+		{
+			"updated_at": "2024-01-01 09:00:00",
+			"author": "rafli",
+			"url": "https://infiartt.com/kb/36/panduan-lama",
+		}
 	),
 	"https://infiartt.com/api/v1/posts/khusus-anggota": _ok(
 		{"content_html": None, "locked": True, "requirement": "member", "excerpt": "Ringkasan saja."}
@@ -114,13 +128,28 @@ def test_later_checks_stop_at_a_known_article():
 
 
 def test_every_knowledge_base_guide_whatever_its_age():
-	items = FakeInfiArtt().fetch_news(infiartt.KNOWLEDGE_BASE, max_age_days=1)
-	assert [(item.title, item.published_at) for item in items] == [
-		("Teks Tautan yang Deskriptif", "2026-11-12T00:00:00+07:00"),
-		("Panduan Lama", "2024-01-01T00:00:00+07:00"),
-		("Panduan tanpa tanggal", None),
+	site = FakeInfiArtt()
+	items = site.fetch_news(infiartt.KNOWLEDGE_BASE, max_age_days=1)
+	assert [(item.title, item.published_at, item.author) for item in items] == [
+		("Teks Tautan yang Deskriptif", "2026-11-12T10:00:00+07:00", "zeus"),
+		("Panduan Lama", "2024-01-01T09:00:00+07:00", "rafli"),
+		("Panduan tanpa tanggal", None, None),
 	]
 	assert items[0].url == "https://infiartt.com/kb/33/teks-tautan"
+
+
+def test_guide_details_are_read_once():
+	site = FakeInfiArtt()
+	site.fetch_news(infiartt.KNOWLEDGE_BASE)
+	site.requested.clear()
+	site.fetch_news(infiartt.KNOWLEDGE_BASE)
+	# Guide 40 has no details in the fake, so it is asked for again; 33 and 36 are remembered.
+	assert site.requested == ["https://infiartt.com/api/v1/kb", "https://infiartt.com/api/v1/kb/40"]
+
+
+def test_article_author():
+	(item, _old) = FakeInfiArtt().fetch_news(infiartt.ARTICLES)
+	assert item.author == "Rexya"
 
 
 def test_article_and_guide_text_from_the_api():

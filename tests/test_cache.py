@@ -162,3 +162,48 @@ def test_a_new_source_is_saved_quietly(folder):
 		)
 	}
 	assert unread == {"https://news.example/1", "https://news.example/2"}
+
+
+def test_author_is_saved_and_filled_in_later(folder):
+	cache.init_db()
+	cache.save_news_items([_item(1)])
+	with_author = NewsItem(
+		title="Berita nomor 1",
+		source="Detik",
+		url="https://news.example/1",
+		guid="https://news.example/1",
+		category="Nasional",
+		author="Rexya",
+	)
+	assert cache.save_news_items([with_author]) == []
+	(item,) = cache.get_news_items(["Detik"], ["Nasional"])
+	assert item.author == "Rexya"
+
+
+def test_always_on_sources_are_refreshed_from_their_api(folder):
+	cache.init_db()
+	old = NewsItem(
+		title="Panduan",
+		source="InfiArtt",
+		url="https://infiartt.com/kb/1",
+		guid="https://infiartt.com/kb/1",
+		category="Pusat Pengetahuan",
+		published_at="2026-11-12T00:00:00+07:00",
+	)
+	cache.save_news_items([old])
+	new = NewsItem(
+		title="Panduan baru",
+		source="InfiArtt",
+		url="https://infiartt.com/kb/1",
+		guid="https://infiartt.com/kb/1",
+		category="Pusat Pengetahuan",
+		published_at="2026-11-12T10:00:00+07:00",
+		author="zeus",
+	)
+	cache.save_news_items([new], refresh_sources=("InfiArtt",))
+	(item,) = cache.get_news_items(["InfiArtt"], ["Pusat Pengetahuan"])
+	assert (item.title, item.published_at, item.author) == (
+		"Panduan baru",
+		"2026-11-12T10:00:00+07:00",
+		"zeus",
+	)

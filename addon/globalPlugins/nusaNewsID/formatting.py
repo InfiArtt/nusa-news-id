@@ -139,6 +139,9 @@ def list_item_text(item: NewsItem, now: datetime | None = None) -> str:
 		parts.append(_("Breaking."))
 	parts.append(_sentence(item.title))
 	details = [item.source, category_label(item.category)]
+	if item.author:
+		# Translators: who wrote a story, in the news list, for example "by Rexya".
+		details.append(_("by {author}").format(author=item.author))
 	when = format_time(story_time(item), now)
 	if when:
 		details.append(when)
@@ -195,6 +198,9 @@ def article_detail_lines(item: NewsItem) -> list[str]:
 		source=item.source, category=category_label(item.category)
 	)
 	lines = [details]
+	if item.author:
+		# Translators: who wrote a story, in the article reader, for example "Written by Rexya".
+		lines.append(_("Written by {author}").format(author=item.author))
 	published = parse_iso(item.published_at)
 	if published:
 		# Translators: when the site published the story, for example "Published 13 November 2026, 20:05".

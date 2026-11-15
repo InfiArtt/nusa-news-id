@@ -164,7 +164,12 @@ class GlobalPlugin(globalPluginHandler.GlobalPlugin):
 			cached_sources = cache.sources()
 			quiet_sources = {item.source for item in items} - cached_sources
 			new_items = (
-				cache.save_news_items(items, mark_seen=first_fill, quiet_sources=quiet_sources)
+				cache.save_news_items(
+					items,
+					mark_seen=first_fill,
+					quiet_sources=quiet_sources,
+					refresh_sources=ALWAYS_ON_SOURCES,
+				)
 				if items
 				else []
 			)

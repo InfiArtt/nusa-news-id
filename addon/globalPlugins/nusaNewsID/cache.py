@@ -153,12 +153,16 @@ def sources() -> set[str]:
 
 
 def save_news_items(
-	items: list[NewsItem], mark_seen: bool = False, quiet_sources: set[str] | None = None
+	items: list[NewsItem],
+	mark_seen: bool = False,
+	quiet_sources: set[str] | None = None,
+	refresh_sources: tuple[str, ...] = (),
 ) -> list[NewsItem]:
 	"""Add the stories not cached yet and return them. A story found again in another category gets it too.
 
 	mark_seen saves every new story as read, for the first fill of an empty cache; quiet_sources does the
-	same for the stories of those sources only (a source's first fill).
+	same for the stories of those sources only (a source's first fill). For refresh_sources (InfiArtt, whose
+	API is the source of truth), saved stories take the title, time, summary and author found now.
 	"""
 	stories = _data()
 	new_items: list[NewsItem] = []
@@ -176,12 +180,27 @@ def save_news_items(
 					"summary": item.summary,
 					"published_at": item.published_at,
 					"is_breaking": item.is_breaking,
+					"author": item.author,
 					"seen": mark_seen or item.source in (quiet_sources or ()),
 					"cached_at": now_str,
 				}
 				new_items.append(item)
 				changed = True
 				continue
+			if item.source in refresh_sources:
+				for field_name, value in (
+					("title", item.title),
+					("published_at", item.published_at),
+					("summary", item.summary),
+					("author", item.author),
+				):
+					if value and entry.get(field_name) != value:
+						entry[field_name] = value
+						changed = True
+			if item.author and not entry.get("author"):
+				# Stories saved before the author was read get it the next time they are found.
+				entry["author"] = item.author
+				changed = True
 			categories = [c.strip() for c in entry.get("category", "").split(",") if c.strip()]
 			if item.category not in categories:
 				categories.append(item.category)
@@ -222,6 +241,7 @@ def get_news_items(
 				is_breaking=is_breaking(title),
 				seen=seen,
 				found_at=val.get("cached_at"),
+				author=val.get("author"),
 			)
 		)
 	# Newest first, by publication time, or by when the add-on found the story if the site gives no time.

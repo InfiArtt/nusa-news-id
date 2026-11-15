@@ -20,3 +20,5 @@ class NewsItem:
 	seen: bool = field(default=False, compare=False)
 	# When the add-on first found it (the cache's cached_at), for stories without a publication time.
 	found_at: str | None = field(default=None, compare=False)
+	# Who wrote it, when the source says so (InfiArtt).
+	author: str | None = field(default=None, compare=False)

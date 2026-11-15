@@ -39,6 +39,7 @@ Every story is read in the same order: the title, then the source, category and 
 - "Unread." comes at the end only for stories you have not opened or marked read.
 - Times read "just now", "14 minutes ago" or "3 hours ago" for today's stories, and as a date and time after that, such as "13 November 2026, 20:00".
 - If the site gives no publication time, the add-on uses the time it first found the story.
+- For InfiArtt articles and guides, the author comes after the category, such as "InfiArtt, InfiArtt articles, by Rexya, 29 October 2026, 13:01."
 
 The newest stories come first. The list shows 50 stories at a time, and you can change this number in the settings. The last item reads, for example, "Load 50 more stories". Press Enter on it to show the next stories.
 
@@ -70,7 +71,7 @@ The reader opens the story as a page that NVDA reads in browse mode, with the st
 The top of the page has:
 
 1. The title, as a level 1 heading.
-2. The source and category, such as "Detik, category National".
+2. The source and category, such as "Detik, category National". For InfiArtt, the next line names the author, such as "Written by Rexya".
 3. The publication time, such as "Published 15 November 2026, 06:09". If the site gives none, this line reads "Found ..." with the time the add-on first found the story.
 4. The story's web address.
 

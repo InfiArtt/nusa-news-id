@@ -39,6 +39,7 @@ Setiap berita dibacakan dengan urutan yang sama: judul, lalu sumber, kategori, d
 - Kata "Belum dibaca." ada di akhir hanya untuk berita yang belum Anda buka atau tandai dibaca.
 - Waktu dibacakan "baru saja", "14 menit lalu", atau "3 jam lalu" untuk berita hari ini, lalu berupa tanggal dan jam, misalnya "13 November 2026 pukul 20.00".
 - Jika situs tidak mencantumkan waktu terbit, add-on memakai waktu saat pertama kali menemukan berita itu.
+- Untuk artikel dan panduan InfiArtt, penulisnya disebut setelah kategori, misalnya "InfiArtt, Artikel InfiArtt, oleh Rexya, 29 Oktober 2026 pukul 13.01."
 
 Berita terbaru ada di atas. Daftar menampilkan 50 berita sekaligus, dan jumlah ini bisa diubah di pengaturan. Item terakhir berbunyi misalnya "Muat 50 berita berikutnya". Tekan Enter di item itu untuk menampilkan berita berikutnya.
 
@@ -70,7 +71,7 @@ Pembaca membuka berita sebagai halaman yang dibaca NVDA dalam mode browse, denga
 Bagian atas halaman berisi:
 
 1. Judul berita, sebagai heading level 1.
-2. Sumber dan kategori, misalnya "Detik, kategori Nasional".
+2. Sumber dan kategori, misalnya "Detik, kategori Nasional". Untuk InfiArtt, baris berikutnya menyebut penulisnya, misalnya "Ditulis oleh Rexya".
 3. Waktu terbit, misalnya "Terbit 15 November 2026 pukul 06.09". Jika situs tidak mencantumkannya, baris ini berbunyi "Ditemukan ..." dengan waktu add-on pertama kali menemukan berita itu.
 4. Alamat web berita.
 

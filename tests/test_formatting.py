@@ -160,3 +160,14 @@ def test_english_source_text():
 	assert formatting.load_more_text(1) == "Load 1 more story"
 	assert formatting.format_date(datetime(2026, 11, 13, 20, 5, tzinfo=WIB)) == "13 November 2026, 20:05"
 	assert formatting.notification_text(_item()) == "New from Detik: Sapaan Prabowo ke Jenderal Suyudi."
+
+
+def test_author_in_the_list_and_the_reader():
+	item = _item(source="InfiArtt", category="Artikel InfiArtt", author="Rexya", seen=True)
+	assert formatting.list_item_text(item, NOW) == (
+		"Sapaan Prabowo ke Jenderal Suyudi. InfiArtt, Artikel InfiArtt, oleh Rexya, 14 menit lalu."
+	)
+	assert formatting.article_detail_lines(item)[:2] == [
+		"InfiArtt, kategori Artikel InfiArtt",
+		"Ditulis oleh Rexya",
+	]

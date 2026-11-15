@@ -54,7 +54,9 @@ def plugin(monkeypatch, securePlugin):
 
 def test_manual_refresh_reports_new_stories(plugin, monkeypatch):
 	monkeypatch.setattr(
-		cache, "save_news_items", lambda items, mark_seen=False, quiet_sources=None: items[:2]
+		cache,
+		"save_news_items",
+		lambda items, mark_seen=False, quiet_sources=None, refresh_sources=(): items[:2],
 	)
 	assert plugin.request_refresh()
 	plugin.on_check_finished(plugin.monitor_thread, _stories(3))
@@ -63,7 +65,9 @@ def test_manual_refresh_reports_new_stories(plugin, monkeypatch):
 
 
 def test_manual_refresh_reports_nothing_new(plugin, monkeypatch):
-	monkeypatch.setattr(cache, "save_news_items", lambda items, mark_seen=False, quiet_sources=None: [])
+	monkeypatch.setattr(
+		cache, "save_news_items", lambda items, mark_seen=False, quiet_sources=None, refresh_sources=(): []
+	)
 	plugin.request_refresh()
 	plugin.on_check_finished(plugin.monitor_thread, _stories(1))
 	assert nvda_mocks.spoken == ["Selesai, tidak ada berita baru."]
@@ -74,7 +78,7 @@ def test_check_from_a_stopped_thread_is_ignored(plugin, monkeypatch):
 	monkeypatch.setattr(
 		cache,
 		"save_news_items",
-		lambda items, mark_seen=False, quiet_sources=None: saved.append(items) or items,
+		lambda items, mark_seen=False, quiet_sources=None, refresh_sources=(): saved.append(items) or items,
 	)
 	oldThread = nusaNewsID.MonitorThread(plugin)
 	plugin.on_check_finished(oldThread, _stories(1))
@@ -90,7 +94,9 @@ def test_first_fill_is_saved_as_read_and_announced_once(plugin, monkeypatch):
 	monkeypatch.setattr(
 		cache,
 		"save_news_items",
-		lambda items, mark_seen=False, quiet_sources=None: calls.append(mark_seen) or items,
+		lambda items, mark_seen=False, quiet_sources=None, refresh_sources=(): (
+			calls.append(mark_seen) or items
+		),
 	)
 	plugin.request_refresh()
 	plugin.on_check_finished(plugin.monitor_thread, _stories(3))
