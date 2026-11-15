@@ -1,6 +1,6 @@
 # NusaNewsID
 
-Add-on NVDA untuk mengikuti berita Indonesia dari Antara, Kompas, Detik, Republika, Liputan6, Merdeka, CNN Indonesia, WinPoin, dan MacPoin. Add-on memeriksa berita baru di latar belakang, mengumumkannya dengan NVDA, diam selama jam sunyi, dan menampilkan isi artikel di jendela yang mudah dibaca tanpa membuka browser.
+Add-on NVDA untuk mengikuti berita Indonesia dari Antara, Kompas, Detik, Republika, Liputan6, Merdeka, CNN Indonesia, dan WinPoin, serta artikel dan pusat pengetahuan InfiArtt. Add-on memeriksa berita baru di latar belakang, mengumumkannya dengan NVDA, diam selama jam sunyi, dan menampilkan isi artikel di jendela yang mudah dibaca tanpa membuka browser.
 
 Panduan pengguna ada di `addon/doc/id/readme.md` (bahasa Indonesia) dan `addon/doc/en/readme.md` (bahasa Inggris). Panduan yang sama bisa dibuka dari Pengelola Add-on NVDA setelah add-on dipasang.
 
