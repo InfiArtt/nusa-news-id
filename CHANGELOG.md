@@ -2,7 +2,7 @@
 
 Format mengikuti Keep a Changelog. Ringkasan berbahasa Inggris untuk versi yang sedang dikerjakan ada di `addon_changelog` di `buildVars.py`, dan ditampilkan di Add-on Store.
 
-## [1.1.0] - belum dirilis
+## [1.1.0] - 2026-11-15
 
 ### Ditambahkan
 
