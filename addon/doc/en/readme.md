@@ -143,7 +143,23 @@ Open the NVDA menu, Preferences, Settings, and choose the NusaNewsID category. F
   - Keep stories for (days): 1 to 30 days. Older stories are removed after every check, except InfiArtt articles and guides.
   - Delete all saved stories: deletes every saved story and article text after you press Delete in the confirmation dialog. This cannot be undone.
 - Skip security certificate checks: use this only if every connection fails because of a certificate problem on your computer. It makes the connections unsafe.
-- Support and donations.
+- Updates and support group:
+  - Check GitHub for new versions once a day: checked by default. About 30 seconds after NVDA starts, the add-on checks its GitHub releases, at most once a day.
+  - Check for updates now: checks right away. NVDA says so when you already have the newest version.
+  - Show a donation reminder now and then: not checked by default. When checked, an invitation to donate appears now and then, first 20 to 45 minutes after NVDA starts, then every 90 to 180 minutes.
+  - Support the developer (GoPay donation): opens the donation details.
+
+## Updates
+
+When a new version is out, the NusaNewsID update window opens. The focus is in the "What's new" box, which holds that version's changelog, so you can read it first with the arrow keys. Press Download and install (Alt+D) to install it, or Not now (Alt+N or Escape) to wait; the add-on asks again the next day.
+
+After the download, the file is checked: it must come from a release of the NusaNewsID repository on GitHub, match GitHub's SHA-256 checksum, and have the release's version. Then NVDA's own add-on installer installs it and offers to restart NVDA.
+
+The changelog is written in Indonesian, as in the repository's CHANGELOG.md.
+
+## Donations
+
+NusaNewsID is free. If it helps you, you can support its developer with a voluntary donation through GoPay to 085128011831, under the name Rexya Muhamad Rizki. When the add-on is installed, the welcome offers a Donate button; choose Donate to see the number, which is also copied to the clipboard, or Not now to go on with the installation. The donation details also open from the Donate button in the news list and from the settings, with a Copy number button.
 
 ## Saved data
 

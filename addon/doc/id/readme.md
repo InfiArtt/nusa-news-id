@@ -143,7 +143,21 @@ Buka menu NVDA, Pilihan, Settings, lalu pilih kategori NusaNewsID. Mulai NVDA 20
   - Lama penyimpanan berita (hari): 1 sampai 30 hari. Berita yang lebih lama dihapus setiap kali pemeriksaan selesai, kecuali artikel dan panduan InfiArtt.
   - Hapus semua berita tersimpan: menghapus semua berita dan isi artikel yang tersimpan, setelah Anda menekan Hapus di dialog konfirmasi. Tindakan ini tidak bisa dibatalkan.
 - Lewati pemeriksaan sertifikat keamanan: pakai hanya jika semua koneksi selalu gagal karena masalah sertifikat di komputer Anda. Pilihan ini membuat koneksi tidak aman.
-- Dukungan dan donasi.
+- Grup Pembaruan dan dukungan:
+  - Periksa versi baru di GitHub sehari sekali: bawaannya dicentang. Sekitar 30 detik setelah NVDA berjalan, add-on memeriksa rilis di GitHub, paling sering sekali sehari.
+  - Periksa pembaruan sekarang: memeriksa saat itu juga. NVDA menyebut jika Anda sudah memakai versi terbaru.
+  - Tampilkan pengingat donasi sesekali: bawaannya tidak dicentang. Jika dicentang, ajakan donasi muncul sesekali, pertama 20 sampai 45 menit setelah NVDA berjalan, lalu setiap 90 sampai 180 menit.
+  - Dukung pengembang (donasi GoPay): membuka rincian donasi.
+
+## Pembaruan
+
+Jika ada versi baru, jendela Pembaruan NusaNewsID terbuka. Fokus ada di kotak "Yang baru", yang berisi catatan perubahan versi itu, jadi Anda bisa membacanya dulu dengan tombol panah. Tekan Unduh dan pasang (Alt+U) untuk memasangnya, atau Tidak sekarang (Alt+T atau Escape) untuk menundanya; add-on bertanya lagi keesokan harinya.
+
+Setelah diunduh, file diperiksa: harus berasal dari rilis repositori NusaNewsID di GitHub, cocok dengan checksum SHA-256 dari GitHub, dan versinya sama dengan versi rilis. Lalu pemasang add-on NVDA sendiri memasangnya dan menawarkan untuk memulai ulang NVDA.
+
+## Donasi
+
+NusaNewsID gratis. Jika bermanfaat, Anda bisa mendukung pengembangnya lewat donasi sukarela melalui GoPay ke 085128011831 atas nama Rexya Muhamad Rizki. Saat add-on dipasang, sambutan menawarkan tombol Donasi; pilih Donasi untuk melihat nomornya, yang juga langsung disalin ke papan klip, atau Tidak sekarang untuk melanjutkan instalasi. Rincian donasi juga bisa dibuka dari tombol Donasi di daftar berita dan dari pengaturan, dengan tombol Salin nomor.
 
 ## Data yang disimpan
 

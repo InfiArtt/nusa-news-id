@@ -45,13 +45,23 @@ def get_config_val(key):
 		# Access config.conf dictionary structure
 		val = config.conf[CONFIG_SECTION][key]
 		# Explicitly cast to prevent type issues (e.g. unvalidated string configs)
-		if key in {"refresh_interval", "cache_duration", "max_display_count", "data_version", "reader_zoom"}:
+		if key in {
+			"refresh_interval",
+			"cache_duration",
+			"max_display_count",
+			"data_version",
+			"reader_zoom",
+			"last_update_check",
+		}:
 			return int(val)
 		if key in {
 			"silent_hours_enabled",
 			"notification_tone",
 			"breaking_news_preference",
 			"bypass_ssl_verification",
+			"check_updates",
+			"first_run",
+			"donation_reminder",
 		}:
 			if isinstance(val, str):
 				return val.lower() == "true"
@@ -97,6 +107,10 @@ def get_config_val(key):
 			"reader_zoom": 100,
 			"list_window": [],
 			"reader_window": [],
+			"check_updates": True,
+			"last_update_check": 0,
+			"first_run": True,
+			"donation_reminder": False,
 		}
 		return fallbacks.get(key)
 

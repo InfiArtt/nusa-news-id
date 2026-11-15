@@ -4,7 +4,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: nusaNewsID 1.1.0\n"
 "Report-Msgid-Bugs-To: 'nvda-translations@groups.io'\n"
-"POT-Creation-Date: 2026-11-15 21:33+0700\n"
+"POT-Creation-Date: 2026-11-15 21:46+0700\n"
 "PO-Revision-Date: 2026-11-15 16:00+0700\n"
 "Last-Translator: Rexya Muhamad Rizki <rexya2017@gmail.com>\n"
 "Language-Team: Indonesian\n"
@@ -13,6 +13,108 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=1; plural=0;\n"
+
+#. Translators: the donation details. {number} is the GoPay phone number, {name} the account holder.
+#. Translators: the donation details. {number} is the GoPay phone number, {name} the account
+#. holder.
+#, python-brace-format
+msgid ""
+"Support the NusaNewsID developer\n"
+"\n"
+"Method: GoPay\n"
+"Phone number: {number}\n"
+"Name: {name}\n"
+"\n"
+"Every donation, whatever the amount, helps keep this add-on updated. Thank "
+"you!"
+msgstr ""
+"Dukungan untuk pengembang NusaNewsID\n"
+"\n"
+"Metode: GoPay\n"
+"Nomor HP: {number}\n"
+"Atas nama: {name}\n"
+"\n"
+"Donasi berapa pun membantu add-on ini terus diperbarui. Terima kasih!"
+
+#. Translators: title of the dialog that shows the GoPay donation details.
+msgid "GoPay donation - NusaNewsID"
+msgstr "Informasi Donasi GoPay - NusaNewsID"
+
+msgid "Donation details:"
+msgstr "Rincian donasi:"
+
+#. Translators: button that copies the GoPay number to the clipboard.
+msgid "Co&py number"
+msgstr "&Salin nomor"
+
+#. Translators: button that closes a dialog.
+msgid "&Close"
+msgstr "&Tutup"
+
+#. Translators: said after the GoPay number is copied. {number} is the number.
+#, python-brace-format
+msgid "GoPay number {number} copied."
+msgstr "Nomor GoPay {number} disalin ke papan klip."
+
+#. Translators: said when the GoPay number could not be copied.
+msgid "Could not copy the number."
+msgstr "Gagal menyalin nomor ke papan klip."
+
+#. Translators: button that opens the donation details.
+#. Translators: button of the installation welcome that shows the donation details.
+msgid "&Donate"
+msgstr "&Donasi"
+
+#. Translators: button that closes the donation invitation.
+#. Translators: a button that closes the update window; the add-on asks again another day.
+#. Translators: button of the installation welcome that goes on with the installation.
+msgid "&Not now"
+msgstr "&Tidak sekarang"
+
+#. Translators: the welcome shown once after installing. Keep NVDA+Shift+/.
+msgid ""
+"Welcome to NusaNewsID!\n"
+"\n"
+"This add-on follows Indonesian news sites in the background, announces new "
+"stories, and opens whole articles in a window made for screen readers. Press "
+"NVDA+Shift+/ to open the news list.\n"
+"\n"
+"If this add-on helps you, you can support its developer with a voluntary "
+"donation through GoPay. Choose Donate to see the number, or Not now to close "
+"this message."
+msgstr ""
+"Selamat datang di NusaNewsID!\n"
+"\n"
+"Add-on ini mengikuti situs berita Indonesia di latar belakang, mengumumkan "
+"berita baru, dan membuka isi artikel di jendela yang dibuat untuk pembaca "
+"layar. Tekan NVDA+Shift+/ untuk membuka daftar berita.\n"
+"\n"
+"Kalau add-on ini bermanfaat, Anda bisa mendukung pengembangnya lewat donasi "
+"sukarela melalui GoPay. Pilih Donasi untuk melihat nomornya, atau Tidak "
+"sekarang untuk menutup pesan ini."
+
+#. Translators: title of the welcome shown once after installing.
+#. Translators: title of the welcome shown while the add-on is being installed.
+msgid "Welcome to NusaNewsID"
+msgstr "Selamat Datang di NusaNewsID"
+
+#. Translators: title of the occasional donation reminder.
+msgid "Support the developer - NusaNewsID"
+msgstr "Dukungan Pengembang - NusaNewsID"
+
+#. Translators: the occasional donation reminder.
+msgid ""
+"We hope NusaNewsID helps you keep up with the news every day.\n"
+"\n"
+"If you want this add-on to keep being updated, you can support its developer "
+"with a voluntary donation through GoPay. You can turn this reminder off in "
+"the NusaNewsID settings."
+msgstr ""
+"Semoga NusaNewsID membantu Anda mengikuti berita setiap hari.\n"
+"\n"
+"Kalau Anda ingin add-on ini terus diperbarui, Anda bisa mendukung "
+"pengembangnya lewat donasi sukarela melalui GoPay. Pengingat ini bisa "
+"dimatikan di pengaturan NusaNewsID."
 
 #. Translators: a month name, used in dates such as "13 November 2026, 20:05".
 msgid "January"
@@ -206,30 +308,6 @@ msgstr "Papan klip sedang dipakai program lain. Coba lagi."
 #. Translators: said when copying to the clipboard fails.
 msgid "Could not copy."
 msgstr "Gagal menyalin."
-
-#. Translators: title of the donation dialog.
-msgid "Donate to NusaNewsID"
-msgstr "Donasi NusaNewsID"
-
-msgid ""
-"You can donate through GoPay to 088222553434, under the name Rexya Muhamad "
-"Rizki.\n"
-"\n"
-"Every donation helps keep this add-on going. Thank you!"
-msgstr ""
-"Anda bisa berdonasi lewat GoPay ke 088222553434 atas nama Rexya Muhamad "
-"Rizki.\n"
-"\n"
-"Setiap donasi membantu add-on ini terus dikembangkan. Terima kasih, orang "
-"baik!"
-
-#. Translators: label of the text box in the donation dialog.
-msgid "Donation information:"
-msgstr "Informasi donasi:"
-
-#. Translators: button that closes a dialog.
-msgid "&Close"
-msgstr "&Tutup"
 
 #. Translators: title of the news list dialog.
 msgid "NusaNews - Indonesian news reader"
@@ -454,9 +532,25 @@ msgstr ""
 "Lewati pemeriksaan sertifikat &keamanan (hanya jika koneksi selalu gagal; "
 "tidak aman)"
 
-#. Translators: button in the settings that opens the donation dialog.
-msgid "Support and d&onations"
-msgstr "D&ukungan dan donasi"
+#. Translators: name of a group of settings: new versions of the add-on, and donations.
+msgid "Updates and support"
+msgstr "Pembaruan dan dukungan"
+
+#. Translators: check box in the settings.
+msgid "Check GitHub for new versions once a &day"
+msgstr "Periksa versi baru di GitHub sehari seka&li"
+
+#. Translators: button in the settings that looks for a new version now.
+msgid "Check for &updates now"
+msgstr "Periksa &pembaruan sekarang"
+
+#. Translators: check box in the settings.
+msgid "Show a donation &reminder now and then"
+msgstr "Tampilkan pengingat &donasi sesekali"
+
+#. Translators: button in the settings that shows how to donate.
+msgid "Support the developer (GoPay d&onation)..."
+msgstr "Dukung pengembang (d&onasi GoPay)..."
 
 #. Translators: error when the start of quiet hours is not a time.
 msgid "The start of quiet hours must be a time such as 22:00."
@@ -504,6 +598,58 @@ msgstr "Semua berita tersimpan sudah dihapus."
 msgid "Could not delete the saved stories."
 msgstr "Gagal menghapus berita tersimpan."
 
+#. Translators: said when the user checks for updates while a check or download is going on.
+msgid "Already checking for updates. The answer comes in a moment."
+msgstr "Pembaruan sedang diperiksa. Jawabannya sebentar lagi."
+
+#. Translators: said while the add-on looks for a new version.
+msgid "Checking for updates..."
+msgstr "Memeriksa pembaruan..."
+
+#. Translators: said when the user checked for a new version and has the newest one.
+#, python-brace-format
+msgid "You have the newest version, {version}."
+msgstr "Anda sudah memakai versi terbaru, {version}."
+
+#. Translators: said when the add-on's GitHub page has no published version yet.
+msgid "No version has been published on GitHub yet."
+msgstr "Belum ada versi yang diterbitkan di GitHub."
+
+#. Translators: said when looking for a new version failed, such as with no internet connection.
+msgid ""
+"Could not check for updates. Check your internet connection and try again."
+msgstr "Gagal memeriksa pembaruan. Periksa koneksi internet, lalu coba lagi."
+
+#. Translators: said when the new version could not be downloaded or was damaged.
+msgid "The new version could not be downloaded. Try again later."
+msgstr "Versi baru gagal diunduh. Coba lagi nanti."
+
+#. Translators: said while a new version of the add-on downloads, for example
+#. "Downloading NusaNewsID 1.2.0...".
+#, python-brace-format
+msgid "Downloading NusaNewsID {version}..."
+msgstr "Mengunduh NusaNewsID {version}..."
+
+msgid "NusaNewsID update"
+msgstr "Pembaruan NusaNewsID"
+
+#. Translators: the top of the window that offers a new version, with both version numbers.
+#, python-brace-format
+msgid "NusaNewsID {new} is available. You have version {current}."
+msgstr "NusaNewsID {new} sudah tersedia. Versi yang Anda pakai {current}."
+
+#. Translators: the label of the text that says what changed in the new version.
+msgid "&What's new:"
+msgstr "&Yang baru:"
+
+#. Translators: shown when a new version has no description of its changes.
+msgid "No description."
+msgstr "Tidak ada keterangan."
+
+#. Translators: a button that downloads and installs the new version.
+msgid "&Download and install"
+msgstr "&Unduh dan pasang"
+
 #, python-brace-format
 msgid "NusaNews: {count} story loaded."
 msgid_plural "NusaNews: {count} stories loaded."
@@ -522,40 +668,31 @@ msgstr "Selesai, tidak ada berita baru."
 msgid "Opens the NusaNews news list"
 msgstr "Membuka daftar berita NusaNews"
 
-#. Translators: title of the dialog shown when the add-on is installed.
-msgid "Welcome to NusaNewsID"
-msgstr "Selamat Datang di NusaNewsID"
-
+#. Translators: the welcome shown while the add-on is being installed. Keep NVDA+Shift+/.
 msgid ""
-"Thank you for installing NusaNewsID.\n"
+"Welcome to NusaNewsID!\n"
 "\n"
-"This add-on reads news from Indonesian news sites and is made for screen "
-"reader users.\n"
+"This add-on follows Indonesian news sites in the background, announces new "
+"stories, and opens whole articles in a window made for screen readers. Press "
+"NVDA+Shift+/ to open the news list.\n"
 "\n"
-"You can filter the news by source and category.\n"
-"To open the news list, press NVDA+Shift+/.\n"
-"\n"
-"Made by Rexya Muhamad Rizki. You can support its development with the Donate "
-"button."
+"If this add-on helps you, you can support its developer with a voluntary "
+"donation through GoPay. Choose Donate to see the number, or Not now to go on "
+"with the installation."
 msgstr ""
-"Terima kasih telah memasang NusaNewsID.\n"
+"Selamat datang di NusaNewsID!\n"
 "\n"
-"Add-on ini membacakan berita dari situs berita Indonesia, dan dibuat untuk "
-"pengguna pembaca layar.\n"
+"Add-on ini mengikuti situs berita Indonesia di latar belakang, mengumumkan "
+"berita baru, dan membuka isi artikel di jendela yang dibuat untuk pembaca "
+"layar. Tekan NVDA+Shift+/ untuk membuka daftar berita.\n"
 "\n"
-"Anda bisa menyaring berita menurut sumber dan kategori.\n"
-"Untuk membuka daftar berita, tekan NVDA+Shift+/.\n"
-"\n"
-"Dibuat oleh Rexya Muhamad Rizki. Anda bisa mendukung pengembangannya lewat "
-"tombol Donasi."
+"Kalau add-on ini bermanfaat, Anda bisa mendukung pengembangnya lewat donasi "
+"sukarela melalui GoPay. Pilih Donasi untuk melihat nomornya, atau Tidak "
+"sekarang untuk melanjutkan instalasi."
 
-#. Translators: label of the text box in the welcome dialog.
-msgid "About NusaNewsID:"
-msgstr "Tentang NusaNewsID:"
-
-#. Translators: button that closes the welcome dialog so the installation goes on.
-msgid "&Continue installing"
-msgstr "&Lanjutkan instalasi"
+#. Translators: added to the donation details after the GoPay number was copied.
+msgid "The GoPay number has been copied to the clipboard."
+msgstr "Nomor GoPay sudah disalin ke papan klip."
 
 #. Add-on summary/title, usually the user visible name of the add-on
 #. Translators: Summary/title for this add-on
@@ -607,6 +744,15 @@ msgid ""
 "- The reader no longer waits for photos. Photos load after the text, and "
 "photos the reader cannot show, such as Liputan6's, are left out instead of "
 "holding the story for several seconds.\n"
+"- New versions are offered from GitHub. Once a day, a while after NVDA "
+"starts, the add-on looks for a newer release; the update window shows what "
+"changed, and Download and install installs it with NVDA's own installer "
+"after checking the file. The setting \"Check GitHub for new versions once a "
+"day\" turns this off, and \"Check for updates now\" checks right away.\n"
+"- The welcome after installing and the donation details are the same as in "
+"Emoji ID, with the GoPay number 085128011831 and a Copy number button. An "
+"occasional donation reminder can be turned on in the settings; it is off by "
+"default.\n"
 "- Under the news list, a box shows the selected story's whole title, its "
 "source, category, time and author, and its summary. The list and this box "
 "use the reader's text size.\n"
@@ -702,6 +848,15 @@ msgstr ""
 "- Pembaca artikel tidak lagi menunggu foto. Foto dimuat setelah teks, dan "
 "foto yang tidak bisa ditampilkan, seperti foto Liputan6, dilewati, bukan "
 "menahan berita selama beberapa detik.\n"
+"- Versi baru ditawarkan dari GitHub. Sehari sekali, sesaat setelah NVDA "
+"berjalan, add-on mencari rilis yang lebih baru; jendela pembaruan "
+"menampilkan apa yang berubah, dan Unduh dan pasang memasangnya dengan "
+"pemasang NVDA sendiri setelah filenya diperiksa. Pengaturan \"Periksa versi "
+"baru di GitHub sehari sekali\" mematikannya, dan \"Periksa pembaruan "
+"sekarang\" memeriksa saat itu juga.\n"
+"- Sambutan saat instalasi dan rincian donasi sama seperti di Emoji ID, "
+"dengan nomor GoPay 085128011831 dan tombol Salin nomor. Pengingat donasi "
+"sesekali bisa dinyalakan di pengaturan; bawaannya mati.\n"
 "- Di bawah daftar berita ada kotak yang menampilkan judul lengkap berita "
 "yang dipilih, sumber, kategori, waktu, dan penulisnya, serta ringkasannya. "
 "Daftar dan kotak ini memakai ukuran teks pembaca.\n"

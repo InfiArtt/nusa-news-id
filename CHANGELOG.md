@@ -20,6 +20,17 @@ Format mengikuti Keep a Changelog. Ringkasan berbahasa Inggris untuk versi yang 
   - Jika mesin web tidak tersedia, pembaca kembali memakai kotak teks seperti sebelumnya.
 - Sumber yang belum punya berita tersimpan, misalnya sumber yang baru diaktifkan di pengaturan, atau InfiArtt dengan seluruh arsipnya, disimpan diam-diam sebagai sudah dibaca saat pertama kali diambil. Berita dari sumber lain di putaran yang sama tetap diumumkan seperti biasa.
 - Aturan membaca berdasarkan WCAG 2.2 ditulis di `AGENTS.md`, dan `tests/test_reader.py` memeriksanya untuk setiap halaman pembaca.
+- Sistem pembaruan dari rilis GitHub, diambil dari add-on WhatsApp Access:
+  - Sekitar 30 detik setelah NVDA berjalan, paling sering sekali sehari, add-on membaca daftar rilis repositori InfiArtt/nusa-news-id. Pengaturan baru "Periksa versi baru di GitHub sehari sekali" (bawaannya menyala) mematikannya, dan tombol "Periksa pembaruan sekarang" memeriksa saat itu juga.
+  - Jika ada versi yang lebih baru, jendela "Pembaruan NusaNewsID" menyebut kedua nomor versi dan menampilkan catatan perubahannya di kotak "Yang baru", yang langsung mendapat fokus. Catatan itu adalah bagian versi tersebut di CHANGELOG.md, tanpa baris checksum di akhirnya. Tombolnya Unduh dan pasang, serta Tidak sekarang.
+  - File hanya dipasang jika berasal dari rilis repositori ini, cocok dengan checksum SHA-256 dari GitHub, dan manifest-nya bernama nusaNewsID dengan versi yang sama dengan rilis. File yang gagal diperiksa dihapus. Pemasangan memakai pemasang add-on NVDA sendiri, lalu NVDA menawarkan untuk memulai ulang.
+- Sambutan dan donasi disamakan dengan add-on Emoji ID:
+  - Saat add-on dipasang, NVDA menampilkan sambutan dengan tombol Donasi dan Tidak sekarang. Donasi menampilkan rincian GoPay dan langsung menyalin nomornya. Jika sambutan tidak bisa tampil saat instalasi, sambutan muncul sekali setelah NVDA dimulai ulang.
+  - Nomor GoPay sekarang 085128011831 atas nama Rexya Muhamad Rizki.
+  - Rincian donasi punya tombol Salin nomor, dan bisa dibuka dari tombol Donasi di daftar berita serta tombol "Dukung pengembang (donasi GoPay)" di pengaturan.
+  - Pengingat donasi sesekali bisa dinyalakan di pengaturan, bawaannya mati: pertama 20 sampai 45 menit setelah NVDA berjalan, lalu setiap 90 sampai 180 menit.
+  - Pengaturan baru tersebut ada di grup "Pembaruan dan dukungan".
+- README repositori sekarang berbahasa Inggris.
 - Daftar berita punya kotak "Berita yang dipilih" di bawahnya. Kotak teks hanya-baca ini menampilkan judul lengkap berita yang dipilih, sumber dan kategori, penulis, waktu terbit, lalu ringkasannya, dan teksnya membungkus mengikuti lebar jendela. Tekan Tab dari daftar untuk membacanya.
 - Daftar berita bisa dimaksimalkan dan ukurannya lebih besar. Ukuran dan posisi daftar berita dan pembaca artikel diingat di pengaturan baru `list_window` dan `reader_window`, dan dipakai lagi hanya jika posisi itu masih ada di layar.
 - Huruf daftar berita dan kotak "Berita yang dipilih" mengikuti ukuran teks pembaca. Mengubah ukuran dengan Control+tambah atau Control+kurang di pembaca artikel langsung mengubah huruf daftar juga.

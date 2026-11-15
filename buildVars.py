@@ -37,6 +37,8 @@ addon_info = AddonInfo(
 - The reader opens in Internet Explorer 11 mode, and the size and place of the news list and the reader are remembered. Both can be maximized.
 - Articles split over several pages, as on Antara, are read whole.
 - The reader no longer waits for photos. Photos load after the text, and photos the reader cannot show, such as Liputan6's, are left out instead of holding the story for several seconds.
+- New versions are offered from GitHub. Once a day, a while after NVDA starts, the add-on looks for a newer release; the update window shows what changed, and Download and install installs it with NVDA's own installer after checking the file. The setting "Check GitHub for new versions once a day" turns this off, and "Check for updates now" checks right away.
+- The welcome after installing and the donation details are the same as in Emoji ID, with the GoPay number 085128011831 and a Copy number button. An occasional donation reminder can be turned on in the settings; it is off by default.
 - Under the news list, a box shows the selected story's whole title, its source, category, time and author, and its summary. The list and this box use the reader's text size.
 - A source with no saved stories yet, such as one you just turned on, or InfiArtt with its whole archive, is saved quietly as read instead of being announced story by story.
 - An empty news list now says why it is empty, instead of NVDA saying "unknown".

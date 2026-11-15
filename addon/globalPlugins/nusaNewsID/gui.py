@@ -132,32 +132,6 @@ def _text_font(zoom: int) -> wx.Font:
 	return font
 
 
-class DonationDialog(wx.Dialog):
-	"""Dialog that displays read-only donation information."""
-
-	def __init__(self, parent):
-		# Translators: title of the donation dialog.
-		super().__init__(parent, title=_("Donate to NusaNewsID"), style=wx.DEFAULT_DIALOG_STYLE)
-		sizer = wx.BoxSizer(wx.VERTICAL)
-		# Translators: the text of the donation dialog. Keep the phone number and the name.
-		msg = _(
-			"You can donate through GoPay to 088222553434, under the name Rexya Muhamad Rizki.\n\n"
-			"Every donation helps keep this add-on going. Thank you!"
-		)
-		# Translators: label of the text box in the donation dialog.
-		label = wx.StaticText(self, label=_("Donation information:"))
-		sizer.Add(label, 0, wx.LEFT | wx.RIGHT | wx.TOP, 10)
-		text = wx.TextCtrl(self, style=wx.TE_MULTILINE | wx.TE_READONLY, size=(400, 150))
-		text.SetValue(msg)
-		sizer.Add(text, 1, wx.EXPAND | wx.ALL, 10)
-		# Translators: button that closes a dialog.
-		btn = wx.Button(self, wx.ID_OK, label=_("&Close"))
-		sizer.Add(btn, 0, wx.ALIGN_CENTER | wx.BOTTOM, 10)
-		self.SetSizerAndFit(sizer)
-		self.Centre()
-		text.SetFocus()
-
-
 class NusaNewsDialog(wx.Dialog):
 	"""The list of cached stories, with filters and actions."""
 
@@ -260,9 +234,9 @@ class NusaNewsDialog(wx.Dialog):
 		self.Bind(wx.EVT_CLOSE, self.on_close)
 
 	def on_donate(self, event):
-		dlg = DonationDialog(self)
-		dlg.ShowModal()
-		dlg.Destroy()
+		from .donation import show_donation_details
+
+		show_donation_details(self)
 
 	def _selected_item(self) -> NewsItem | None:
 		selection = self.news_listbox.GetSelection()
@@ -868,8 +842,27 @@ class NusaNewsSettingsPanel(SettingsPanel):
 		)
 		self.ssl_checkbox.SetValue(settings["bypass_ssl_verification"])
 
-		# Translators: button in the settings that opens the donation dialog.
-		self.btn_donate = sHelper.addItem(wx.Button(self, label=_("Support and d&onations")))
+		# Translators: name of a group of settings: new versions of the add-on, and donations.
+		support = self._group(sHelper, _("Updates and support"))
+		self.updates_checkbox = support.addItem(
+			# Translators: check box in the settings.
+			wx.CheckBox(self._box(support), label=_("Check GitHub for new versions once a &day"))
+		)
+		self.updates_checkbox.SetValue(settings["check_updates"])
+		self.btn_check_updates = support.addItem(
+			# Translators: button in the settings that looks for a new version now.
+			wx.Button(self._box(support), label=_("Check for &updates now"))
+		)
+		self.btn_check_updates.Bind(wx.EVT_BUTTON, self.on_check_updates)
+		self.reminder_checkbox = support.addItem(
+			# Translators: check box in the settings.
+			wx.CheckBox(self._box(support), label=_("Show a donation &reminder now and then"))
+		)
+		self.reminder_checkbox.SetValue(settings["donation_reminder"])
+		self.btn_donate = support.addItem(
+			# Translators: button in the settings that shows how to donate.
+			wx.Button(self._box(support), label=_("Support the developer (GoPay d&onation)..."))
+		)
 		self.btn_donate.Bind(wx.EVT_BUTTON, self.on_donate)
 
 	def _group(self, sHelper: guiHelper.BoxSizerHelper, label: str) -> guiHelper.BoxSizerHelper:
@@ -890,9 +883,14 @@ class NusaNewsSettingsPanel(SettingsPanel):
 		self.dnd_end_txt.Enable(enabled)
 
 	def on_donate(self, event):
-		dlg = DonationDialog(self)
-		dlg.ShowModal()
-		dlg.Destroy()
+		from .donation import show_donation_details
+
+		show_donation_details(self)
+
+	def on_check_updates(self, event):
+		from . import updateCheck
+
+		updateCheck.check(manual=True)
 
 	def isValid(self) -> bool:
 		"""Refuse to save quiet hours that are not times, and say which field is wrong."""
@@ -934,12 +932,17 @@ class NusaNewsSettingsPanel(SettingsPanel):
 		config.set_config_val("cache_duration", self.cache_spin.GetValue())
 		config.set_config_val("max_display_count", DISPLAY_COUNTS[self.display_limit_choice.GetSelection()])
 		config.set_config_val("reader_zoom", READER_ZOOMS[self.zoom_choice.GetSelection()])
+		config.set_config_val("check_updates", self.updates_checkbox.GetValue())
+		reminder_changed = self.reminder_checkbox.GetValue() != config.get_config_val("donation_reminder")
+		config.set_config_val("donation_reminder", self.reminder_checkbox.GetValue())
 
 		# Hand the new settings to the background thread. NVDA writes nvda.ini itself.
 		from . import addon_instance
 
 		if addon_instance:
 			addon_instance.apply_settings()
+			if reminder_changed:
+				addon_instance.schedule_reminder()
 		refresh_active_dialog()
 
 	def on_clear_cache(self, event):
