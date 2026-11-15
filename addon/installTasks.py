@@ -82,8 +82,36 @@ class WelcomeDialog(wx.Dialog):
 		dlg.Destroy()
 
 
+def _loadConfigSpec():
+	"""The add-on's settings specification, from its own module, without importing the add-on."""
+	import importlib.util
+	import os
+
+	path = os.path.join(os.path.dirname(__file__), "globalPlugins", "nusaNewsID", "configSpec.py")
+	spec = importlib.util.spec_from_file_location("nusaNewsID_configSpec", path)
+	module = importlib.util.module_from_spec(spec)
+	spec.loader.exec_module(module)
+	return module
+
+
+def _registerSettings():
+	"""From NVDA 2026.3: register the settings section, the same in every profile, loaded at NVDA's start."""
+	try:
+		from config import configSections
+	except ImportError:
+		return
+	configSpec = _loadConfigSpec()
+	configSections.registerSection(configSpec.CONFIG_SECTION, configSpec.CONFIG_SPEC, isBaseOnly=True)
+
+
 def onInstall():
 	"""Hook executed by NVDA when the addon is installed."""
+	try:
+		_registerSettings()
+	except Exception:
+		import logHandler
+
+		logHandler.log.exception("NusaNews: Registering the settings section failed.")
 
 	def show_welcome():
 		app = wx.GetApp()
@@ -95,3 +123,12 @@ def onInstall():
 	# NVDA executes onInstall in a background thread during addon installation.
 	# We must use wx.CallAfter to safely spawn GUI elements on the main thread.
 	wx.CallAfter(show_welcome)
+
+
+def onUninstall():
+	"""Hook executed by NVDA when the add-on is removed: forget the settings section."""
+	try:
+		from config import configSections
+	except ImportError:
+		return
+	configSections.unregisterSection("nusaNewsID")

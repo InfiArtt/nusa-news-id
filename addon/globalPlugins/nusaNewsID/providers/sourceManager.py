@@ -30,6 +30,18 @@ PROVIDER_CLASSES: tuple[type[BaseProvider], ...] = (
 	WinPoinProvider,
 )
 
+# The categories, in the order the news list offers them. Their names are stored in the cache.
+CATEGORIES: tuple[str, ...] = (
+	"Nasional",
+	"Internasional",
+	"Teknologi",
+	"Politik",
+	"Ekonomi",
+	"Olahraga",
+	"Entertainment",
+	"Disabilitas",
+)
+
 # The source names that can be enabled.
 # Names saved by older versions that are not here, such as Tempo and MacPoin, are ignored.
 SOURCE_NAMES: tuple[str, ...] = tuple(provider.source_name for provider in PROVIDER_CLASSES)

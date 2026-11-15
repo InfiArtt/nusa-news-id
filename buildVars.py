@@ -38,6 +38,11 @@ addon_info = AddonInfo(
 - Times are shown as "14 menit lalu" or "3 jam lalu" for the last day, and as "13 November 2026 pukul 20.00" for older stories. The list is sorted by publication time, newest first.
 - The article reader shows one fact per line: title, source and category, publication time and link. "Salin berita" copies only the title and the article.
 - Several new stories announced at once are now one message, so a braille display shows them all. The message names the key that opens the reader as set in Input Gestures.
+- The first check after installing, or after deleting saved stories, fills the list quietly and says "NusaNews: N berita dimuat." instead of announcing hundreds of stories. Stories saved by older versions are marked read once, so "Belum dibaca" means new.
+- Faster: stories are kept in memory and saved shortly after a change, article texts are saved separately, old stories are removed after every check, and the list is no longer limited to 500 stories.
+- Settings are the same in every configuration profile from NVDA 2026.3.
+- Settings are grouped and labelled: sources are a checkable list, quiet hours must be times such as 22:00, and deleting saved stories asks with NVDA's own confirmation dialog.
+- The news list has a label, keeps the selected story selected when new stories arrive, and reads a story once when you return from the reader. Refresh is now Alt+G, because Alt+S moves to the source filter.
 - Every story now has the category it was listed under: stories from sidebars, "popular" boxes and other sections of a page are left out.
 - Stories older than the cache period are no longer added, so news from 2023 or 2024 is no longer announced as new.
 - Breaking news is now only about disasters and emergencies. Words such as "presiden" or "waspada" no longer mark ordinary stories as breaking, so they no longer break through quiet hours.

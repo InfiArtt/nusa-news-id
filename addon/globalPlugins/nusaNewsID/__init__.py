@@ -16,6 +16,7 @@ import wx
 from scriptHandler import script
 
 from . import cache, config
+from .configSpec import DATA_VERSION
 from .notificationManager import NotificationManager
 from .providers.sourceManager import SourceManager
 
@@ -91,6 +92,7 @@ class GlobalPlugin(globalPluginHandler.GlobalPlugin):
 		config.initialize_config()
 		self.settings = config.read_settings()
 		cache.init_db()
+		self._upgrade_saved_data()
 		cache.prune_cache(self.settings["cache_duration"])
 
 		import gui
@@ -109,6 +111,7 @@ class GlobalPlugin(globalPluginHandler.GlobalPlugin):
 			self.monitor_thread.stop()
 			self.monitor_thread.join(timeout=1.0)
 			self.monitor_thread = None
+			cache.flush()
 		if addon_instance is self:
 			import gui
 
@@ -118,6 +121,16 @@ class GlobalPlugin(globalPluginHandler.GlobalPlugin):
 				gui.settingsDialogs.NVDASettingsDialog.categoryClasses.remove(NusaNewsSettingsPanel)
 			addon_instance = None
 		super().terminate(*args, **kwargs)
+
+	def _upgrade_saved_data(self) -> None:
+		"""Once per data version: bring the settings and cache of an older version up to date."""
+		if config.get_config_val("data_version") >= DATA_VERSION:
+			return
+		# Version 1.0.2 never marked stories as read by itself, so thousands were "Belum dibaca".
+		# Marking them read makes "Belum dibaca" mean new since this version.
+		cache.mark_all_as_read()
+		config.set_config_val("data_version", DATA_VERSION)
+		logHandler.log.info("NusaNews: Marked the stories of the older version as read.")
 
 	def apply_settings(self) -> None:
 		"""Read the saved settings again and start a new check with them. Main thread only."""
@@ -139,11 +152,18 @@ class GlobalPlugin(globalPluginHandler.GlobalPlugin):
 			# A check from a thread that was stopped meanwhile, for example while add-ons were reloaded.
 			return
 		try:
-			new_items = cache.save_news_items(items) if items else []
+			cache.prune_cache(self.settings["cache_duration"])
+			# The first fill of an empty cache (new install, or after clearing it) is saved as read and
+			# not announced story by story: all of them would be "new".
+			first_fill = cache.is_empty()
+			new_items = cache.save_news_items(items, mark_seen=first_fill) if items else []
 		except Exception:
 			logHandler.log.exception("NusaNews: Saving the stories failed.")
 			return
-		if self._manual_refresh_pending:
+		if first_fill and new_items:
+			self._manual_refresh_pending = False
+			ui.message(f"NusaNews: {len(new_items)} berita dimuat.")
+		elif self._manual_refresh_pending:
 			self._manual_refresh_pending = False
 			if new_items:
 				ui.message(f"Selesai, {len(new_items)} berita baru.")
