@@ -147,7 +147,7 @@ msgstr[0] "NusaNews: {count} berita baru. Tekan {gesture} untuk membuka."
 #, python-brace-format
 msgid "NusaNews: {count} new story. To open it, assign a key in Input Gestures."
 msgid_plural "NusaNews: {count} new stories. To open them, assign a key in Input Gestures."
-msgstr[0] "NusaNews: {count} berita baru. Tetapkan tombol untuk membukanya di Gestur Masukan."
+msgstr[0] "NusaNews: {count} berita baru. Tetapkan tombolnya di Input Gestures NVDA."
 
 #. Translators: the second line of an article in the reader, for example "Detik, category National".
 #, python-brace-format
@@ -513,7 +513,7 @@ msgstr ""
 "- Satu berita dibacakan dengan cara yang sama di daftar, di notifikasi, dan di pembaca artikel: judul dulu, lalu sumber, kategori, dan waktu. \"Breaking\" ada di depan hanya untuk berita breaking, dan \"Belum dibaca\" ada di akhir hanya untuk berita yang belum dibaca. Tanda kurung siku, garis vertikal, dan garis minus sudah tidak ada.\n"
 "- Waktu dibacakan seperti \"14 menit lalu\" atau \"3 jam lalu\" pada hari pertama, lalu berupa tanggal dan jam. Berita terbaru ada di atas.\n"
 "- Pembaca artikel menampilkan judul, sumber dan kategori, waktu terbit, dan link, masing-masing di baris sendiri. \"Salin berita\" hanya menyalin judul dan isi berita.\n"
-"- Beberapa berita baru diumumkan dalam satu pesan, jadi semuanya tampil di layar braille. Pesan itu menyebut tombol pembuka daftar berita, termasuk tombol yang Anda atur di Gestur Masukan.\n"
+"- Beberapa berita baru diumumkan dalam satu pesan, jadi semuanya tampil di layar braille. Pesan itu menyebut tombol pembuka daftar berita, termasuk tombol yang Anda atur di Input Gestures.\n"
 "- Pemeriksaan pertama setelah add-on dipasang, atau setelah berita tersimpan dihapus, menyimpan berita tanpa mengumumkannya satu per satu, lalu menyebut jumlah berita yang dimuat. Berita yang disimpan versi lama ditandai dibaca sekali.\n"
 "- Add-on lebih cepat. Berita disimpan di memori, ditulis ke disk sesaat setelah ada perubahan, dan isi artikel disimpan terpisah. Berita lama dihapus setiap kali pemeriksaan selesai, dan daftar tidak lagi berhenti di 500 berita.\n"
 "- Mulai NVDA 2026.3, pengaturan sama di semua profil konfigurasi.\n"

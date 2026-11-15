@@ -1,81 +1,146 @@
-# NusaNews - Pembaca Berita Indonesia untuk NVDA
+# NusaNewsID
 
-Add-on NusaNews memungkinkan Anda untuk memantau dan membaca berita terbaru secara langsung dan aksesibel dari berbagai portal berita terkemuka di Indonesia menggunakan pembaca layar NVDA. Dengan fitur utama **Offline Reader Mode**, Anda dapat membaca isi lengkap artikel berita secara offline langsung di dalam dialog NVDA yang nyaman tanpa perlu membuka browser web eksternal yang sering kali dipenuhi dengan iklan, popup, dan elemen yang mengganggu aksesibilitas.
+NusaNewsID membacakan berita dari situs berita Indonesia di NVDA. Add-on ini memeriksa berita baru di latar belakang, mengumumkannya, dan menampilkan isi artikel di jendela yang mudah dibaca, jadi Anda tidak perlu membuka browser yang penuh iklan.
 
-## Fitur Utama
+Bahasa add-on mengikuti bahasa NVDA. Panduan ini memakai nama tombol dan pesan dalam bahasa Indonesia.
 
-*   **Pintasan Keyboard Tunggal**: Tekan `NVDA+Shift+/` dari mana saja untuk memunculkan dialog utama pembaca berita.
-*   **Offline Reader Mode (Mode Membaca Offline)**: Membuka dan membaca isi lengkap artikel berita dalam kotak teks multi-baris yang ramah pembaca layar. Anda dapat membaca artikel baris demi baris menggunakan tombol panah atas/bawah standard.
-*   **8 Sumber Berita Populer**:
-    *   *Berita Umum*: Detik.com, Kompas.com, Antara News, Republika, Liputan6, Merdeka.com, dan CNN Indonesia.
-    *   *Berita Teknologi*: WinPoin (berita Windows/Microsoft).
-*   **Kategori Berita Terstruktur**: Nasional, Internasional, Teknologi, Politik, Ekonomi, Olahraga, Entertainment, dan Disabilitas.
-*   **Penyaringan Khusus Isu Disabilitas**: Ketika memilih kategori "Disabilitas", add-on secara otomatis menyaring berita dari semua portal menggunakan daftar kata kunci relevan disabilitas yang komprehensif. Ini memastikan daftar berita hanya berisi informasi yang benar-benar berkaitan dengan isu disabilitas di Indonesia.
-*   **Sistem Notifikasi Pintar**:
-    *   *Hanya Ringkasan (Digest)*: Mengumumkan jumlah berita baru yang masuk selama siklus pencarian otomatis.
-    *   *Berita Langsung (Immediate)*: Mengumumkan judul berita baru satu per satu begitu ditemukan (maksimal 5 judul per siklus untuk mencegah banjir suara).
-*   **Jam Sunyi (Do Not Disturb - DND)**: Mematikan notifikasi berita otomatis pada rentang jam tertentu (misalnya malam hari) agar tidak mengganggu istirahat Anda.
-*   **Pagination (Muat Lebih Banyak)**: Membatasi jumlah awal tampilan berita (20, 50, atau 100) dan menyediakan opsi `-- Muat Lebih Banyak --` di akhir daftar berita untuk memuat berita berikutnya secara instan dan memindahkan fokus secara otomatis ke berita baru pertama.
-*   **Penyimpanan Cache Lokal**: Artikel yang sudah diunduh akan disimpan secara lokal, sehingga dapat dibaca kembali secara instan.
-*   **Bypass SSL Verification**: Opsi darurat untuk melewati verifikasi SSL jika koneksi internet Anda mengalami masalah sertifikat lokal.
+## Kebutuhan
 
----
+- NVDA 2026.1 atau yang lebih baru.
+- Koneksi internet.
 
-## Panduan Penggunaan dan Pintasan Keyboard
+## Sumber dan kategori
 
-### 1. Dialog Utama Pembaca Berita
-Untuk membuka NusaNews, tekan **`NVDA+Shift+/`** dari mana saja. Dialog utama akan terbuka dan fokus akan langsung berada pada daftar berita.
-*   **Navigasi Berita**: Gunakan tombol **Panah Atas** dan **Panah Bawah** untuk memilih artikel berita.
-*   **Membuka Artikel**: Tekan **Enter** atau klik dua kali pada berita yang dipilih untuk membuka **Reader Mode** offline.
-*   **Salin Link (Alt+C)**: Menyalin tautan berita (URL) yang dipilih ke clipboard.
-*   **Tandai Dibaca (Alt+D)**: Menandai berita yang dipilih saat ini sebagai sudah dibaca (menghilangkan awalan `[Baru]`).
-*   **Tandai Semua Dibaca (Alt+M)**: Menandai seluruh berita yang tampil dalam daftar saat ini sebagai sudah dibaca.
-*   **Segarkan Berita (Alt+S)**: Memicu proses pencarian berita baru secara manual dari seluruh sumber yang aktif.
-*   **Salin Link (Alt+L)**: Salin URL berita yang dipilih.
-*   **Tutup Dialog (Alt+T atau Escape)**: Menutup dialog NusaNews dan kembali ke aplikasi sebelumnya.
-*   **Filter Sumber dan Kategori**: Gunakan tombol **Tab** untuk berpindah ke dropdown filter sumber atau kategori, lalu gunakan tombol **Panah** untuk mengubah penyaringan. Daftar berita akan terupdate secara instan.
+Ada delapan kategori: Nasional, Internasional, Teknologi, Politik, Ekonomi, Olahraga, Entertainment, dan Disabilitas. Tidak semua sumber punya semua kategori, karena add-on hanya mengambil bagian yang masih diperbarui oleh situsnya.
 
-### 2. Jendela Reader Mode (Membaca Offline)
-Ketika Anda membuka berita, dialog bacaan akan tampil dengan kotak teks baca-saja. NVDA akan langsung menaruh fokus pada kotak teks ini untuk mulai membacanya.
-*   **Membaca Teks**: Gunakan tombol panah standar pembaca layar (seperti **Panah Bawah**, **Panah Atas**, **Page Down**, dll) untuk membaca artikel baris demi baris atau paragraf demi paragraf.
-*   **Buka di Browser (Alt+B)**: Jika Anda ingin melihat halaman web asli artikel tersebut, tekan tombol ini untuk membukanya di browser internet default Anda.
-*   **Salin Link (Alt+L)**: Menyalin tautan berita (URL) saat ini ke clipboard.
-*   **Salin ke Clipboard (Alt+S)**: Menyalin seluruh isi lengkap artikel (termasuk judul dan metadata) ke clipboard sistem agar bisa ditempel di aplikasi lain.
-*   **Tutup Pembaca (Alt+T atau Escape)**: Menutup jendela bacaan offline dan kembali ke daftar utama NusaNews.
+- Antara, Kompas, Liputan6, Merdeka, dan CNN Indonesia: semua kategori.
+- Detik: semua kategori kecuali Politik.
+- Republika: Nasional, Internasional, Teknologi, Ekonomi, Olahraga, dan Disabilitas.
+- WinPoin, berita Windows dan Microsoft: Teknologi.
 
----
+Berita diambil dari feed RSS situs jika feed-nya terus diperbarui, dan dari halaman kategori jika tidak. Setiap berita tetap di kategori tempat ia tercantum. Berita yang lebih tua dari batas penyimpanan tidak diambil.
 
-## Konfigurasi Pengaturan NusaNews
+Kategori Disabilitas berisi berita tentang disabilitas dan penyandang disabilitas. Untuk sumber yang tidak punya kanal khusus, add-on mengambil halaman tag disabilitas dan hanya menyimpan berita yang judul atau ringkasannya memuat kata seperti disabilitas, difabel, tunanetra, Tuli, atau kursi roda. Kata dicocokkan sebagai kata utuh.
 
-Anda dapat menyesuaikan perilaku add-on ini melalui menu Pengaturan NVDA:
-1.  Tekan **`NVDA+N`** untuk membuka menu NVDA.
-2.  Pilih **Preferences** -> **Settings...** (Pengaturan).
-3.  Di dalam daftar kategori sebelah kiri, cari dan pilih **nusaNewsID**.
-4.  Gunakan tombol **Tab** untuk berpindah di antara pilihan pengaturan berikut:
+## Membuka daftar berita
 
-*   **Sumber Berita Aktif**: Centang atau hilangkan centang pada nama-nama portal berita (Detik, Kompas, Antara, Republika, Liputan6, Merdeka, CNN Indonesia, WinPoin) yang ingin dipantau.
-*   **Interval Penyegaran (menit)**: Memilih seberapa sering add-on mencari berita baru di latar belakang (2, 5, 10, 15, 30, 60, atau 120 menit).
-*   **Mode Notifikasi**:
-    *   *Hanya Ringkasan (Digest)*: NVDA hanya mengumumkan ringkasan jumlah berita (contoh: *"NusaNews: 5 berita baru tersedia"*).
-    *   *Berita Langsung (Immediate)*: NVDA mengumumkan judul-judul berita baru secara bergantian.
-*   **Mainkan nada notifikasi ketika ada berita baru**: Centang pilihan ini untuk memainkan bunyi bip pendek setiap kali berita baru masuk.
-*   **Utamakan berita breaking news**: Jika dicentang, berita berlabel breaking news akan selalu diumumkan secara langsung terlepas dari setelan mode notifikasi.
-*   **Aktifkan Jam Sunyi (Do Not Disturb)**: Centang pilihan ini untuk menghentikan notifikasi suara otomatis selama jam-jam istirahat.
-*   **Jam Sunyi Mulai / Selesai (HH:MM)**: Tulis waktu mulai dan selesai jam sunyi menggunakan format 24 jam (contoh: mulai `22:00` dan selesai `06:00`).
-*   **Lewati Verifikasi SSL**: Centang jika Anda menemui kendala koneksi SSL atau sertifikat tidak valid dari portal berita (disarankan tidak dicentang kecuali darurat).
-*   **Jumlah Berita Awal yang Ditampilkan**: Memilih batas awal berita yang tampil di daftar (20, 50, atau 100 berita) untuk mempercepat loading dialog.
-*   **Batas Penyimpanan Cache (Hari)**: Menentukan berapa lama artikel yang sudah diunduh tetap disimpan secara lokal (1 hingga 30 hari). Berita yang lebih lama akan dihapus otomatis pada saat NVDA dimulai untuk menghemat ruang disk.
-*   **Hapus Semua Cache Berita**: Klik tombol ini untuk mengosongkan seluruh database cache berita secara manual. Dialog konfirmasi akan muncul sebelum penghapusan.
+Tekan NVDA+Shift+garis miring dari mana saja. Daftar berita terbuka dengan fokus di berita terbaru. Tombol ini bisa diganti di menu NVDA, Pilihan, Input Gestures, kategori NusaNewsID.
 
----
+Jika daftar berita sudah terbuka, tombol yang sama memindahkan fokus kembali ke daftar itu.
 
-## Riwayat Versi
+## Daftar berita
+
+Setiap berita dibacakan dengan urutan yang sama: judul, lalu sumber, kategori, dan waktu. Contohnya:
+
+"Sapaan Prabowo ke Jenderal Suyudi. Detik, Nasional, 14 menit lalu. Belum dibaca."
+
+- Kata "Breaking." ada di depan judul hanya untuk berita breaking.
+- Kata "Belum dibaca." ada di akhir hanya untuk berita yang belum Anda buka atau tandai dibaca.
+- Waktu dibacakan "baru saja", "14 menit lalu", atau "3 jam lalu" untuk berita hari ini, lalu berupa tanggal dan jam, misalnya "13 November 2026 pukul 20.00".
+- Jika situs tidak mencantumkan waktu terbit, add-on memakai waktu saat pertama kali menemukan berita itu.
+
+Berita terbaru ada di atas. Daftar menampilkan 50 berita sekaligus, dan jumlah ini bisa diubah di pengaturan. Item terakhir berbunyi misalnya "Muat 50 berita berikutnya". Tekan Enter di item itu untuk menampilkan berita berikutnya.
+
+Tekan Enter pada berita untuk membacanya.
+
+Di atas daftar ada filter dan pilihan berikut:
+
+- Sumber (Alt+S): tampilkan berita dari satu sumber saja, atau Semua.
+- Kategori (Alt+K): tampilkan satu kategori saja, atau Semua.
+- Hanya yang belum dibaca (Alt+B): sembunyikan berita yang sudah dibaca.
+
+Di bawah daftar ada tombol berikut:
+
+- Salin link (Alt+L): menyalin alamat web berita yang dipilih.
+- Tandai dibaca (Alt+D): menandai berita yang dipilih sudah dibaca.
+- Tandai semua dibaca (Alt+M): menandai semua berita tersimpan sudah dibaca.
+- Segarkan (Alt+G): memeriksa berita baru sekarang. NVDA mengucapkan "Memeriksa berita baru...", lalu misalnya "Selesai, 3 berita baru." atau "Selesai, tidak ada berita baru."
+- Donasi (Alt+O): informasi donasi untuk pengembangan add-on.
+- Tutup (Alt+T atau Escape).
+
+Saat berita baru masuk ketika daftar terbuka, daftar diperbarui dan berita yang sedang Anda pilih tetap terpilih.
+
+## Membaca berita
+
+Jendela pembaca dibuka dengan judul berita sebagai judul jendela, dan fokus ada di kotak Isi berita. Gunakan tombol panah untuk membaca baris demi baris.
+
+Baris pertama sampai keempat berisi:
+
+1. Judul berita.
+2. Sumber dan kategori, misalnya "Detik, kategori Nasional".
+3. Waktu terbit, misalnya "Terbit 15 November 2026 pukul 06.09". Jika situs tidak mencantumkannya, baris ini berbunyi "Ditemukan ..." dengan waktu add-on pertama kali menemukan berita itu.
+4. Alamat web berita.
+
+Setelah satu baris kosong, isi berita dimulai.
+
+Saat pertama kali dibuka, isi berita diunduh dulu. NVDA mengucapkan "Isi berita sudah dimuat." setelah selesai. Isi yang sudah diunduh disimpan, jadi bisa dibaca lagi tanpa internet selama berita itu masih tersimpan. Membuka berita juga menandainya sudah dibaca.
+
+Tombol di jendela pembaca:
+
+- Buka di browser (Alt+B): membuka berita di situs aslinya.
+- Salin link (Alt+L): menyalin alamat web berita.
+- Salin berita (Alt+S): menyalin judul dan isi berita, tanpa baris keterangan.
+- Tutup (Alt+T atau Escape): kembali ke daftar berita.
+
+## Pemberitahuan berita baru
+
+Add-on memeriksa berita baru setiap 5 menit, dan interval ini bisa diubah di pengaturan. Pemeriksaan pertama dimulai beberapa detik setelah NVDA berjalan.
+
+Ada dua cara pemberitahuan:
+
+- Ringkasan jumlah berita baru, bawaan: satu pesan, misalnya "NusaNews: 5 berita baru. Tekan NVDA+shift+/ untuk membuka." Pesan ini menyebut tombol yang Anda pakai untuk membuka daftar berita, termasuk jika Anda menggantinya di Input Gestures.
+- Judul setiap berita baru: judul semua berita baru dalam satu pesan, misalnya "Berita baru dari Detik: ...". Jika ada lebih dari 5 berita baru, NVDA memakai ringkasan.
+
+Semua pemberitahuan juga tampil di layar braille.
+
+Berita breaking adalah berita tentang bencana dan keadaan darurat. Add-on mengenalinya dari kata utuh di judul: gempa, tsunami, erupsi, meletus, banjir bandang, longsor, kebakaran hutan, bencana, darurat, evakuasi, peringatan dini, bom, teroris, dan "breaking news".
+
+Pemeriksaan pertama setelah add-on dipasang, atau setelah semua berita tersimpan dihapus, tidak mengumumkan berita satu per satu. Berita itu disimpan sebagai sudah dibaca, lalu NVDA mengucapkan satu pesan, misalnya "NusaNews: 450 berita dimuat."
+
+## Jam sunyi
+
+Selama jam sunyi, add-on tidak mengumumkan berita baru dan tidak membunyikan nada. Berita tetap disimpan dan bisa dibaca di daftar berita. Jika pilihan "Umumkan berita breaking juga saat jam sunyi" dicentang, berita breaking tetap diumumkan.
+
+Jam sunyi boleh melewati tengah malam, misalnya mulai 22:00 dan selesai 06:00.
+
+## Pengaturan
+
+Buka menu NVDA, Pilihan, Settings, lalu pilih kategori NusaNewsID. Mulai NVDA 2026.3, pengaturan ini sama di semua profil konfigurasi.
+
+- Sumber berita yang dipantau: daftar kotak centang. Pilih setidaknya satu sumber.
+- Periksa berita baru setiap (menit): 2, 5, 10, 15, 30, 60, atau 120 menit.
+- Grup Notifikasi:
+  - Cara memberi tahu berita baru: Ringkasan jumlah berita baru, atau Judul setiap berita baru.
+  - Bunyikan nada saat ada berita baru.
+  - Umumkan berita breaking juga saat jam sunyi.
+- Grup Jam sunyi:
+  - Aktifkan jam sunyi.
+  - Mulai dan Selesai: jam dan menit, misalnya 22:00 dan 06:00. Jika formatnya salah, NVDA memberi tahu kolom mana yang perlu diperbaiki.
+- Jumlah berita yang ditampilkan sekaligus: 20, 50, atau 100.
+- Grup Penyimpanan:
+  - Lama penyimpanan berita (hari): 1 sampai 30 hari. Berita yang lebih lama dihapus setiap kali pemeriksaan selesai.
+  - Hapus semua berita tersimpan: menghapus semua berita dan isi artikel yang tersimpan, setelah Anda menekan Hapus di dialog konfirmasi. Tindakan ini tidak bisa dibatalkan.
+- Lewati pemeriksaan sertifikat keamanan: pakai hanya jika semua koneksi selalu gagal karena masalah sertifikat di komputer Anda. Pilihan ini membuat koneksi tidak aman.
+- Dukungan dan donasi.
+
+## Data yang disimpan
+
+Berita disimpan di folder pengaturan NVDA, dalam folder nusaNewsID. File nusaNewsCache.json berisi judul, sumber, kategori, waktu, dan status dibaca setiap berita. Folder articles berisi isi artikel yang sudah Anda buka.
+
+Add-on hanya menghubungi situs berita yang Anda pilih. Add-on tidak mengirim data pribadi ke mana pun.
+
+## Jika ada masalah
+
+- Tidak ada berita sama sekali: periksa koneksi internet, lalu tekan Segarkan di daftar berita.
+- Satu sumber tidak pernah punya berita baru: situs itu mungkin mengubah tampilannya. Laporkan di halaman issue repositori di bawah.
+- Isi berita gagal diunduh: tekan Buka di browser untuk membacanya di situs aslinya.
+
+## Riwayat perubahan
 
 Riwayat lengkap ada di file CHANGELOG.md di repositori https://github.com/InfiArtt/nusa-news-id.
 
----
+## Pembuat dan lisensi
 
-## Kontributor
-*   **Rexya Muhamad Rizki** (Pengembang Utama / Lead Developer)
-*   **NusaNews ID Team**
-*   Dibuat khusus untuk komunitas tunanetra dan pengguna pembaca layar di Indonesia.
+NusaNewsID dibuat oleh Rexya Muhamad Rizki dan dikembangkan bersama InfiArtt. Laporan masalah dan usulan bisa dikirim lewat https://github.com/InfiArtt/nusa-news-id/issues.
+
+Add-on ini dirilis dengan lisensi GNU General Public License versi 2 atau lebih baru.

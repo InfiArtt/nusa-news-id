@@ -1,81 +1,146 @@
-# NusaNews - Indonesian News Reader for NVDA
+# NusaNewsID
 
-The NusaNews add-on allows you to monitor and read the latest news directly and accessibly from various leading news portals in Indonesia using the NVDA screen reader. Featuring a robust **Offline Reader Mode**, you can read full article bodies offline inside a comfortable, screen-reader friendly text box without opening external web browsers which are often cluttered with advertisements, overlays, and accessibility barriers.
+NusaNewsID reads news from Indonesian news sites in NVDA. It checks for new stories in the background, announces them, and shows whole articles in an accessible window, so you do not need a browser full of ads.
 
-## Key Features
+The add-on uses NVDA's language. This guide uses the English names of buttons and messages. The news itself is in Indonesian.
 
-*   **Single Keyboard Shortcut**: Press `NVDA+Shift+/` from anywhere to summon the main news reader dialog.
-*   **Offline Reader Mode**: Open and read full news articles offline inside a multi-line, read-only text control. Read articles line-by-line or paragraph-by-paragraph using standard screen review arrow keys.
-*   **8 Popular News Sources**:
-    *   *General News*: Detik.com, Kompas.com, Antara News, Republika, Liputan6, Merdeka.com, and CNN Indonesia.
-    *   *Technology News*: WinPoin (Windows/Microsoft news).
-*   **Structured Categories**: Nasional, Internasional, Teknologi, Politik, Ekonomi, Olahraga, Entertainment, and Disabilitas.
-*   **Disability Topic Filtering**: When selecting the "Disabilitas" category, the add-on automatically filters articles from all portals using a comprehensive list of localized disability-related keywords. This ensures only articles highly relevant to disability issues in Indonesia are shown.
-*   **Smart Notification System**:
-    *   *Digest*: Announces the number of new articles fetched during background polling cycles.
-    *   *Immediate*: Speaks individual article titles as they are fetched (up to a maximum of 5 to prevent speech flooding).
-*   **Do Not Disturb (Quiet Hours)**: Silences automatic news notifications during configurable hours (e.g. at night) so your rest is never interrupted.
-*   **Display Limits & Pagination**: Restricts the initial number of news items displayed (20, 50, or 100) to keep dialog loading instantaneous, with an incremental `-- Muat Lebih Banyak --` (Load More) item at the bottom of the list to fetch more articles on the fly and focus automatically on the first new item.
-*   **Persistent Local Cache**: Downloaded article contents are saved locally for instant retrieval.
-*   **Bypass SSL Verification**: An emergency fallback option to skip SSL certificate verification if your local network connection encounters certificate validation errors.
+## Requirements
 
----
+- NVDA 2026.1 or later.
+- An internet connection.
 
-## Usage Guidelines and Keyboard Shortcuts
+## Sources and categories
 
-### 1. Main News Reader Dialog
-To open NusaNews, press **`NVDA+Shift+/`** from anywhere. The dialog will open and place focus directly on the news list box.
-*   **Navigating the News**: Use **Up Arrow** and **Down Arrow** keys to select an article from the list.
-*   **Reading Articles**: Press **Enter** or double-click on a selected article to open the offline **Reader Mode**.
-*   **Copy Link (Alt+C)**: Copies the selected news article URL to the clipboard.
-*   **Mark Read (Alt+D)**: Marks the selected news item as read (removing the `[Baru]` prefix).
-*   **Mark All Read (Alt+M)**: Marks all currently listed news items as read.
-*   **Refresh (Alt+S)**: Triggers a manual background check for new articles from all enabled sources immediately.
-*   **Copy Link (Alt+L)**: Copy the URL of the selected news.
-*   **Close Dialog (Alt+T or Escape)**: Closes the NusaNews dialog and returns to your previous application.
-*   **Filtering by Source and Category**: Use the **Tab** key to move to the Source or Category filter dropdowns, and use the **Arrow** keys to change selections. The news list will update instantly.
+There are eight categories: National, International, Technology, Politics, Economy, Sports, Entertainment and Disability. Not every source has every category, because the add-on only follows sections that the site still updates.
 
-### 2. Offline Reader Mode Dialog
-When you open an article, the offline reader dialog displays a read-only text control containing the cleaned text. NVDA will automatically focus on this text control so you can start reading immediately.
-*   **Reviewing Text**: Use standard text review keys (such as **Down Arrow**, **Up Arrow**, **Page Down**, etc.) to read the article.
-*   **Open in Browser (Alt+B)**: Opens the original article webpage in your default web browser.
-*   **Copy Link (Alt+L)**: Copies the current news article URL to the clipboard.
-*   **Copy (Alt+S)**: Copies the full article text (including title and metadata) to the system clipboard.
-*   **Close Reader (Alt+T or Escape)**: Closes the reader dialog and returns you to the main news list.
+- Antara, Kompas, Liputan6, Merdeka and CNN Indonesia: every category.
+- Detik: every category except Politics.
+- Republika: National, International, Technology, Economy, Sports and Disability.
+- WinPoin, news about Windows and Microsoft: Technology.
 
----
+Stories come from a site's RSS feed when the feed is kept up to date, and from its category pages otherwise. Each story stays in the category it was listed under. Stories older than the storage period are skipped.
 
-## Configuring Settings
+The Disability category has news about disability and people with disabilities. For sources without their own disability section, the add-on reads the disability tag page and keeps only stories whose title or summary has a word such as disabilitas, difabel, tunanetra, Tuli or kursi roda. Words are matched as whole words.
 
-You can customize the add-on settings through NVDA's Preferences:
-1.  Press **`NVDA+N`** to open the NVDA Menu.
-2.  Go to **Preferences** -> **Settings...**
-3.  In the Category list on the left, find and select **nusaNewsID**.
-4.  Use **Tab** to navigate through the following configuration controls:
+## Opening the news list
 
-*   **Active News Sources**: Check or uncheck news portals (Detik, Kompas, Antara, Republika, Liputan6, Merdeka, CNN Indonesia, WinPoin) to enable/disable them.
-*   **Refresh Interval (minutes)**: Select how frequently the add-on polls for updates in the background (2, 5, 10, 15, 30, 60, or 120 minutes).
-*   **Notification Mode**:
-    *   *Digest*: NVDA speaks a summary count of new articles (e.g. *"NusaNews: 5 new articles available"*).
-    *   *Immediate*: NVDA announces individual article titles in succession.
-*   **Play a notification tone when there is new news**: Check to play a short beep sound whenever new news is fetched.
-*   **Prioritize breaking news**: If enabled, articles labeled as breaking news are always announced immediately, overriding the general notification mode.
-*   **Enable Jam Sunyi (Do Not Disturb)**: Check to silence automatic voice notifications during specified hours.
-*   **Quiet Hours Start / End (HH:MM)**: Enter start and end times in 24-hour format (e.g. start `22:00` and end `06:00`).
-*   **Bypass SSL Verification**: Check this option if you encounter SSL certificate validation errors from news sites (recommended to keep unchecked unless necessary).
-*   **Initial Display Limit**: Set the initial number of news items loaded in the list (20, 50, or 100) to keep the interface fast.
-*   **Cache Retention Limit (Days)**: Select how long downloaded article text should remain cached on disk (1 to 30 days). Expired cache items are cleaned up automatically when NVDA starts.
-*   **Clear All News Cache**: Click this button to wipe all locally stored cache immediately. A confirmation dialog will appear.
+Press NVDA+Shift+slash anywhere. The news list opens on the newest story. You can change the key in the NVDA menu, Preferences, Input gestures, category NusaNewsID.
 
----
+If the news list is already open, the same key moves the focus back to it.
 
-## Version History
+## The news list
+
+Every story is read in the same order: the title, then the source, category and time. For example:
+
+"Sapaan Prabowo ke Jenderal Suyudi. Detik, National, 14 minutes ago. Unread."
+
+- "Breaking." comes before the title only for breaking news.
+- "Unread." comes at the end only for stories you have not opened or marked read.
+- Times read "just now", "14 minutes ago" or "3 hours ago" for today's stories, and as a date and time after that, such as "13 November 2026, 20:00".
+- If the site gives no publication time, the add-on uses the time it first found the story.
+
+The newest stories come first. The list shows 50 stories at a time, and you can change this number in the settings. The last item reads, for example, "Load 50 more stories". Press Enter on it to show the next stories.
+
+Press Enter on a story to read it.
+
+Above the list are these filters:
+
+- Source (Alt+S): show one source only, or All.
+- Category (Alt+T): show one category only, or All.
+- Unread only (Alt+U): hide stories you have read.
+
+Below the list are these buttons:
+
+- Copy link (Alt+L): copies the web address of the selected story.
+- Mark read (Alt+M): marks the selected story as read.
+- Mark all read (Alt+A): marks every saved story as read.
+- Refresh (Alt+R): checks for new stories now. NVDA says "Checking for new stories...", then, for example, "Done, 3 new stories." or "Done, no new stories."
+- Donate (Alt+O): how to support the add-on's development.
+- Close (Alt+C or Escape).
+
+When new stories arrive while the list is open, the list updates and the story you selected stays selected.
+
+## Reading a story
+
+The reader opens with the story's title as the window title, and the focus is in the Story text box. Use the arrow keys to read line by line.
+
+The first four lines are:
+
+1. The title.
+2. The source and category, such as "Detik, category National".
+3. The publication time, such as "Published 15 November 2026, 06:09". If the site gives none, this line reads "Found ..." with the time the add-on first found the story.
+4. The story's web address.
+
+The text of the story starts after an empty line.
+
+The first time you open a story, the add-on downloads its text, and NVDA says "Story loaded." when it is ready. The text is saved, so you can read the story again without the internet while it stays in storage. Opening a story also marks it read.
+
+The reader's buttons:
+
+- Open in browser (Alt+B): opens the story on its website.
+- Copy link (Alt+L): copies the story's web address.
+- Copy story (Alt+S): copies the title and the text, without the details lines.
+- Close (Alt+C or Escape): goes back to the news list.
+
+## Announcements of new stories
+
+The add-on checks for new stories every 5 minutes, and you can change the interval in the settings. The first check starts a few seconds after NVDA starts.
+
+You can choose how new stories are announced:
+
+- Number of new stories, the default: one message, such as "NusaNews: 5 new stories. Press NVDA+shift+/ to open them." The message names the key you use to open the news list, including a key you set in Input gestures.
+- Title of each new story: the titles of all new stories in one message, such as "New from Detik: ...". With more than 5 new stories, NVDA gives the number instead.
+
+Every announcement also appears on a braille display.
+
+Breaking news means stories about disasters and emergencies. The add-on recognizes them by whole words in the title: gempa, tsunami, erupsi, meletus, banjir bandang, longsor, kebakaran hutan, bencana, darurat, evakuasi, peringatan dini, bom, teroris and "breaking news".
+
+The first check after installing the add-on, or after deleting every saved story, does not announce stories one by one. It saves them as read, and NVDA says one message, such as "NusaNews: 450 stories loaded."
+
+## Quiet hours
+
+During quiet hours, the add-on does not announce new stories or play a tone. It still saves them, and you can read them in the news list. If "Announce breaking news during quiet hours too" is checked, breaking news is still announced.
+
+Quiet hours can pass midnight, for example from 22:00 to 06:00.
+
+## Settings
+
+Open the NVDA menu, Preferences, Settings, and choose the NusaNewsID category. From NVDA 2026.3, these settings are the same in every configuration profile.
+
+- News sources to follow: a list of check boxes. Choose at least one source.
+- Check for new stories every (minutes): 2, 5, 10, 15, 30, 60 or 120 minutes.
+- Notifications group:
+  - How to announce new stories: Number of new stories, or Title of each new story.
+  - Play a tone when new stories arrive.
+  - Announce breaking news during quiet hours too.
+- Quiet hours group:
+  - Use quiet hours.
+  - Start and End: hours and minutes, such as 22:00 and 06:00. If a time is not valid, NVDA says which field to fix.
+- Number of stories shown at a time: 20, 50 or 100.
+- Storage group:
+  - Keep stories for (days): 1 to 30 days. Older stories are removed after every check.
+  - Delete all saved stories: deletes every saved story and article text after you press Delete in the confirmation dialog. This cannot be undone.
+- Skip security certificate checks: use this only if every connection fails because of a certificate problem on your computer. It makes the connections unsafe.
+- Support and donations.
+
+## Saved data
+
+The add-on keeps its data in NVDA's settings folder, in a folder named nusaNewsID. The file nusaNewsCache.json holds the title, source, category, time and read status of each story. The articles folder holds the text of the stories you opened.
+
+The add-on only connects to the news sites you chose. It does not send personal data anywhere.
+
+## Troubleshooting
+
+- No stories at all: check the internet connection, then press Refresh in the news list.
+- One source never has new stories: the site may have changed its pages. Report it on the repository's issues page below.
+- A story's text does not download: press Open in browser to read it on the website.
+
+## Version history
 
 The full history is in CHANGELOG.md in the repository https://github.com/InfiArtt/nusa-news-id.
 
----
+## Author and license
 
-## Contributors
-*   **Rexya Muhamad Rizki** (Lead Developer)
-*   **NusaNews ID Team**
-*   Built specifically for the blind and screen reader community in Indonesia.
+NusaNewsID is made by Rexya Muhamad Rizki and developed with InfiArtt. Report problems and ideas at https://github.com/InfiArtt/nusa-news-id/issues.
+
+The add-on is released under the GNU General Public License, version 2 or later.

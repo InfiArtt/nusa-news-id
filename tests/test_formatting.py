@@ -104,7 +104,10 @@ def test_notifications():
 		formatting.digest_text(5, "NVDA+shift+/")
 		== "NusaNews: 5 berita baru. Tekan NVDA+shift+/ untuk membuka."
 	)
-	assert "Gestur Masukan" in formatting.digest_text(5, None)
+	assert (
+		formatting.digest_text(5, None)
+		== "NusaNews: 5 berita baru. Tetapkan tombolnya di Input Gestures NVDA."
+	)
 
 
 def test_load_more():
