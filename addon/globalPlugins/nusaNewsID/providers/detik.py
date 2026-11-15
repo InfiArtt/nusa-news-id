@@ -1,61 +1,28 @@
 # detik.py
 #
-# A news provider: the category pages of one site and the pattern of its article links.
+# Detik (detik.com). Each subsite has a feed; international news and the disability tag use pages.
 
-from ..models import NewsItem
-from .baseProvider import BaseProvider
-from .htmlProvider import parse_html_feed
+from .baseProvider import BaseProvider, CategorySource
 
 
 class DetikProvider(BaseProvider):
-	"""Provider implementation for Detik News (detik.com)."""
-
 	source_name = "Detik"
-
-	# Endpoint URLs for HTML Fallbacks
-	html_urls = {
-		"Nasional": "https://news.detik.com",
-		"Internasional": "https://news.detik.com/internasional",
-		"Teknologi": "https://inet.detik.com",
-		"Politik": "https://news.detik.com/indeks?tag=politik",
-		"Ekonomi": "https://finance.detik.com",
-		"Olahraga": "https://sport.detik.com",
-		"Entertainment": "https://hot.detik.com",
-		"Disabilitas": "https://www.detik.com/tag/disabilitas",
+	base_url = "https://www.detik.com"
+	# Example: https://news.detik.com/berita/d-8750894/2-nama-cawapres-pengganti-gibran
+	article_pattern = r"detik\.com/[a-z0-9\-/]+/d-\d+"
+	categories = {
+		"Nasional": CategorySource(
+			rss="https://news.detik.com/berita/rss",
+			html="https://news.detik.com/berita",
+			sections=r"news\.detik\.com/berita/",
+		),
+		"Internasional": CategorySource(
+			html="https://news.detik.com/internasional", sections=r"news\.detik\.com/internasional/"
+		),
+		"Teknologi": CategorySource(rss="https://inet.detik.com/rss", html="https://inet.detik.com"),
+		"Ekonomi": CategorySource(rss="https://finance.detik.com/rss", html="https://finance.detik.com"),
+		"Olahraga": CategorySource(rss="https://sport.detik.com/rss", html="https://sport.detik.com"),
+		"Entertainment": CategorySource(rss="https://hot.detik.com/rss", html="https://hot.detik.com"),
+		"Disabilitas": CategorySource(html="https://www.detik.com/tag/disabilitas"),
 	}
-
-	# Regex matching absolute URLs of individual news articles (discarding menus/tags)
-	# Example: https://news.detik.com/berita/d-7356241/peringatan-dini-cuaca
-	html_regex = r"detik\.com/[a-z\-/]+/d-\d+"
-
-	def fetch_news(self, category: str, bypass_ssl: bool = False) -> list[NewsItem]:
-		items = []
-
-		# Trigger HTML Scraping
-		html_url = self.html_urls.get(category)
-		if html_url:
-			html_payload = self._request_http(html_url, bypass_ssl=bypass_ssl)
-			if html_payload:
-				items = parse_html_feed(self.source_name, category, html_payload, self.html_regex)
-
-		# 3. Post-process breaking news flags using parent helper
-		final_items = []
-		for item in items:
-			if category == "Disabilitas" and not self._is_disabilitas_relevant(item.title):
-				continue
-			is_breaking = self._check_breaking(item.title)
-			final_items.append(
-				NewsItem(
-					title=item.title,
-					source=item.source,
-					url=item.url,
-					guid=item.guid,
-					category=item.category,
-					summary=item.summary,
-					content=item.content,
-					published_at=item.published_at,
-					is_breaking=is_breaking,
-				)
-			)
-
-		return final_items
+	# Politics is left out: Detik has no politics section, and its election feed is not kept up to date.

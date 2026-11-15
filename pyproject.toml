@@ -58,6 +58,8 @@ max-complexity = 15
 "sconstruct" = ["F821", "E501"]
 # The changelog is a multi-line string shown as is in the Add-on Store.
 "buildVars.py" = ["E501"]
+# The tests hold HTML copied from the news sites, which is kept as it is.
+"tests/*" = ["E501"]
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]

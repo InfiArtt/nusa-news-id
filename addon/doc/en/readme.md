@@ -6,9 +6,9 @@ The NusaNews add-on allows you to monitor and read the latest news directly and 
 
 *   **Single Keyboard Shortcut**: Press `NVDA+Shift+/` from anywhere to summon the main news reader dialog.
 *   **Offline Reader Mode**: Open and read full news articles offline inside a multi-line, read-only text control. Read articles line-by-line or paragraph-by-paragraph using standard screen review arrow keys.
-*   **9 Popular News Sources**:
+*   **8 Popular News Sources**:
     *   *General News*: Detik.com, Kompas.com, Antara News, Republika, Liputan6, Merdeka.com, and CNN Indonesia.
-    *   *Technology News*: WinPoin (Windows/Microsoft news) and MacPoin (Apple/Mac news).
+    *   *Technology News*: WinPoin (Windows/Microsoft news).
 *   **Structured Categories**: Nasional, Internasional, Teknologi, Politik, Ekonomi, Olahraga, Entertainment, and Disabilitas.
 *   **Disability Topic Filtering**: When selecting the "Disabilitas" category, the add-on automatically filters articles from all portals using a comprehensive list of localized disability-related keywords. This ensures only articles highly relevant to disability issues in Indonesia are shown.
 *   **Smart Notification System**:
@@ -53,7 +53,7 @@ You can customize the add-on settings through NVDA's Preferences:
 3.  In the Category list on the left, find and select **nusaNewsID**.
 4.  Use **Tab** to navigate through the following configuration controls:
 
-*   **Active News Sources**: Check or uncheck news portals (Detik, Kompas, Antara, Republika, Liputan6, Merdeka, CNN Indonesia, WinPoin, MacPoin) to enable/disable them.
+*   **Active News Sources**: Check or uncheck news portals (Detik, Kompas, Antara, Republika, Liputan6, Merdeka, CNN Indonesia, WinPoin) to enable/disable them.
 *   **Refresh Interval (minutes)**: Select how frequently the add-on polls for updates in the background (2, 5, 10, 15, 30, 60, or 120 minutes).
 *   **Notification Mode**:
     *   *Digest*: NVDA speaks a summary count of new articles (e.g. *"NusaNews: 5 new articles available"*).

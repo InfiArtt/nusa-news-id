@@ -14,7 +14,6 @@ from .cnn import CNNProvider
 from .detik import DetikProvider
 from .kompas import KompasProvider
 from .liputan6 import Liputan6Provider
-from .macpoin import MacPoinProvider
 from .merdeka import MerdekaProvider
 from .republika import RepublikaProvider
 from .winpoin import WinPoinProvider
@@ -29,11 +28,10 @@ PROVIDER_CLASSES: tuple[type[BaseProvider], ...] = (
 	MerdekaProvider,
 	CNNProvider,
 	WinPoinProvider,
-	MacPoinProvider,
 )
 
 # The source names that can be enabled.
-# Names saved by older versions that are not here, such as Tempo, are ignored.
+# Names saved by older versions that are not here, such as Tempo and MacPoin, are ignored.
 SOURCE_NAMES: tuple[str, ...] = tuple(provider.source_name for provider in PROVIDER_CLASSES)
 
 
@@ -53,6 +51,7 @@ class SourceManager:
 		enabled_sources: list[str],
 		enabled_categories: list[str],
 		bypass_ssl: bool = False,
+		max_age_days: int = 7,
 	) -> list[NewsItem]:
 		"""Fetch every enabled source and category. Stops early when the stop event is set."""
 		aggregated_news: list[NewsItem] = []
@@ -64,7 +63,7 @@ class SourceManager:
 				if self.stop_event is not None and self.stop_event.is_set():
 					return aggregated_news
 				try:
-					items = provider.fetch_news(category, bypass_ssl=bypass_ssl)
+					items = provider.fetch_news(category, bypass_ssl=bypass_ssl, max_age_days=max_age_days)
 				except Exception:
 					# One broken provider must not stop the others.
 					logHandler.log.exception(f"NusaNews: Checking {source_name}, {category} failed.")

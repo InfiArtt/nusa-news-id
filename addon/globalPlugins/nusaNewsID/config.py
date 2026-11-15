@@ -12,7 +12,7 @@ config_spec = {
 	"notification_mode": "string(default='digest')",
 	"enabled_sources": (
 		"string_list(default=list('Detik', 'Kompas', 'Antara', 'Republika', 'Liputan6', 'Merdeka', "
-		"'CNN Indonesia', 'WinPoin', 'MacPoin'))"
+		"'CNN Indonesia', 'WinPoin'))"
 	),
 	"category_filter": (
 		"string_list(default=list('Nasional', 'Internasional', 'Teknologi', 'Politik', 'Ekonomi', "
@@ -73,7 +73,6 @@ def get_config_val(key):
 				"Merdeka",
 				"CNN Indonesia",
 				"WinPoin",
-				"MacPoin",
 			],
 			"category_filter": [
 				"Nasional",

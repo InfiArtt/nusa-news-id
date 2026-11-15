@@ -1,77 +1,26 @@
 # cnn.py
 #
-# A news provider: the category pages of one site and the pattern of its article links.
+# CNN Indonesia (cnnindonesia.com). Every section has a feed; politics and the disability tag use pages.
 
-from ..models import NewsItem
-from .baseProvider import BaseProvider
-from .htmlProvider import parse_html_feed
+from .baseProvider import BaseProvider, CategorySource
+
+_SITE = "https://www.cnnindonesia.com"
 
 
 class CNNProvider(BaseProvider):
-	"""Provider implementation for CNN Indonesia (cnnindonesia.com)."""
-
 	source_name = "CNN Indonesia"
-
-	# Endpoint URLs for HTML Fallbacks
-	html_urls = {
-		"Nasional": "https://www.cnnindonesia.com/nasional",
-		"Internasional": "https://www.cnnindonesia.com/internasional",
-		"Teknologi": "https://www.cnnindonesia.com/teknologi",
-		"Politik": "https://www.cnnindonesia.com/nasional/politik",
-		"Ekonomi": "https://www.cnnindonesia.com/ekonomi",
-		"Olahraga": "https://www.cnnindonesia.com/olahraga",
-		"Entertainment": "https://www.cnnindonesia.com/hiburan",
-		"Disabilitas": "https://www.cnnindonesia.com/tag/disabilitas",
+	base_url = _SITE
+	# Example: https://www.cnnindonesia.com/nasional/20261114120533-32-1427140/gaduh-gibran-mundur
+	article_pattern = r"cnnindonesia\.com/[a-z\-]+/\d{14}-\d+-\d+/"
+	# The number after the section is the publication time: 20261114120533 is 14 November 2026, 12:05:33.
+	url_date_pattern = r"cnnindonesia\.com/[a-z\-]+/(\d{4})(\d{2})(\d{2})(\d{2})(\d{2})(\d{2})-"
+	categories = {
+		"Nasional": CategorySource(rss=f"{_SITE}/nasional/rss", html=f"{_SITE}/nasional"),
+		"Internasional": CategorySource(rss=f"{_SITE}/internasional/rss", html=f"{_SITE}/internasional"),
+		"Teknologi": CategorySource(rss=f"{_SITE}/teknologi/rss", html=f"{_SITE}/teknologi"),
+		"Politik": CategorySource(html=f"{_SITE}/nasional/politik", sections=r"cnnindonesia\.com/nasional/"),
+		"Ekonomi": CategorySource(rss=f"{_SITE}/ekonomi/rss", html=f"{_SITE}/ekonomi"),
+		"Olahraga": CategorySource(rss=f"{_SITE}/olahraga/rss", html=f"{_SITE}/olahraga"),
+		"Entertainment": CategorySource(rss=f"{_SITE}/hiburan/rss", html=f"{_SITE}/hiburan"),
+		"Disabilitas": CategorySource(html=f"{_SITE}/tag/disabilitas"),
 	}
-
-	# Regex matching absolute URLs of individual news articles (discarding menus/tags)
-	# Example: https://www.cnnindonesia.com/nasional/20260525124723-20-1362117/botol-miras-pesta-juara-persib-capai-satu-mobil-pikap-2-orang-tewas
-	html_regex = r"cnnindonesia\.com/[a-zA-Z0-9\-]+/\d+-\d+-\d+/"
-
-	def fetch_news(self, category: str, bypass_ssl: bool = False) -> list[NewsItem]:
-		items = []
-
-		# Trigger HTML Scraping
-		html_url = self.html_urls.get(category)
-		if html_url:
-			html_payload = self._request_http(html_url, bypass_ssl=bypass_ssl)
-			if html_payload:
-				items = parse_html_feed(self.source_name, category, html_payload, self.html_regex)
-
-		# Post-process breaking news flags and filter off-topic disabilitas items
-		final_items = []
-		for item in items:
-			if category == "Disabilitas" and not self._is_disabilitas_relevant(item.title):
-				continue
-
-			# Clean up title trailing suffixes if they have "Nasional" or other category names
-			title = item.title.strip()
-			if title.endswith(" Nasional"):
-				title = title[:-9].strip()
-			elif title.endswith(" Internasional"):
-				title = title[:-14].strip()
-			elif title.endswith(" Teknologi"):
-				title = title[:-10].strip()
-			elif title.endswith(" Ekonomi"):
-				title = title[:-8].strip()
-			elif title.endswith(" Olahraga"):
-				title = title[:-9].strip()
-			elif title.endswith(" Hiburan"):
-				title = title[:-8].strip()
-
-			is_breaking = self._check_breaking(title)
-			final_items.append(
-				NewsItem(
-					title=title,
-					source=item.source,
-					url=item.url,
-					guid=item.guid,
-					category=item.category,
-					summary=item.summary,
-					content=item.content,
-					published_at=item.published_at,
-					is_breaking=is_breaking,
-				)
-			)
-
-		return final_items

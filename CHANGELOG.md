@@ -14,11 +14,26 @@ Format mengikuti Keep a Changelog. Ringkasan berbahasa Inggris untuk versi yang 
 - Di layar aman, misalnya layar masuk Windows, dialog pembaca berita tidak lagi terbuka, dan NVDA tidak lagi mencatat error AttributeError saat add-on ditutup.
 - Pengaturan dibaca di thread utama NVDA, tidak lagi dari thread latar.
 
-### Dihapus
-
-- Tempo dihapus dari pengaturan, karena situs dan artikelnya menolak akses dari add-on dengan error 403. Tempo yang masih tercentang di pengaturan lama diabaikan.
+- Judul berita bersih di semua sumber. Sisa teks seperti jam ("18:13Jangan Biarkan ..."), nama kanal ("Nasional - , 03:33 ...", "... Politik Nasional", "detikJatimJumat, 12:00 WIB ..."), dan kata "Headline" tidak lagi ikut terbaca. Judul diambil dari judul utama kartu berita, bukan dari seluruh teks tautan.
+- Kategori berita akurat. Tautan dari kotak samping (misalnya "Terkini" di Antara), kotak "Populer", menu, footer, dan kanal lain di halaman yang sama tidak lagi masuk ke kategori yang sedang diambil. Contohnya, berita Cek Fakta tidak lagi masuk Teknologi Liputan6, dan berita sepak bola tidak lagi masuk Nasional Antara.
+- Tanggal terbit dibaca dengan benar dan disimpan dalam satu format waktu standar. Waktu relatif seperti "10 jam lalu" dihitung dari jam pengambilan. CNN Indonesia dan Kompas memakai waktu yang tercantum di alamat artikel. Tanggal Republika tidak lagi tertukar ke artikel lain.
+- Berita yang lebih tua dari batas cache tidak lagi diambil, jadi berita Republika dari 2023 dan 2024 tidak lagi diumumkan sebagai berita baru.
+- Tanda breaking hanya untuk bencana dan keadaan darurat: gempa, tsunami, erupsi, meletus, banjir bandang, longsor, kebakaran hutan, bencana, darurat, evakuasi, peringatan dini, bom, teroris, dan "breaking news". Kata "presiden", "waspada", "urgent", dan "breaking" dihapus. Dalam uji 506 judul, 21 dari 29 tanda breaking sebelumnya hanya karena kata "presiden".
+- Kata kunci breaking dan Disabilitas dicocokkan sebagai kata utuh. "tuli" tidak lagi cocok dengan "menulis". Kata yang punya arti lain juga dihapus dari daftar Disabilitas, yaitu "lumpuh", "cacat", "buta", "bisu", "inklusi", "inklusif", "aksesibilitas", "aksesibel", "gangguan jiwa", "panti sosial", dan "rehabilitasi sosial".
 
 ### Diubah
+
+- Semua provider sekarang memakai satu kelas dasar yang sama. Setiap provider hanya berisi data: alamat RSS dan halaman per kategori, pola alamat artikel, dan bagian alamat yang menandai kategori.
+- Berita diambil dari RSS jika ada dan segar, yaitu CNN Indonesia, Detik, Liputan6, Republika, sebagian Antara, dan WinPoin. Kompas, Merdeka, dan kategori yang RSS-nya basi memakai halaman kategori. Jika RSS gagal atau berisi kurang dari 5 berita terbaru, berita dari halaman kategori ditambahkan, tanpa duplikat.
+- Olahraga Merdeka sekarang diambil dari kanal sepakbola dan sport, karena kanal bolasport dan olahraga sudah tidak diperbarui. Olahraga Republika diambil dari RSS sport.
+- Ada skrip `tools/checkProviders.py` untuk mengecek semua sumber dan kategori langsung ke situs, di luar NVDA.
+
+### Dihapus
+
+- Tempo dihapus dari pengaturan, karena situs dan artikelnya menolak akses dari add-on dengan error 403.
+- MacPoin dihapus, karena artikel terakhirnya terbit 8 Maret 2024.
+- Tempo dan MacPoin yang masih tercentang di pengaturan lama diabaikan.
+- Kategori yang sudah tidak diperbarui oleh situsnya: Politik di Detik (Detik tidak punya kanal politik dan RSS pemilunya basi), serta Politik dan Entertainment di Republika (terakhir diperbarui 2024 dan 2023).
 
 - Proyek dipindahkan ke repositori InfiArtt/nusa-news-id dan memakai template add-on NV Access. Manifest sekarang dibuat dari `buildVars.py`.
 - Versi NVDA terakhir yang diuji: 2026.3.1.

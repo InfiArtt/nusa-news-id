@@ -1,125 +1,13 @@
-# htmlProvider.py
+# articleContent.py
 #
-# HTML parsers: links to stories on category pages, and the text of an article.
+# Downloads an article page and extracts its text for the reader. Runs in a background thread.
 
 import re
 from html.parser import HTMLParser
 
 import logHandler
 
-from ..models import NewsItem
 from ..networkUtils import fetch_http_data
-
-
-class NewsHTMLParser(HTMLParser):
-	"""State-machine HTML parser that extracts news article links and clean text descriptions."""
-
-	def __init__(self, source_name: str, category: str, url_filter_regex: str = "", base_url: str = ""):
-		super().__init__()
-		self.source_name = source_name
-		self.category = category
-		self.url_filter = re.compile(url_filter_regex) if url_filter_regex else None
-		self.base_url = base_url
-
-		# Parser state tracking
-		self.in_anchor = False
-		self.current_url = ""
-		self.current_text = []
-		self.articles_data = []
-		self.date_regex = re.compile(
-			r"(?:\d+\s+(?:menit|jam|hari|detik)(?:\s+yang)?\s+lalu|kemarin|\d{1,2}(?:\s*[-/]\s*\d{1,2}\s*[-/]\s*\d{4}|\s+(?:jan|feb|mar|apr|mei|jun|jul|agu|sep|okt|nov|des)[a-z]*\s+\d{4}))",
-			re.IGNORECASE,
-		)
-
-	def handle_starttag(self, tag, attrs):
-		if tag == "a":
-			href = None
-			for attr, value in attrs:
-				if attr == "href":
-					href = value
-					break
-			if href:
-				href = href.strip()
-				if href.startswith("/") and hasattr(self, "base_url") and self.base_url:
-					href = self.base_url + href
-				# Only capture links matching the source's news pattern
-				if not self.url_filter or self.url_filter.search(href):
-					self.in_anchor = True
-					self.current_url = href
-					self.current_text = []
-
-	def handle_endtag(self, tag):
-		if tag == "a" and self.in_anchor:
-			self.in_anchor = False
-			title = "".join(self.current_text).strip()
-			# Clean up formatting, tabs, and duplicate spaces
-			title = re.sub(r"\s+", " ", title)
-
-			published_at = None
-			if title:
-				match = self.date_regex.search(title)
-				if match:
-					published_at = match.group()
-					title = title[: match.start()].strip() + " " + title[match.end() :].strip()
-					title = title.strip("-| ")
-
-			# Validation rules (titles must be descriptive, URLs must be absolute)
-			if title and len(title) >= 15 and self.current_url.startswith("http"):
-				self.articles_data.append(
-					{
-						"title": title,
-						"source": self.source_name,
-						"url": self.current_url,
-						"guid": self.current_url,
-						"category": self.category,
-						"published_at": published_at,
-					}
-				)
-			self.current_url = ""
-			self.current_text = []
-
-	def handle_data(self, data):
-		if self.in_anchor:
-			self.current_text.append(data)
-		elif self.articles_data and not self.articles_data[-1]["published_at"]:
-			data_clean = data.strip()
-			if data_clean:
-				match = self.date_regex.search(data_clean)
-				if match:
-					self.articles_data[-1]["published_at"] = data_clean
-
-
-def parse_html_feed(
-	source_name: str, category: str, html_data: bytes, url_filter_regex: str = "", base_url: str = ""
-) -> list[NewsItem]:
-	"""
-	Decodes raw HTML bytes and feeds them into the NewsHTMLParser.
-	"""
-	if not html_data:
-		return []
-
-	try:
-		# Use ignore fallback to prevent decoder crashes on invalid byte characters
-		html_text = html_data.decode("utf-8", errors="ignore")
-		parser = NewsHTMLParser(source_name, category, url_filter_regex, base_url=base_url)
-		parser.feed(html_text)
-
-		items = []
-		for data in parser.articles_data:
-			items.append(
-				NewsItem(
-					title=data["title"],
-					source=data["source"],
-					url=data["url"],
-					guid=data["guid"],
-					category=data["category"],
-					published_at=data["published_at"],
-				)
-			)
-		return items
-	except Exception as e:
-		logHandler.log.error(f"NusaNews: HTML Parser exception on source {source_name}: {e}")
-		return []
 
 
 def _is_boilerplate_text(text: str) -> bool:

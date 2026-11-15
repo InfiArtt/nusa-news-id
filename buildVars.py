@@ -22,7 +22,7 @@ addon_info = AddonInfo(
 	# Translators: Long description to be shown for this add-on on add-on information from add-on store
 	addon_description=_(
 		"Follows Indonesian news from Antara, Kompas, Detik, Republika, Liputan6, Merdeka, "
-		"CNN Indonesia, WinPoin and MacPoin. Announces new stories in the background, "
+		"CNN Indonesia and WinPoin. Announces new stories in the background, "
 		"keeps quiet during the hours you choose, and lets you read whole articles "
 		"in an accessible window without opening a browser."
 	),
@@ -33,7 +33,13 @@ addon_info = AddonInfo(
 	addon_changelog=_("""
 - Merdeka works again: it now finds articles at Merdeka's new web addresses instead of links from the page footer.
 - Antara works again inside NVDA: its security certificate is now checked with the certificates that come with NVDA, so the "CERTIFICATE_VERIFY_FAILED" error is gone. A certificate error is no longer retried three times.
-- Tempo is removed from the settings, because its website refuses connections from the add-on.
+- Clean titles and exact publication times: stories now come from each site's RSS feed where it is kept up to date, and from its pages otherwise. Leftovers such as times, section names or "Headline" no longer appear in titles.
+- Every story now has the category it was listed under: stories from sidebars, "popular" boxes and other sections of a page are left out.
+- Stories older than the cache period are no longer added, so news from 2023 or 2024 is no longer announced as new.
+- Breaking news is now only about disasters and emergencies. Words such as "presiden" or "waspada" no longer mark ordinary stories as breaking, so they no longer break through quiet hours.
+- The disability category matches whole words only, and no longer picks up stories with words such as "menulis", "lumpuh" or "inklusif".
+- Tempo and MacPoin are removed: Tempo refuses connections from the add-on, and MacPoin has not published since March 2024.
+- Some sources no longer offer a category that the site stopped updating: Detik and Republika have no politics, and Republika has no entertainment.
 - Refresh no longer starts a second background check, so new stories are no longer announced twice. After a refresh, NVDA says how many new stories were found.
 - Stopping NVDA or reloading add-ons no longer waits for the current news check to finish.
 - On secure screens, such as the Windows sign-in screen, the news reader no longer opens and NVDA no longer logs an error when it closes.

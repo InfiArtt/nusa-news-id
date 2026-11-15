@@ -1,61 +1,36 @@
 # kompas.py
 #
-# A news provider: the category pages of one site and the pattern of its article links.
+# Kompas (kompas.com). It has no working feed, so every category reads a page.
+# Each section is a subdomain, which keeps the categories apart.
 
-from ..models import NewsItem
-from .baseProvider import BaseProvider
-from .htmlProvider import parse_html_feed
+from .baseProvider import BaseProvider, CategorySource
+
+# Domestic news comes from many subdomains (nasional, regional, megapolitan, city sites),
+# so "Nasional" takes every subdomain except those of other categories and non-news sections.
+_DOMESTIC = (
+	r"//(?!(?:entertainment|money|tekno|bola|otomotif|lifestyle|health|travel|edukasi|internasional"
+	r"|properti|lestari|video|jeo|tren|sains|food|parapuan|kolom|go|pemilu|interaktif)\.)[a-z]+\.kompas\.com/"
+)
 
 
 class KompasProvider(BaseProvider):
-	"""Provider implementation for Kompas News (kompas.com)."""
-
 	source_name = "Kompas"
-
-	# Endpoint URLs for HTML Fallbacks
-	html_urls = {
-		"Nasional": "https://news.kompas.com",
-		"Internasional": "https://internasional.kompas.com",
-		"Teknologi": "https://tekno.kompas.com",
-		"Politik": "https://nasional.kompas.com",
-		"Ekonomi": "https://money.kompas.com",
-		"Olahraga": "https://bola.kompas.com",
-		"Entertainment": "https://entertainment.kompas.com",
-		"Disabilitas": "https://www.kompas.com/tag/disabilitas",
+	base_url = "https://www.kompas.com"
+	# Example: https://nasional.kompas.com/read/2026/11/15/07000081/dalang-di-balik-penyadapan
+	article_pattern = r"kompas\.com/read/\d{4}/\d{2}/\d{2}/\d+"
+	# The path holds the date, and the first six digits of the number the time: 07000081 is 07:00:00.
+	url_date_pattern = r"kompas\.com/read/(\d{4})/(\d{2})/(\d{2})/(\d{2})(\d{2})(\d{2})"
+	categories = {
+		"Nasional": CategorySource(html="https://news.kompas.com", sections=_DOMESTIC),
+		"Internasional": CategorySource(
+			html="https://internasional.kompas.com", sections=r"//internasional\.kompas\.com/"
+		),
+		"Teknologi": CategorySource(html="https://tekno.kompas.com", sections=r"//tekno\.kompas\.com/"),
+		"Politik": CategorySource(html="https://nasional.kompas.com", sections=r"//nasional\.kompas\.com/"),
+		"Ekonomi": CategorySource(html="https://money.kompas.com", sections=r"//money\.kompas\.com/"),
+		"Olahraga": CategorySource(html="https://bola.kompas.com", sections=r"//bola\.kompas\.com/"),
+		"Entertainment": CategorySource(
+			html="https://entertainment.kompas.com", sections=r"//entertainment\.kompas\.com/"
+		),
+		"Disabilitas": CategorySource(html="https://www.kompas.com/tag/disabilitas"),
 	}
-
-	# Regex matching absolute URLs of individual news articles (discarding menus/tags)
-	# Example: https://nasional.kompas.com/read/2026/05/24/221526312/peringatan-dini-cuaca
-	html_regex = r"kompas\.com/read/\d+/\d+/\d+/\d+"
-
-	def fetch_news(self, category: str, bypass_ssl: bool = False) -> list[NewsItem]:
-		items = []
-
-		# Trigger HTML Scraping
-		html_url = self.html_urls.get(category)
-		if html_url:
-			html_payload = self._request_http(html_url, bypass_ssl=bypass_ssl)
-			if html_payload:
-				items = parse_html_feed(self.source_name, category, html_payload, self.html_regex)
-
-		# 3. Post-process breaking news flags using parent helper
-		final_items = []
-		for item in items:
-			if category == "Disabilitas" and not self._is_disabilitas_relevant(item.title):
-				continue
-			is_breaking = self._check_breaking(item.title)
-			final_items.append(
-				NewsItem(
-					title=item.title,
-					source=item.source,
-					url=item.url,
-					guid=item.guid,
-					category=item.category,
-					summary=item.summary,
-					content=item.content,
-					published_at=item.published_at,
-					is_breaking=is_breaking,
-				)
-			)
-
-		return final_items

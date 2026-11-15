@@ -6,9 +6,9 @@ Add-on NusaNews memungkinkan Anda untuk memantau dan membaca berita terbaru seca
 
 *   **Pintasan Keyboard Tunggal**: Tekan `NVDA+Shift+/` dari mana saja untuk memunculkan dialog utama pembaca berita.
 *   **Offline Reader Mode (Mode Membaca Offline)**: Membuka dan membaca isi lengkap artikel berita dalam kotak teks multi-baris yang ramah pembaca layar. Anda dapat membaca artikel baris demi baris menggunakan tombol panah atas/bawah standard.
-*   **9 Sumber Berita Populer**:
+*   **8 Sumber Berita Populer**:
     *   *Berita Umum*: Detik.com, Kompas.com, Antara News, Republika, Liputan6, Merdeka.com, dan CNN Indonesia.
-    *   *Berita Teknologi*: WinPoin (berita Windows/Microsoft) dan MacPoin (berita Apple/Mac).
+    *   *Berita Teknologi*: WinPoin (berita Windows/Microsoft).
 *   **Kategori Berita Terstruktur**: Nasional, Internasional, Teknologi, Politik, Ekonomi, Olahraga, Entertainment, dan Disabilitas.
 *   **Penyaringan Khusus Isu Disabilitas**: Ketika memilih kategori "Disabilitas", add-on secara otomatis menyaring berita dari semua portal menggunakan daftar kata kunci relevan disabilitas yang komprehensif. Ini memastikan daftar berita hanya berisi informasi yang benar-benar berkaitan dengan isu disabilitas di Indonesia.
 *   **Sistem Notifikasi Pintar**:
@@ -53,7 +53,7 @@ Anda dapat menyesuaikan perilaku add-on ini melalui menu Pengaturan NVDA:
 3.  Di dalam daftar kategori sebelah kiri, cari dan pilih **nusaNewsID**.
 4.  Gunakan tombol **Tab** untuk berpindah di antara pilihan pengaturan berikut:
 
-*   **Sumber Berita Aktif**: Centang atau hilangkan centang pada nama-nama portal berita (Detik, Kompas, Antara, Republika, Liputan6, Merdeka, CNN Indonesia, WinPoin, MacPoin) yang ingin dipantau.
+*   **Sumber Berita Aktif**: Centang atau hilangkan centang pada nama-nama portal berita (Detik, Kompas, Antara, Republika, Liputan6, Merdeka, CNN Indonesia, WinPoin) yang ingin dipantau.
 *   **Interval Penyegaran (menit)**: Memilih seberapa sering add-on mencari berita baru di latar belakang (2, 5, 10, 15, 30, 60, atau 120 menit).
 *   **Mode Notifikasi**:
     *   *Hanya Ringkasan (Digest)*: NVDA hanya mengumumkan ringkasan jumlah berita (contoh: *"NusaNews: 5 berita baru tersedia"*).

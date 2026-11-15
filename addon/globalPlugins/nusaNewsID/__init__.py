@@ -58,6 +58,7 @@ class MonitorThread(threading.Thread):
 					enabled_sources=settings["enabled_sources"],
 					enabled_categories=settings["category_filter"],
 					bypass_ssl=settings["bypass_ssl_verification"],
+					max_age_days=settings["cache_duration"],
 				)
 			except Exception:
 				logHandler.log.exception("NusaNews: News check failed.")

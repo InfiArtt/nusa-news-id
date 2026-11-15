@@ -1,67 +1,26 @@
 # antara.py
 #
-# A news provider: the category pages of one site and the pattern of its article links.
+# Antara (antaranews.com). Its feeds per section are used when they are fresh; its category pages otherwise.
 
-from ..models import NewsItem
-from .baseProvider import BaseProvider
-from .htmlProvider import parse_html_feed
+from .baseProvider import BaseProvider, CategorySource
+
+_SITE = "https://www.antaranews.com"
 
 
 class AntaraProvider(BaseProvider):
-	"""Provider implementation for Antara News (antaranews.com)."""
-
 	source_name = "Antara"
-
-	# Endpoint URLs for HTML Fallbacks
-	html_urls = {
-		"Nasional": "https://www.antaranews.com/nasional",
-		"Internasional": "https://www.antaranews.com/dunia",
-		"Teknologi": "https://www.antaranews.com/tekno",
-		"Politik": "https://www.antaranews.com/politik",
-		"Ekonomi": "https://www.antaranews.com/ekonomi",
-		"Olahraga": "https://www.antaranews.com/olahraga",
-		"Entertainment": "https://www.antaranews.com/hiburan",
-		"Disabilitas": "https://www.antaranews.com/tag/disabilitas",
+	base_url = _SITE
+	# Example: https://www.antaranews.com/berita/5854403/presiden-instruksikan-minimal-70-persen-hasil-iup
+	article_pattern = r"antaranews\.com/berita/\d+/"
+	# Links tagged with a utm_campaign are the "top news" and "popular" boxes, shown on every category page.
+	deny_pattern = r"utm_campaign="
+	categories = {
+		"Nasional": CategorySource(html=f"{_SITE}/nasional"),
+		"Internasional": CategorySource(rss=f"{_SITE}/rss/dunia.xml", html=f"{_SITE}/dunia"),
+		"Teknologi": CategorySource(rss=f"{_SITE}/rss/tekno.xml", html=f"{_SITE}/tekno"),
+		"Politik": CategorySource(rss=f"{_SITE}/rss/politik.xml", html=f"{_SITE}/politik"),
+		"Ekonomi": CategorySource(rss=f"{_SITE}/rss/ekonomi.xml", html=f"{_SITE}/ekonomi"),
+		"Olahraga": CategorySource(rss=f"{_SITE}/rss/olahraga.xml", html=f"{_SITE}/olahraga"),
+		"Entertainment": CategorySource(rss=f"{_SITE}/rss/hiburan.xml", html=f"{_SITE}/hiburan"),
+		"Disabilitas": CategorySource(html=f"{_SITE}/tag/disabilitas"),
 	}
-
-	# Regex matching absolute URLs of individual news articles (discarding menus/tags)
-	# Example: https://www.antaranews.com/berita/4123456/peringatan-dini-cuaca
-	html_regex = r"antaranews\.com/berita/\d+/"
-
-	def fetch_news(self, category: str, bypass_ssl: bool = False) -> list[NewsItem]:
-		items = []
-
-		# Trigger HTML Scraping
-		html_url = self.html_urls.get(category)
-		if html_url:
-			html_payload = self._request_http(html_url, bypass_ssl=bypass_ssl)
-			if html_payload:
-				items = parse_html_feed(
-					self.source_name,
-					category,
-					html_payload,
-					self.html_regex,
-					base_url="https://www.antaranews.com",
-				)
-
-		# 3. Post-process breaking news flags using parent helper
-		final_items = []
-		for item in items:
-			if category == "Disabilitas" and not self._is_disabilitas_relevant(item.title):
-				continue
-			is_breaking = self._check_breaking(item.title)
-			final_items.append(
-				NewsItem(
-					title=item.title,
-					source=item.source,
-					url=item.url,
-					guid=item.guid,
-					category=item.category,
-					summary=item.summary,
-					content=item.content,
-					published_at=item.published_at,
-					is_breaking=is_breaking,
-				)
-			)
-
-		return final_items

@@ -1,67 +1,28 @@
 # merdeka.py
 #
-# A news provider: the category pages of one site and the pattern of its article links.
+# Merdeka (merdeka.com). It has no feed, so every category reads a page.
+# The section is the first part of the article path.
 
-from ..models import NewsItem
-from .baseProvider import BaseProvider
-from .htmlProvider import parse_html_feed
+from .baseProvider import BaseProvider, CategorySource
+
+_SITE = "https://www.merdeka.com"
 
 
 class MerdekaProvider(BaseProvider):
-	"""Provider implementation for Merdeka News (merdeka.com)."""
-
 	source_name = "Merdeka"
-
-	# Endpoint URLs for HTML Fallbacks
-	html_urls = {
-		"Nasional": "https://www.merdeka.com/peristiwa/",
-		"Internasional": "https://www.merdeka.com/dunia/",
-		"Teknologi": "https://www.merdeka.com/teknologi/",
-		"Politik": "https://www.merdeka.com/politik/",
-		"Ekonomi": "https://www.merdeka.com/uang/",
-		"Olahraga": "https://www.merdeka.com/bolasport/",
-		"Entertainment": "https://www.merdeka.com/artis/",
-		"Disabilitas": "https://www.merdeka.com/tag/disabilitas/",
-	}
-
-	# Regex matching absolute URLs of individual news articles (discarding menus/tags)
+	base_url = _SITE
 	# Example: https://www.merdeka.com/peristiwa/read/8335388/anwar-hafid-tegaskan-dukungan-sulteng
-	html_regex = r"merdeka\.com/[a-z0-9\-]+/read/\d+/[a-z0-9\-]+"
-
-	def fetch_news(self, category: str, bypass_ssl: bool = False) -> list[NewsItem]:
-		items = []
-
-		# Trigger HTML Scraping
-		html_url = self.html_urls.get(category)
-		if html_url:
-			html_payload = self._request_http(html_url, bypass_ssl=bypass_ssl)
-			if html_payload:
-				items = parse_html_feed(
-					self.source_name,
-					category,
-					html_payload,
-					self.html_regex,
-					base_url="https://www.merdeka.com",
-				)
-
-		# Post-process breaking news flags and filter off-topic disabilitas items
-		final_items = []
-		for item in items:
-			if category == "Disabilitas" and not self._is_disabilitas_relevant(item.title):
-				continue
-			is_breaking = self._check_breaking(item.title)
-			final_items.append(
-				NewsItem(
-					title=item.title,
-					source=item.source,
-					url=item.url,
-					guid=item.guid,
-					category=item.category,
-					summary=item.summary,
-					content=item.content,
-					published_at=item.published_at,
-					is_breaking=is_breaking,
-				)
-			)
-
-		return final_items
+	article_pattern = r"merdeka\.com/[a-z0-9\-]+/read/\d+/[a-z0-9\-]+"
+	categories = {
+		"Nasional": CategorySource(html=f"{_SITE}/peristiwa/", sections=r"merdeka\.com/peristiwa/"),
+		"Internasional": CategorySource(html=f"{_SITE}/dunia/", sections=r"merdeka\.com/dunia/"),
+		"Teknologi": CategorySource(html=f"{_SITE}/teknologi/", sections=r"merdeka\.com/teknologi/"),
+		"Politik": CategorySource(html=f"{_SITE}/politik/", sections=r"merdeka\.com/politik/"),
+		"Ekonomi": CategorySource(html=f"{_SITE}/uang/", sections=r"merdeka\.com/uang/"),
+		# The older bolasport and olahraga sections are no longer updated.
+		"Olahraga": CategorySource(
+			html=(f"{_SITE}/sepakbola/", f"{_SITE}/sport/"), sections=r"merdeka\.com/(?:sepakbola|sport)/"
+		),
+		"Entertainment": CategorySource(html=f"{_SITE}/artis/", sections=r"merdeka\.com/artis/"),
+		"Disabilitas": CategorySource(html=f"{_SITE}/tag/disabilitas/"),
+	}

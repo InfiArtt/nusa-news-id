@@ -4,14 +4,14 @@ This file is read by AI coding agents (Claude Code, Codex, GitHub Copilot, Curso
 
 ## About this project
 
-NusaNewsID is an NVDA add-on (Python 3.13, wxPython, NVDA's add-on API) for blind and low-vision users in Indonesia. A background thread checks Indonesian news sites (Antara, Kompas, Detik, Republika, Liputan6, Merdeka, CNN Indonesia, WinPoin, MacPoin) by reading their category pages, keeps the stories in a JSON cache, announces new ones with `ui.message`, and shows them in an accessible reader dialog. It has no RSS: every provider scrapes HTML with `html.parser`.
+NusaNewsID is an NVDA add-on (Python 3.13, wxPython, NVDA's add-on API) for blind and low-vision users in Indonesia. A background thread checks Indonesian news sites (Antara, Kompas, Detik, Republika, Liputan6, Merdeka, CNN Indonesia, WinPoin) through their RSS feeds where they are kept up to date and their category pages otherwise, keeps the stories in a JSON cache, announces new ones with `ui.message`, and shows them in an accessible reader dialog.
 
 ## Commands
 
 - Tests: `python -m pytest` (Python 3.13). The tests replace NVDA and wx with stubs from `tests/nvda_mocks.py`.
 - Lint and format: `ruff check .` and `ruff format .` (tabs, line length 110, settings in `pyproject.toml`).
 - Build: `scons` writes `nusaNewsID-<version>.nvda-addon`; `scons pot` writes the translation template. Needs the `build` dependency group from `pyproject.toml` and gettext.
-- Live check of every provider against the real sites: see "Project-specific notes".
+- Live check of every provider and category against the real sites: `python tools/checkProviders.py` (or with a source name). It prints feed or page, story counts, dates and suspicious titles, and exits 1 when a category is empty.
 
 Run the tests before committing, and add a test when you fix a bug.
 
@@ -34,6 +34,7 @@ Run the tests before committing, and add a test when you fix a bug.
 - Generated files are not committed: `addon/manifest.ini`, `addon/locale/*/manifest.ini`, `addon/doc/*/readme.html`, `addon/doc/style.css`, `*.mo` and `*.pot` all come from `scons`.
 - Threading: network requests run only in the background `MonitorThread` or the article download thread. Everything that touches wx, `config.conf`, `ui` or the cache runs on the main thread (`wx.CallAfter`). Settings are copied on the main thread and handed to the thread.
 - Background work must stop quickly: check the stop event between requests and wait on it instead of `time.sleep`.
-- Sites change their HTML often. When a provider breaks, check the real page first and fix its URL pattern; never guess.
+- Providers are data only (`providers/<site>.py`): `CategorySource(rss=..., html=..., sections=..., curated=...)` per category, `article_pattern`, optional `deny_pattern` and `url_date_pattern`. All behaviour lives in `providers/baseProvider.py` (rules), `providers/parsers.py` (RSS and HTML) and `providers/textUtils.py` (dates, titles, keywords), the same for every site. Do not add site-specific code paths; add data or a general rule instead.
+- Sites change their HTML and feeds often. When a provider breaks, run `tools/checkProviders.py`, check the real page or feed first and fix its data; never guess. A category the site no longer updates is removed rather than kept with old stories.
 - NVDA's Python has certifi; `networkUtils` uses it together with the Windows certificate store, because some sites (Antara) use roots that Windows only downloads on demand.
 - Before using an NVDA API, check that it exists in the NVDA version you target (the NVDA MCP tool `nvda_lookup_api` does this against the running NVDA). Minimum NVDA is 2026.1.

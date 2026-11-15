@@ -1,61 +1,25 @@
 # republika.py
 #
-# A news provider: the category pages of one site and the pattern of its article links.
+# Republika (republika.co.id). Feeds for the sections where they are kept up to date, pages for the rest.
 
-from ..models import NewsItem
-from .baseProvider import BaseProvider
-from .htmlProvider import parse_html_feed
+from .baseProvider import BaseProvider, CategorySource
+
+_SITE = "https://www.republika.co.id"
 
 
 class RepublikaProvider(BaseProvider):
-	"""Provider implementation for Republika News (republika.co.id)."""
-
 	source_name = "Republika"
-
-	# Endpoint URLs for HTML Fallbacks
-	html_urls = {
-		"Nasional": "https://www.republika.co.id/kanal/nasional",
-		"Internasional": "https://www.republika.co.id/kanal/internasional",
-		"Teknologi": "https://www.republika.co.id/kanal/tekno",
-		"Politik": "https://www.republika.co.id/kanal/nasional/politik",
-		"Ekonomi": "https://www.republika.co.id/kanal/ekonomi",
-		"Olahraga": "https://www.republika.co.id/kanal/sepakbola",
-		"Entertainment": "https://www.republika.co.id/kanal/senggang",
-		"Disabilitas": "https://www.republika.co.id/tag/disabilitas",
+	base_url = _SITE
+	# Example: https://news.republika.co.id/berita/toiefa6030000/menlu-asean-bahas-percepatan
+	article_pattern = r"republika\.co\.id/berita/[a-z0-9]+/"
+	categories = {
+		"Nasional": CategorySource(rss=f"{_SITE}/rss/news/nasional", html=f"{_SITE}/kanal/nasional"),
+		"Internasional": CategorySource(
+			rss=f"{_SITE}/rss/internasional", html=f"{_SITE}/kanal/internasional"
+		),
+		"Teknologi": CategorySource(rss=f"{_SITE}/rss/tekno"),
+		"Ekonomi": CategorySource(rss=f"{_SITE}/rss/ekonomi", html=f"{_SITE}/kanal/ekonomi"),
+		"Olahraga": CategorySource(rss=f"{_SITE}/rss/sport"),
+		"Disabilitas": CategorySource(html=f"{_SITE}/tag/disabilitas"),
 	}
-
-	# Regex matching absolute URLs of individual news articles (discarding menus/tags)
-	# Example: https://news.republika.co.id/berita/nasional/politik/s12345/judul-berita
-	html_regex = r"republika\.co\.id/berita/[a-zA-Z0-9\-_]+/[a-zA-Z0-9\-_]+"
-
-	def fetch_news(self, category: str, bypass_ssl: bool = False) -> list[NewsItem]:
-		items = []
-
-		# Trigger HTML Scraping
-		html_url = self.html_urls.get(category)
-		if html_url:
-			html_payload = self._request_http(html_url, bypass_ssl=bypass_ssl)
-			if html_payload:
-				items = parse_html_feed(self.source_name, category, html_payload, self.html_regex)
-
-		# Post-process breaking news flags and filter off-topic disabilitas items
-		final_items = []
-		for item in items:
-			if category == "Disabilitas" and not self._is_disabilitas_relevant(item.title):
-				continue
-			is_breaking = self._check_breaking(item.title)
-			final_items.append(
-				NewsItem(
-					title=item.title,
-					source=item.source,
-					url=item.url,
-					guid=item.guid,
-					category=item.category,
-					summary=item.summary,
-					content=item.content,
-					published_at=item.published_at,
-					is_breaking=is_breaking,
-				)
-			)
-
-		return final_items
+	# Politics and entertainment are left out: their feeds and pages stopped in 2024 and 2023.

@@ -493,7 +493,7 @@ class NusaNewsReaderDialog(wx.Dialog):
 
 	def _bg_fetch(self, guid, url, bypass_ssl):
 		"""Worker function running in a background thread."""
-		from .providers.htmlProvider import fetch_article_content
+		from .providers.articleContent import fetch_article_content
 
 		content = fetch_article_content(url, bypass_ssl=bypass_ssl)
 

@@ -8,7 +8,7 @@ from nusaNewsID.providers import sourceManager
 from nusaNewsID.providers.merdeka import MerdekaProvider
 
 
-def test_sources_without_tempo():
+def test_sources_without_tempo_and_macpoin():
 	assert sourceManager.SOURCE_NAMES == (
 		"Detik",
 		"Kompas",
@@ -18,7 +18,6 @@ def test_sources_without_tempo():
 		"Merdeka",
 		"CNN Indonesia",
 		"WinPoin",
-		"MacPoin",
 	)
 
 
@@ -30,7 +29,7 @@ def test_old_tempo_setting_is_ignored(monkeypatch):
 
 
 def test_merdeka_pattern_matches_new_article_addresses():
-	pattern = re.compile(MerdekaProvider.html_regex)
+	pattern = re.compile(MerdekaProvider.article_pattern)
 	assert pattern.search(
 		"https://www.merdeka.com/peristiwa/read/8335388/anwar-hafid-tegaskan-dukungan-sulteng-pada-pemerintahan"
 	)
@@ -38,7 +37,7 @@ def test_merdeka_pattern_matches_new_article_addresses():
 
 
 def test_merdeka_pattern_skips_footer_and_section_links():
-	pattern = re.compile(MerdekaProvider.html_regex)
+	pattern = re.compile(MerdekaProvider.article_pattern)
 	assert not pattern.search("https://www.merdeka.com/pedoman-media-siber.html")
 	assert not pattern.search("https://www.merdeka.com/peristiwa")
 	assert not pattern.search("https://www.merdeka.com/special-content/menakar-fiskal-moneter")
@@ -55,7 +54,7 @@ def test_polling_stops_when_asked():
 	manager = sourceManager.SourceManager(stopEvent)
 	asked = []
 
-	def fakeFetch(category, bypass_ssl=False):
+	def fakeFetch(category, **kwargs):
 		asked.append(category)
 		stopEvent.set()
 		return []
