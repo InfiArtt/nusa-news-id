@@ -30,4 +30,5 @@ CONFIG_SPEC: dict[str, str] = {
 	"bypass_ssl_verification": "boolean(default=false)",
 	"max_display_count": "integer(default=50, min=20, max=100)",
 	"data_version": "integer(default=0, min=0)",
+	"reader_zoom": "integer(default=100, min=50, max=400)",
 }

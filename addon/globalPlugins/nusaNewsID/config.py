@@ -23,16 +23,20 @@ def initialize_config() -> None:
 		from config import configSections
 	except ImportError:
 		configSections = None
-	if configSections is not None and CONFIG_SECTION not in getattr(configSections, "_customSections", {}):
+	registered = (
+		getattr(configSections, "_customSections", {}).get(CONFIG_SECTION) if configSections else None
+	)
+	if configSections is not None and (registered or {}).get("spec") != CONFIG_SPEC:
+		# Not registered yet, or registered by a version with other settings.
 		try:
 			configSections.registerSection(CONFIG_SECTION, CONFIG_SPEC, isBaseOnly=True)
 		except Exception:
 			logHandler.log.exception("NusaNews: Registering the settings section failed.")
-	if CONFIG_SECTION not in config.conf.spec:
-		try:
-			config.conf.spec[CONFIG_SECTION] = CONFIG_SPEC
-		except Exception:
-			logHandler.log.exception("NusaNews: Adding the settings section failed.")
+	# The running configuration gets this version's specification, which may have new settings.
+	try:
+		config.conf.spec[CONFIG_SECTION] = CONFIG_SPEC
+	except Exception:
+		logHandler.log.exception("NusaNews: Adding the settings section failed.")
 
 
 def get_config_val(key):
@@ -41,7 +45,7 @@ def get_config_val(key):
 		# Access config.conf dictionary structure
 		val = config.conf[CONFIG_SECTION][key]
 		# Explicitly cast to prevent type issues (e.g. unvalidated string configs)
-		if key in {"refresh_interval", "cache_duration", "max_display_count", "data_version"}:
+		if key in {"refresh_interval", "cache_duration", "max_display_count", "data_version", "reader_zoom"}:
 			return int(val)
 		if key in {
 			"silent_hours_enabled",
@@ -88,6 +92,7 @@ def get_config_val(key):
 			"bypass_ssl_verification": False,
 			"max_display_count": 50,
 			"data_version": 0,
+			"reader_zoom": 100,
 		}
 		return fallbacks.get(key)
 

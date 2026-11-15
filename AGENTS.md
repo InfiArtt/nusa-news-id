@@ -26,6 +26,20 @@ Run the tests before committing, and add a test when you fix a bug.
 - Keep changes focused, and match the existing code style, naming and comment density.
 - Write code, comments and commit messages in English, with Conventional Commits prefixes (`feat:`, `fix:`, `docs:`, `test:`, `ci:`, `refactor:`). Talk to the team in the language they use with you, often Indonesian.
 
+## Reading rules (WCAG 2.2)
+
+Stories must be easy to read with a screen reader and with low vision. Every change to how stories are shown follows these rules; `tests/test_reader.py` checks most of them.
+
+- Structure (1.3.1): the reader page keeps the article's paragraphs, headings, lists, quotes and links. The story title is the only h1, the article's headings start at h2, and levels never skip.
+- Language (3.1.1, 3.1.2): the page has NVDA's language, the article its own (`lang`), so NVDA can switch voices.
+- Colors (1.4.3, 1.4.11): only Windows system colors (Window, WindowText, Highlight, GrayText, ButtonFace, ButtonText); never fixed colors, so contrast themes work.
+- Size and spacing (1.4.4, 1.4.10, 1.4.12, 1.4.8): sizes in em or rem, never px; line height 1.5, space between paragraphs, lines at most 70ch and wrapping, text left aligned. Text size goes from 100 to 400 percent (Control+plus, Control+minus, Control+0, and the setting).
+- Images (1.1.1): only with a text alternative; images without one are left out.
+- Keyboard and focus (2.1.1, 2.4.7, 2.4.3): every action is a real button with a visible focus outline and the dialog's shortcut key; Escape closes. Lists and dialogs keep the focus order checked with `nvda_audit_focus_order`.
+- Names and status (4.1.2, 4.1.3, 3.3.1): every control has a label; results are announced with `ui.message`; errors say what is wrong and how to fix it. An empty list shows a line explaining why, never nothing.
+- Article content is rebuilt from an allow list in `providers/articleContent.py`; the site's own markup, styles and scripts never reach the page. Boilerplate (ads, "baca juga", addresses, copyright lines) is removed by `is_boilerplate`.
+- The reader uses Internet Explorer's engine, like NVDA's own HTML messages, so CSS and script stay within IE 11. Without a web engine it falls back to a plain text box with the same text.
+
 ## Project-specific notes
 
 - The add-on id `nusaNewsID` (in `buildVars.py`), the config section name `nusaNewsID` and its keys (`refresh_interval`, `enabled_sources`, ...) and the cache file `nusaNewsCache.json` with its field names must not change: installed copies would lose their settings and cache.
@@ -36,6 +50,7 @@ Run the tests before committing, and add a test when you fix a bug.
 - Generated files are not committed: `addon/manifest.ini`, `addon/locale/*/manifest.ini`, `addon/doc/*/readme.html`, `addon/doc/style.css`, `*.mo` and `*.pot` all come from `scons`.
 - Threading: network requests run only in the background `MonitorThread` or the article download thread. Everything that touches wx, `config.conf`, `ui` or the cache runs on the main thread (`wx.CallAfter`). Settings are copied on the main thread and handed to the thread.
 - Background work must stop quickly: check the stop event between requests and wait on it instead of `time.sleep`.
+- InfiArtt (`providers/infiartt.py`) is the exception to "data only": it is the organization's own site, always on (`ALWAYS_ON_SOURCES`, not in the settings list), and read through its JSON API (`/api/v1/posts`, `/api/v1/kb`, used by InfiApp; code in the private repository InfiArtt/infiartt-website). Knowledge base dates come from `sitemap.xml`. Its articles open from the API, members-only ones show their summary.
 - Providers are data only (`providers/<site>.py`): `CategorySource(rss=..., html=..., sections=..., curated=...)` per category, `article_pattern`, optional `deny_pattern` and `url_date_pattern`. All behaviour lives in `providers/baseProvider.py` (rules), `providers/parsers.py` (RSS and HTML) and `providers/textUtils.py` (dates, titles, keywords), the same for every site. Do not add site-specific code paths; add data or a general rule instead.
 - Sites change their HTML and feeds often. When a provider breaks, run `tools/checkProviders.py`, check the real page or feed first and fix its data; never guess. A category the site no longer updates is removed rather than kept with old stories.
 - NVDA's Python has certifi; `networkUtils` uses it together with the Windows certificate store, because some sites (Antara) use roots that Windows only downloads on demand.

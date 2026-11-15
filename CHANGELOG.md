@@ -4,6 +4,25 @@ Format mengikuti Keep a Changelog. Ringkasan berbahasa Inggris untuk versi yang 
 
 ## [1.1.0] - belum dirilis
 
+### Ditambahkan
+
+- InfiArtt, organisasi yang membuat add-on ini, menjadi sumber yang selalu aktif dan tidak bisa dimatikan. Artikel baru dari https://infiartt.com/posts masuk ke kategori baru "Artikel InfiArtt", dan panduan baru dari pusat pengetahuan https://infiartt.com/kb masuk ke kategori baru "Pusat Pengetahuan". Datanya diambil lewat API JSON InfiArtt yang juga dipakai aplikasi InfiApp (`/api/v1/posts` dan `/api/v1/kb`), bukan dari halaman web. Tanggal panduan diambil dari `sitemap.xml`. Isi artikel juga dibuka lewat API, lengkap dengan judul bagian dan daftar. Artikel khusus anggota menampilkan ringkasannya dengan keterangan bahwa artikel itu perlu dibuka di browser. Di pengaturan, InfiArtt tidak ada di daftar sumber; di bawah daftar ada keterangan bahwa InfiArtt selalu diperiksa. Di filter Sumber pada daftar berita, InfiArtt selalu ada.
+- Pembaca artikel mengikuti WCAG 2.2, untuk pengguna pembaca layar dan low vision:
+  - Isi berita tampil sebagai halaman web yang dibaca NVDA dalam mode browse, dengan mesin yang sama seperti dialog HTML NVDA sendiri. Judul berita adalah satu-satunya heading level 1, judul bagian artikel dimulai dari level 2 tanpa melompati level, dan daftar, kutipan, serta tautan dari artikel asli tetap ada. Tautan dibuka di browser.
+  - Halaman ditandai dengan bahasa NVDA, dan isi berita ditandai dengan bahasanya sendiri, biasanya bahasa Indonesia, sehingga NVDA bisa berganti suara.
+  - Warna memakai warna sistem Windows, sehingga mengikuti tema kontras tinggi. Ukuran huruf memakai satuan relatif, jarak baris 1,5, ada jarak antarparagraf, baris paling panjang 70 karakter, dan teks rata kiri.
+  - Control+tambah, Control+kurang, dan Control+0 mengubah ukuran teks dari 100 sampai 400 persen, dan NVDA menyebut ukurannya, misalnya "Ukuran teks 150 persen". Ukuran ini disimpan dan juga bisa diatur di pengaturan "Ukuran teks pembaca (persen)".
+  - Tombol Buka di browser, Salin link, Salin berita, dan Tutup ada di akhir halaman sebagai tombol biasa dengan garis fokus yang terlihat. Tombol pintasnya tetap Alt+B, Alt+L, Alt+S, dan Alt+T, dan Escape menutup pembaca.
+  - Gambar hanya tampil jika punya teks alternatif.
+  - Jika mesin web tidak tersedia, pembaca kembali memakai kotak teks seperti sebelumnya.
+- Aturan membaca berdasarkan WCAG 2.2 ditulis di `AGENTS.md`, dan `tests/test_reader.py` memeriksanya untuk setiap halaman pembaca.
+
+### Diperbaiki
+
+- Pengambil isi artikel ditulis ulang. Hanya wadah artikel pertama yang diambil, jadi daftar berita terkait di kotak samping (misalnya di Antara) tidak ikut. Merdeka dan WinPoin kembali terbaca isinya. Iklan, kotak "baca juga", tag, catatan hak cipta, ajakan mematikan pemblokir iklan, dan alamat kantor redaksi (misalnya di akhir artikel Republika) dibuang. Baris kota seperti "Jakarta -" digabung ke paragraf berikutnya.
+- Daftar berita yang kosong, misalnya saat filter tidak cocok dengan berita apa pun, tidak lagi dibacakan NVDA sebagai "unknown". Daftar itu berisi satu baris yang menjelaskan bahwa belum ada berita.
+- Isi artikel tersimpan dalam format terstruktur. Isi yang tersimpan sebelumnya sebagai teks polos tetap terbaca.
+
 ### Diperbaiki
 
 - Merdeka kembali berfungsi. Sebelumnya setiap kategori hanya berisi tautan footer seperti "Pedoman Media Siber", karena alamat artikel Merdeka berubah dari akhiran .html menjadi bentuk `merdeka.com/peristiwa/read/8335388/judul-berita`.

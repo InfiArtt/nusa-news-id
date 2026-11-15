@@ -20,6 +20,7 @@ import logHandler
 
 from .formatting import parse_iso, story_time
 from .models import NewsItem
+from .providers.articleContent import Article, blocks_from_text, parse_blocks
 from .providers.textUtils import is_breaking, parse_date
 
 CACHE_FILE = "nusaNewsCache.json"
@@ -53,9 +54,10 @@ def get_cache_path() -> str:
 	return os.path.join(cache_dir, CACHE_FILE)
 
 
-def _article_path(guid: str) -> str:
+def _article_path(guid: str, extension: str = "json") -> str:
+	"""Articles are saved as JSON (structure and language); version 1.1.0 drafts saved plain .txt."""
 	name = hashlib.sha1(guid.encode("utf-8")).hexdigest()
-	return os.path.join(get_cache_dir(), ARTICLES_DIR, f"{name}.txt")
+	return os.path.join(get_cache_dir(), ARTICLES_DIR, f"{name}.{extension}")
 
 
 def init_db() -> None:
@@ -80,7 +82,7 @@ def init_db() -> None:
 			changed = True
 		content = val.pop("content", None)
 		if content:
-			_write_article(guid, content)
+			_write_article(guid, Article(blocks=blocks_from_text(content)))
 			changed = True
 	with _lock:
 		_stories = stories
@@ -276,17 +278,32 @@ def prune_cache(retention_days: int) -> None:
 		for guid in to_delete:
 			del stories[guid]
 	for guid in to_delete:
-		with contextlib.suppress(FileNotFoundError):
-			os.remove(_article_path(guid))
+		for extension in ("json", "txt"):
+			with contextlib.suppress(FileNotFoundError):
+				os.remove(_article_path(guid, extension))
 	_schedule_save()
 	logHandler.log.info(f"NusaNews: Removed {len(to_delete)} stories older than {retention_days} days.")
 
 
-def get_article_content(guid: str) -> str | None:
-	"""The saved text of an article, or None when it was never downloaded."""
+def get_article(guid: str) -> Article | None:
+	"""The saved article, or None when it was never downloaded."""
 	try:
 		with open(_article_path(guid), encoding="utf-8") as f:
-			return f.read()
+			saved = json.load(f)
+		return Article(
+			blocks=parse_blocks(saved.get("html", ""), "", whole_document=True),
+			language=saved.get("language") or "id",
+			locked_note=saved.get("locked_note"),
+			summary=saved.get("summary"),
+		)
+	except FileNotFoundError:
+		pass
+	except Exception:
+		logHandler.log.exception("NusaNews: Reading a saved article failed.")
+		return None
+	try:
+		with open(_article_path(guid, "txt"), encoding="utf-8") as f:
+			return Article(blocks=blocks_from_text(f.read()))
 	except FileNotFoundError:
 		return None
 	except Exception:
@@ -294,20 +311,28 @@ def get_article_content(guid: str) -> str | None:
 		return None
 
 
-def _write_article(guid: str, content: str) -> None:
+def _write_article(guid: str, article: Article) -> None:
 	path = _article_path(guid)
+	saved = {
+		"html": article.html,
+		"language": article.language,
+		"locked_note": article.locked_note,
+		"summary": article.summary,
+	}
 	try:
 		os.makedirs(os.path.dirname(path), exist_ok=True)
 		with open(path, "w", encoding="utf-8") as f:
-			f.write(content)
+			json.dump(saved, f, ensure_ascii=False)
+		with contextlib.suppress(FileNotFoundError):
+			os.remove(_article_path(guid, "txt"))
 	except Exception:
 		logHandler.log.exception("NusaNews: Saving an article failed.")
 
 
-def update_article_content(guid: str, content: str) -> None:
-	"""Save a downloaded article's text, for reading it again without the network."""
+def update_article(guid: str, article: Article) -> None:
+	"""Save a downloaded article, for reading it again without the network."""
 	if guid in _data():
-		_write_article(guid, content)
+		_write_article(guid, article)
 
 
 def clear_cache() -> None:

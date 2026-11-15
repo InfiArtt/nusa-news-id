@@ -11,12 +11,13 @@ Bahasa add-on mengikuti bahasa NVDA. Panduan ini memakai nama tombol dan pesan d
 
 ## Sumber dan kategori
 
-Ada delapan kategori: Nasional, Internasional, Teknologi, Politik, Ekonomi, Olahraga, Entertainment, dan Disabilitas. Tidak semua sumber punya semua kategori, karena add-on hanya mengambil bagian yang masih diperbarui oleh situsnya.
+Ada sepuluh kategori: Nasional, Internasional, Teknologi, Politik, Ekonomi, Olahraga, Entertainment, Disabilitas, Artikel InfiArtt, dan Pusat Pengetahuan. Tidak semua sumber punya semua kategori, karena add-on hanya mengambil bagian yang masih diperbarui oleh situsnya.
 
 - Antara, Kompas, Liputan6, Merdeka, dan CNN Indonesia: semua kategori.
 - Detik: semua kategori kecuali Politik.
 - Republika: Nasional, Internasional, Teknologi, Ekonomi, Olahraga, dan Disabilitas.
 - WinPoin, berita Windows dan Microsoft: Teknologi.
+- InfiArtt, organisasi yang membuat add-on ini: Artikel InfiArtt (dari infiartt.com/posts) dan Pusat Pengetahuan (panduan dari infiartt.com/kb). InfiArtt selalu diperiksa dan tidak bisa dimatikan, jadi artikel dan panduan barunya selalu muncul di daftar berita. Artikel khusus anggota InfiArtt menampilkan ringkasannya saja; bukalah di browser dan masuk untuk membacanya.
 
 Berita diambil dari feed RSS situs jika feed-nya terus diperbarui, dan dari halaman kategori jika tidak. Setiap berita tetap di kategori tempat ia tercantum. Berita yang lebih tua dari batas penyimpanan tidak diambil.
 
@@ -58,29 +59,39 @@ Di bawah daftar ada tombol berikut:
 - Donasi (Alt+O): informasi donasi untuk pengembangan add-on.
 - Tutup (Alt+T atau Escape).
 
+Jika daftar kosong, misalnya karena filter tidak cocok dengan berita apa pun, daftar berisi satu baris yang menjelaskannya.
+
 Saat berita baru masuk ketika daftar terbuka, daftar diperbarui dan berita yang sedang Anda pilih tetap terpilih.
 
 ## Membaca berita
 
-Jendela pembaca dibuka dengan judul berita sebagai judul jendela, dan fokus ada di kotak Isi berita. Gunakan tombol panah untuk membaca baris demi baris.
+Pembaca membuka berita sebagai halaman yang dibaca NVDA dalam mode browse, dengan judul berita sebagai judul jendela. Gunakan tombol panah untuk membaca, H untuk berpindah per judul bagian, L untuk daftar, dan K untuk tautan. Isi berita ditandai berbahasa Indonesia, jadi jika pengaturan pergantian bahasa otomatis di NVDA aktif, NVDA membacanya dengan suara bahasa Indonesia.
 
-Baris pertama sampai keempat berisi:
+Bagian atas halaman berisi:
 
-1. Judul berita.
+1. Judul berita, sebagai heading level 1.
 2. Sumber dan kategori, misalnya "Detik, kategori Nasional".
 3. Waktu terbit, misalnya "Terbit 15 November 2026 pukul 06.09". Jika situs tidak mencantumkannya, baris ini berbunyi "Ditemukan ..." dengan waktu add-on pertama kali menemukan berita itu.
 4. Alamat web berita.
 
-Setelah satu baris kosong, isi berita dimulai.
+Setelah itu isi berita, lengkap dengan judul bagian, daftar, kutipan, dan tautan dari artikel aslinya. Iklan, kotak "baca juga", kotak samping, dan catatan hak cipta dibuang. Gambar hanya tampil jika punya keterangan. Tautan dibuka di browser.
 
 Saat pertama kali dibuka, isi berita diunduh dulu. NVDA mengucapkan "Isi berita sudah dimuat." setelah selesai. Isi yang sudah diunduh disimpan, jadi bisa dibaca lagi tanpa internet selama berita itu masih tersimpan. Membuka berita juga menandainya sudah dibaca.
 
-Tombol di jendela pembaca:
+Untuk pengguna low vision:
+
+- Control+tambah memperbesar teks, Control+kurang memperkecilnya, dan Control+0 kembali ke 100 persen. Ukurannya dari 100 sampai 400 persen, dan NVDA menyebutnya, misalnya "Ukuran teks 150 persen". Ukuran ini diingat untuk berita berikutnya.
+- Warna halaman mengikuti warna Windows, termasuk tema kontras. Jarak baris lega, dan baris paling panjang sekitar 70 karakter, jadi teks besar tetap terlipat rapi tanpa perlu menggulir ke samping.
+- Tombol yang sedang difokus diberi garis tepi yang jelas.
+
+Tombol di akhir halaman, yang juga bisa dipakai dari mana saja di halaman dengan tombol pintasnya:
 
 - Buka di browser (Alt+B): membuka berita di situs aslinya.
 - Salin link (Alt+L): menyalin alamat web berita.
 - Salin berita (Alt+S): menyalin judul dan isi berita, tanpa baris keterangan.
 - Tutup (Alt+T atau Escape): kembali ke daftar berita.
+
+Jika Windows tidak bisa menampilkan halaman web, pembaca memakai kotak teks biasa dengan isi yang sama.
 
 ## Pemberitahuan berita baru
 
@@ -107,7 +118,7 @@ Jam sunyi boleh melewati tengah malam, misalnya mulai 22:00 dan selesai 06:00.
 
 Buka menu NVDA, Pilihan, Settings, lalu pilih kategori NusaNewsID. Mulai NVDA 2026.3, pengaturan ini sama di semua profil konfigurasi.
 
-- Sumber berita yang dipantau: daftar kotak centang. Pilih setidaknya satu sumber.
+- Sumber berita yang dipantau: daftar kotak centang. Pilih setidaknya satu sumber. InfiArtt tidak ada di daftar ini karena selalu diperiksa.
 - Periksa berita baru setiap (menit): 2, 5, 10, 15, 30, 60, atau 120 menit.
 - Grup Notifikasi:
   - Cara memberi tahu berita baru: Ringkasan jumlah berita baru, atau Judul setiap berita baru.
@@ -117,6 +128,7 @@ Buka menu NVDA, Pilihan, Settings, lalu pilih kategori NusaNewsID. Mulai NVDA 20
   - Aktifkan jam sunyi.
   - Mulai dan Selesai: jam dan menit, misalnya 22:00 dan 06:00. Jika formatnya salah, NVDA memberi tahu kolom mana yang perlu diperbaiki.
 - Jumlah berita yang ditampilkan sekaligus: 20, 50, atau 100.
+- Ukuran teks pembaca (persen): 100 sampai 400 persen. Control+tambah dan Control+kurang di pembaca juga mengubahnya.
 - Grup Penyimpanan:
   - Lama penyimpanan berita (hari): 1 sampai 30 hari. Berita yang lebih lama dihapus setiap kali pemeriksaan selesai.
   - Hapus semua berita tersimpan: menghapus semua berita dan isi artikel yang tersimpan, setelah Anda menekan Hapus di dialog konfirmasi. Tindakan ini tidak bisa dibatalkan.

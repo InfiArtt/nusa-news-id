@@ -5,6 +5,7 @@ import json
 import pytest
 from nusaNewsID import cache
 from nusaNewsID.models import NewsItem
+from nusaNewsID.providers.articleContent import Article, blocks_from_text
 
 
 @pytest.fixture
@@ -83,7 +84,7 @@ def test_old_file_loads_and_moves_article_text_out(folder):
 		encoding="utf-8",
 	)
 	cache.init_db()
-	assert cache.get_article_content("https://news.example/1") == "Isi artikel lama."
+	assert cache.get_article("https://news.example/1").text == "Isi artikel lama."
 	(item,) = cache.get_news_items(["Detik"], ["Nasional"])
 	assert item.published_at == "2026-11-14T22:00:00+07:00"
 	cache.flush()
@@ -96,20 +97,20 @@ def test_prune_removes_old_stories_and_their_articles(folder):
 	cache.init_db()
 	cache.save_news_items([_item(1), _item(2)])
 	cache._stories["https://news.example/1"]["cached_at"] = "2020-01-01T00:00:00"
-	cache.update_article_content("https://news.example/1", "Isi.")
+	cache.update_article("https://news.example/1", Article(blocks=blocks_from_text("Isi.")))
 	cache.prune_cache(7)
 	assert [item.guid for item in cache.get_news_items(["Detik"], ["Nasional"])] == ["https://news.example/2"]
-	assert cache.get_article_content("https://news.example/1") is None
+	assert cache.get_article("https://news.example/1") is None
 
 
 def test_clear_removes_everything(folder):
 	cache.init_db()
 	cache.save_news_items([_item(1)])
-	cache.update_article_content("https://news.example/1", "Isi.")
+	cache.update_article("https://news.example/1", Article(blocks=blocks_from_text("Isi.")))
 	cache.clear_cache()
 	assert cache.is_empty()
 	assert _file(folder) == {}
-	assert cache.get_article_content("https://news.example/1") is None
+	assert cache.get_article("https://news.example/1") is None
 
 
 def test_list_is_newest_first_without_a_500_limit(folder):

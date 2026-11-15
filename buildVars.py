@@ -30,6 +30,11 @@ addon_info = AddonInfo(
 	# Brief changelog for this version
 	# Translators: what's new content for the add-on version to be shown in the add-on store
 	addon_changelog=_("""
+- InfiArtt, the organization that makes this add-on, is now a source that is always on. New articles from infiartt.com/posts and new guides from the knowledge base at infiartt.com/kb appear in two new categories, InfiArtt articles and Knowledge base. The add-on reads them through InfiArtt's own API.
+- The reader shows the article as a web page that NVDA reads in browse mode, with the article's headings, lists, quotes and links, so you can move by heading with H. The article is marked as Indonesian, so NVDA can switch to an Indonesian voice.
+- For low vision: Control+plus, Control+minus and Control+0 change the reader's text size from 100 to 400 percent, and the new setting "Reader text size" keeps it. The page uses the Windows colors, including contrast themes, with wider line spacing and lines of at most 70 characters.
+- Articles are cleaner. Ads, "baca juga" boxes, sidebars, copyright lines and office addresses are left out, and images appear with their descriptions.
+- An empty news list now says why it is empty, instead of NVDA saying "unknown".
 - Merdeka works again. The add-on finds its articles at Merdeka's new web addresses.
 - Antara works again inside NVDA. Its certificate is checked against the certificates that come with NVDA, so the "CERTIFICATE_VERIFY_FAILED" error is gone, and certificate errors are no longer retried.
 - Titles are clean and times are exact. Stories come from each site's RSS feed when the feed is kept up to date, and from its pages otherwise.

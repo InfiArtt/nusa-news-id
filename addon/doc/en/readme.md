@@ -11,12 +11,13 @@ The add-on uses NVDA's language. This guide uses the English names of buttons an
 
 ## Sources and categories
 
-There are eight categories: National, International, Technology, Politics, Economy, Sports, Entertainment and Disability. Not every source has every category, because the add-on only follows sections that the site still updates.
+There are ten categories: National, International, Technology, Politics, Economy, Sports, Entertainment, Disability, InfiArtt articles and Knowledge base. Not every source has every category, because the add-on only follows sections that the site still updates.
 
 - Antara, Kompas, Liputan6, Merdeka and CNN Indonesia: every category.
 - Detik: every category except Politics.
 - Republika: National, International, Technology, Economy, Sports and Disability.
 - WinPoin, news about Windows and Microsoft: Technology.
+- InfiArtt, the organization that makes this add-on: InfiArtt articles (from infiartt.com/posts) and Knowledge base (guides from infiartt.com/kb). InfiArtt is always checked and cannot be turned off, so its new articles and guides always reach the news list. Articles only InfiArtt members can read show their summary; open them in the browser and sign in to read them.
 
 Stories come from a site's RSS feed when the feed is kept up to date, and from its category pages otherwise. Each story stays in the category it was listed under. Stories older than the storage period are skipped.
 
@@ -58,29 +59,39 @@ Below the list are these buttons:
 - Donate (Alt+O): how to support the add-on's development.
 - Close (Alt+C or Escape).
 
+If the list is empty, for example because no story matches the filters, it has one line that says so.
+
 When new stories arrive while the list is open, the list updates and the story you selected stays selected.
 
 ## Reading a story
 
-The reader opens with the story's title as the window title, and the focus is in the Story text box. Use the arrow keys to read line by line.
+The reader opens the story as a page that NVDA reads in browse mode, with the story's title as the window title. Use the arrow keys to read, H to move by heading, L by list and K by link. The story is marked as Indonesian, so if automatic language switching is on in NVDA, NVDA reads it with an Indonesian voice.
 
-The first four lines are:
+The top of the page has:
 
-1. The title.
+1. The title, as a level 1 heading.
 2. The source and category, such as "Detik, category National".
 3. The publication time, such as "Published 15 November 2026, 06:09". If the site gives none, this line reads "Found ..." with the time the add-on first found the story.
 4. The story's web address.
 
-The text of the story starts after an empty line.
+Then comes the story, with the headings, lists, quotes and links of the original article. Ads, "baca juga" boxes, sidebars and copyright lines are left out. Images appear only when they have a description. Links open in your browser.
 
 The first time you open a story, the add-on downloads its text, and NVDA says "Story loaded." when it is ready. The text is saved, so you can read the story again without the internet while it stays in storage. Opening a story also marks it read.
 
-The reader's buttons:
+For low vision:
+
+- Control+plus makes the text larger, Control+minus smaller, and Control+0 goes back to 100 percent. The size goes from 100 to 400 percent, and NVDA says it, such as "Text size 150 percent". The add-on keeps the size for the next story.
+- The page uses the Windows colors, including contrast themes. Lines are well spaced and at most about 70 characters long, so large text still wraps without scrolling sideways.
+- The focused button has a clear outline.
+
+Buttons at the end of the page, which also work from anywhere in the page with their shortcut keys:
 
 - Open in browser (Alt+B): opens the story on its website.
 - Copy link (Alt+L): copies the story's web address.
 - Copy story (Alt+S): copies the title and the text, without the details lines.
 - Close (Alt+C or Escape): goes back to the news list.
+
+If Windows cannot show web pages, the reader uses a plain text box with the same text.
 
 ## Announcements of new stories
 
@@ -107,7 +118,7 @@ Quiet hours can pass midnight, for example from 22:00 to 06:00.
 
 Open the NVDA menu, Preferences, Settings, and choose the NusaNewsID category. From NVDA 2026.3, these settings are the same in every configuration profile.
 
-- News sources to follow: a list of check boxes. Choose at least one source.
+- News sources to follow: a list of check boxes. Choose at least one source. InfiArtt is not in this list because it is always checked.
 - Check for new stories every (minutes): 2, 5, 10, 15, 30, 60 or 120 minutes.
 - Notifications group:
   - How to announce new stories: Number of new stories, or Title of each new story.
@@ -117,6 +128,7 @@ Open the NVDA menu, Preferences, Settings, and choose the NusaNewsID category. F
   - Use quiet hours.
   - Start and End: hours and minutes, such as 22:00 and 06:00. If a time is not valid, NVDA says which field to fix.
 - Number of stories shown at a time: 20, 50 or 100.
+- Reader text size (percent): 100 to 400 percent. Control+plus and Control+minus in the reader change it too.
 - Storage group:
   - Keep stories for (days): 1 to 30 days. Older stories are removed after every check.
   - Delete all saved stories: deletes every saved story and article text after you press Delete in the confirmation dialog. This cannot be undone.

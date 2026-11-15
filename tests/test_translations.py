@@ -44,8 +44,8 @@ def test_shortcut_keys_are_kept(entry):
 		["Open in &browser", "Copy &link", "Copy &story", "&Close"],
 		# The settings panel, with NVDA's own Apply button (Alt+A).
 		[
-			"News &sources to follow:",
-			"&Check for new stories every (minutes):",
+			"News &sources to follow (InfiArtt is always checked):",
+			"Check for new stories e&very (minutes):",
 			"&How to announce new stories:",
 			"Play a &tone when new stories arrive",
 			"Announce &breaking news during quiet hours too",
@@ -57,7 +57,9 @@ def test_shortcut_keys_are_kept(entry):
 			"&Delete all saved stories",
 			"Skip security certi&ficate checks (only if connections always fail; not safe)",
 			"Support and d&onations",
+			# NVDA's own Apply button and Categories list, the same in English and Indonesian.
 			"&Apply",
+			"&Categories:",
 		],
 	],
 	ids=["news list", "reader", "settings"],
