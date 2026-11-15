@@ -7,6 +7,7 @@ import nusaNewsID
 import nvda_mocks
 import pytest
 from nusaNewsID import cache
+from poFile import translated
 
 
 @pytest.fixture
@@ -41,7 +42,8 @@ def plugin(monkeypatch, securePlugin):
 	monkeypatch.setattr(cache, "prune_cache", lambda days: None)
 	monkeypatch.setattr(cache, "is_empty", lambda: False)
 	nvda_mocks.spoken.clear()
-	return securePlugin
+	with translated("id"):
+		yield securePlugin
 
 
 def test_manual_refresh_reports_new_stories(plugin, monkeypatch):

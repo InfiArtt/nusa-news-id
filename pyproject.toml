@@ -63,3 +63,4 @@ max-complexity = 15
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]
+markers = ["english: read the English source text instead of the Indonesian translation"]

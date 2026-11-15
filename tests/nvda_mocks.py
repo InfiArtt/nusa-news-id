@@ -9,6 +9,8 @@ from types import ModuleType, SimpleNamespace
 from typing import Any
 
 builtins._ = lambda text: text  # type: ignore[attr-defined]
+builtins.ngettext = lambda singular, plural, count: singular if count == 1 else plural  # type: ignore[attr-defined]
+builtins.pgettext = lambda context, text: text  # type: ignore[attr-defined]
 
 
 def _module(name: str, **attributes: Any) -> ModuleType:

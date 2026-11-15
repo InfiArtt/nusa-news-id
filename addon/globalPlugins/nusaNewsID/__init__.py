@@ -8,6 +8,7 @@
 import contextlib
 import threading
 
+import addonHandler
 import globalPluginHandler
 import globalVars
 import logHandler
@@ -19,6 +20,8 @@ from . import cache, config
 from .configSpec import DATA_VERSION
 from .notificationManager import NotificationManager
 from .providers.sourceManager import SourceManager
+
+addonHandler.initTranslation()
 
 # The running plugin, for the GUI. None while the add-on is not running.
 addon_instance = None
@@ -74,7 +77,8 @@ class MonitorThread(threading.Thread):
 class GlobalPlugin(globalPluginHandler.GlobalPlugin):
 	"""Main NusaNews add-on controller."""
 
-	scriptCategory = "nusaNewsID"
+	# The add-on's name, the same in every language.
+	scriptCategory = "NusaNewsID"
 
 	def __init__(self):
 		super().__init__()
@@ -162,13 +166,27 @@ class GlobalPlugin(globalPluginHandler.GlobalPlugin):
 			return
 		if first_fill and new_items:
 			self._manual_refresh_pending = False
-			ui.message(f"NusaNews: {len(new_items)} berita dimuat.")
+			count = len(new_items)
+			# Translators: said once after the first check of an empty cache, which saves stories without
+			# announcing each of them.
+			ui.message(
+				ngettext(
+					"NusaNews: {count} story loaded.", "NusaNews: {count} stories loaded.", count
+				).format(count=count)
+			)
 		elif self._manual_refresh_pending:
 			self._manual_refresh_pending = False
 			if new_items:
-				ui.message(f"Selesai, {len(new_items)} berita baru.")
+				count = len(new_items)
+				# Translators: said when a check started with the Refresh button finds new stories.
+				ui.message(
+					ngettext("Done, {count} new story.", "Done, {count} new stories.", count).format(
+						count=count
+					)
+				)
 			else:
-				ui.message("Selesai, tidak ada berita baru.")
+				# Translators: said when a check started with the Refresh button finds nothing new.
+				ui.message(_("Done, no new stories."))
 		elif new_items:
 			self.notification_manager.notify_new_items(new_items)
 		if new_items:
@@ -178,8 +196,9 @@ class GlobalPlugin(globalPluginHandler.GlobalPlugin):
 
 	@script(
 		gesture="kb:NVDA+Shift+/",
-		description="Membuka pembaca berita NusaNews",
-		category="nusaNewsID",
+		# Translators: describes the command that opens the news list, in Input Gestures.
+		description=_("Opens the NusaNews news list"),
+		category="NusaNewsID",
 	)
 	def script_openNewsReader(self, gesture):
 		"""Open the news reader dialog."""

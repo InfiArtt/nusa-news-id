@@ -25,6 +25,10 @@ Format mengikuti Keep a Changelog. Ringkasan berbahasa Inggris untuk versi yang 
 
 ### Diubah
 
+- Teks antarmuka sekarang ditulis dalam bahasa Inggris sebagai teks sumber, sesuai standar NVDA, dengan terjemahan Indonesia di `addon/locale/id/LC_MESSAGES/nvda.po`. NVDA memakai bahasa Indonesia jika bahasa NVDA bahasa Indonesia, dan bahasa Inggris untuk bahasa lain. Semua teks punya komentar `Translators:` untuk penerjemah. Ringkasan, deskripsi, dan riwayat perubahan di manifest juga diterjemahkan. Nama kategori tetap disimpan dalam bahasa Indonesia di cache, dan hanya tampilannya yang diterjemahkan.
+- Tombol pintas di bahasa Inggris dan Indonesia dipilih supaya tidak ada yang sama dalam satu jendela. Di bahasa Indonesia tombolnya sama seperti sebelumnya, misalnya Segarkan Alt+G. Di bahasa Inggris Refresh memakai Alt+R.
+- Teks antarmuka bahasa Inggris dan Indonesia ditulis ulang supaya lebih wajar dan langsung, misalnya teks donasi dan jendela sambutan saat pemasangan.
+- Kategori add-on di Gestur Masukan sekarang bernama "NusaNewsID".
 - Cache disimpan di memori. Perubahan ditulis ke disk sekitar 2 detik setelah perubahan terakhir oleh thread latar, dan sekali lagi saat NVDA ditutup, dalam JSON ringkas. Menandai berita dibaca, membuka artikel, atau memuat daftar tidak lagi membaca dan menulis ulang seluruh file di thread utama. Format file dan nama kolomnya sama, jadi cache lama langsung terbaca. Pada cache uji, ukurannya turun dari 3,3 MB menjadi 2,3 MB.
 - Isi artikel disimpan di file terpisah per artikel di folder `articles`, dan hanya dibaca saat artikel dibuka. Isi artikel yang tersimpan di dalam cache versi lama dipindahkan otomatis.
 - Berita lama dihapus di setiap putaran pengambilan, tidak hanya saat NVDA mulai. Isi artikelnya ikut dihapus.

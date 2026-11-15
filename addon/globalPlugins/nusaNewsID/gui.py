@@ -6,6 +6,7 @@
 import re
 import threading
 
+import addonHandler
 import gui
 import logHandler
 import ui
@@ -18,10 +19,27 @@ from . import cache, config, formatting
 from .models import NewsItem
 from .providers.sourceManager import CATEGORIES, SOURCE_NAMES
 
-ALL = "Semua"
+addonHandler.initTranslation()
+
 REFRESH_INTERVALS = (2, 5, 10, 15, 30, 60, 120)
 DISPLAY_COUNTS = (20, 50, 100)
-NOTIFICATION_MODES = (("digest", "Ringkasan jumlah berita baru"), ("immediate", "Judul setiap berita baru"))
+NOTIFICATION_MODES = ("digest", "immediate")
+
+
+def _notification_mode_labels() -> list[str]:
+	return [
+		# Translators: a choice for how new stories are announced: one message with their number.
+		_("Number of new stories"),
+		# Translators: a choice for how new stories are announced: the title of each story.
+		_("Title of each new story"),
+	]
+
+
+def _all_label() -> str:
+	# Translators: the first choice of the source and category filters, which shows everything.
+	return _("All")
+
+
 _TIME = re.compile(r"^([01]?\d|2[0-3]):([0-5]\d)$")
 
 # The open news list dialog, so background checks and settings can refresh it.
@@ -57,14 +75,16 @@ def open_news_dialog():
 
 def _copy_to_clipboard(text: str, done_message: str) -> None:
 	if not wx.TheClipboard.Open():
-		ui.message("Papan klip sedang dipakai program lain. Coba lagi.")
+		# Translators: said when copying fails because another program holds the clipboard.
+		ui.message(_("Another program is using the clipboard. Try again."))
 		return
 	try:
 		wx.TheClipboard.SetData(wx.TextDataObject(text))
 		ui.message(done_message)
 	except Exception:
 		logHandler.log.exception("NusaNews: Copying failed.")
-		ui.message("Gagal menyalin.")
+		# Translators: said when copying to the clipboard fails.
+		ui.message(_("Could not copy."))
 	finally:
 		wx.TheClipboard.Close()
 
@@ -73,19 +93,22 @@ class DonationDialog(wx.Dialog):
 	"""Dialog that displays read-only donation information."""
 
 	def __init__(self, parent):
-		super().__init__(parent, title="Donasi NusaNewsID", style=wx.DEFAULT_DIALOG_STYLE)
+		# Translators: title of the donation dialog.
+		super().__init__(parent, title=_("Donate to NusaNewsID"), style=wx.DEFAULT_DIALOG_STYLE)
 		sizer = wx.BoxSizer(wx.VERTICAL)
-		msg = (
-			"Lakukan donasi melalui go-pay 088222553434, atas nama rexya muhamad rizki.\n\n"
-			"Setiap donasi Anda akan sangat membantu kelangsungan pengembangan add-on ini. "
-			"Terima kasih orang baik!"
+		# Translators: the text of the donation dialog. Keep the phone number and the name.
+		msg = _(
+			"You can donate through GoPay to 088222553434, under the name Rexya Muhamad Rizki.\n\n"
+			"Every donation helps keep this add-on going. Thank you!"
 		)
-		label = wx.StaticText(self, label="Informasi donasi:")
+		# Translators: label of the text box in the donation dialog.
+		label = wx.StaticText(self, label=_("Donation information:"))
 		sizer.Add(label, 0, wx.LEFT | wx.RIGHT | wx.TOP, 10)
 		text = wx.TextCtrl(self, style=wx.TE_MULTILINE | wx.TE_READONLY, size=(400, 150))
 		text.SetValue(msg)
 		sizer.Add(text, 1, wx.EXPAND | wx.ALL, 10)
-		btn = wx.Button(self, wx.ID_OK, label="&Tutup")
+		# Translators: button that closes a dialog.
+		btn = wx.Button(self, wx.ID_OK, label=_("&Close"))
 		sizer.Add(btn, 0, wx.ALIGN_CENTER | wx.BOTTOM, 10)
 		self.SetSizerAndFit(sizer)
 		self.Centre()
@@ -98,12 +121,12 @@ class NusaNewsDialog(wx.Dialog):
 	def __init__(self, parent):
 		super().__init__(
 			parent,
-			title="NusaNews - Pembaca Berita Indonesia",
+			# Translators: title of the news list dialog.
+			title=_("NusaNews - Indonesian news reader"),
 			style=wx.DEFAULT_DIALOG_STYLE | wx.RESIZE_BORDER,
 		)
 		self.news_items: list[NewsItem] = []
-		self.sources = [ALL] + config.read_settings()["enabled_sources"]
-		self.categories = [ALL, *CATEGORIES]
+		self.sources = config.read_settings()["enabled_sources"]
 		self.current_display_limit = config.get_config_val("max_display_count")
 		self._setup_ui()
 		self._bind_events()
@@ -116,29 +139,46 @@ class NusaNewsDialog(wx.Dialog):
 		sHelper = guiHelper.BoxSizerHelper(self, orientation=wx.VERTICAL)
 
 		filters = guiHelper.BoxSizerHelper(self, orientation=wx.HORIZONTAL)
-		self.source_choice = filters.addLabeledControl("&Sumber:", wx.Choice, choices=self.sources)
+		self.source_choice = filters.addLabeledControl(
+			# Translators: label of the filter that shows the stories of one news site.
+			_("&Source:"),
+			wx.Choice,
+			choices=[_all_label(), *self.sources],
+		)
 		self.source_choice.SetSelection(0)
-		self.cat_choice = filters.addLabeledControl("&Kategori:", wx.Choice, choices=self.categories)
+		self.cat_choice = filters.addLabeledControl(
+			# Translators: label of the filter that shows the stories of one category.
+			_("Ca&tegory:"),
+			wx.Choice,
+			choices=[_all_label(), *(formatting.category_label(category) for category in CATEGORIES)],
+		)
 		self.cat_choice.SetSelection(0)
 		sHelper.addItem(filters)
 
-		self.unread_checkbox = sHelper.addItem(wx.CheckBox(self, label="Hanya yang &belum dibaca"))
+		# Translators: check box that shows only the stories not read yet.
+		self.unread_checkbox = sHelper.addItem(wx.CheckBox(self, label=_("&Unread only")))
 
 		# The label makes NVDA say "Daftar berita, list" when the list gets focus.
 		self.news_listbox = sHelper.addLabeledControl(
-			"Daftar berita. Tekan Enter untuk membaca:",
+			# Translators: label of the news list.
+			_("News. Press Enter to read the selected story:"),
 			wx.ListBox,
 			style=wx.LB_SINGLE | wx.LB_NEEDED_SB,
 			size=(700, 360),
 		)
 
 		buttons = guiHelper.ButtonHelper(wx.HORIZONTAL)
-		self.btn_copy_link = buttons.addButton(self, label="Salin &link")
-		self.btn_mark_read = buttons.addButton(self, label="Tandai &dibaca")
-		self.btn_mark_all = buttons.addButton(self, label="Tandai se&mua dibaca")
-		self.btn_refresh = buttons.addButton(self, label="Se&garkan")
-		self.btn_donate = buttons.addButton(self, label="D&onasi")
-		self.btn_close = buttons.addButton(self, id=wx.ID_CANCEL, label="&Tutup")
+		# Translators: button that copies the web address of the selected story.
+		self.btn_copy_link = buttons.addButton(self, label=_("Copy &link"))
+		# Translators: button that marks the selected story as read.
+		self.btn_mark_read = buttons.addButton(self, label=_("&Mark read"))
+		# Translators: button that marks every saved story as read.
+		self.btn_mark_all = buttons.addButton(self, label=_("Mark &all read"))
+		# Translators: button that checks the news sites for new stories now.
+		self.btn_refresh = buttons.addButton(self, label=_("&Refresh"))
+		# Translators: button that opens the donation dialog.
+		self.btn_donate = buttons.addButton(self, label=_("D&onate"))
+		self.btn_close = buttons.addButton(self, id=wx.ID_CANCEL, label=_("&Close"))
 		sHelper.addDialogDismissButtons(buttons)
 
 		main_sizer.Add(sHelper.sizer, 1, wx.EXPAND | wx.ALL, guiHelper.BORDER_FOR_DIALOGS)
@@ -173,10 +213,11 @@ class NusaNewsDialog(wx.Dialog):
 
 	def populate_list(self, keep_guid: str | None = None):
 		"""Fill the list from the cache. keep_guid selects that story again if it is still listed."""
-		selected_source = self.source_choice.GetString(self.source_choice.GetSelection())
-		selected_cat = self.cat_choice.GetString(self.cat_choice.GetSelection())
-		sources_filter = self.sources[1:] if selected_source == ALL else [selected_source]
-		cats_filter = list(CATEGORIES) if selected_cat == ALL else [selected_cat]
+		# The first choice of each filter is "All"; the others follow self.sources and CATEGORIES.
+		source_index = self.source_choice.GetSelection()
+		category_index = self.cat_choice.GetSelection()
+		sources_filter = self.sources if source_index <= 0 else [self.sources[source_index - 1]]
+		cats_filter = list(CATEGORIES) if category_index <= 0 else [CATEGORIES[category_index - 1]]
 		all_items = cache.get_news_items(
 			enabled_sources=sources_filter,
 			enabled_categories=cats_filter,
@@ -255,7 +296,8 @@ class NusaNewsDialog(wx.Dialog):
 			NusaNewsReaderDialog(self, item).Show()
 		except Exception:
 			logHandler.log.exception("NusaNews: Opening the article reader failed.")
-			ui.message("Gagal membuka berita.")
+			# Translators: said when the article reader cannot open.
+			ui.message(_("Could not open the story."))
 
 	def on_load_more(self):
 		"""Show more stories and move to the first of them."""
@@ -269,7 +311,8 @@ class NusaNewsDialog(wx.Dialog):
 	def on_copy_link(self, event):
 		item = self._selected_item()
 		if item is not None:
-			_copy_to_clipboard(item.url, "Link berita disalin.")
+			# Translators: said after copying a story's web address.
+			_copy_to_clipboard(item.url, _("Link copied."))
 
 	def on_mark_read(self, event):
 		item = self._selected_item()
@@ -277,21 +320,25 @@ class NusaNewsDialog(wx.Dialog):
 			return
 		cache.mark_as_read(item.guid)
 		self.update_item(item.guid)
-		ui.message("Ditandai dibaca.")
+		# Translators: said after marking a story as read.
+		ui.message(_("Marked read."))
 
 	def on_mark_all_read(self, event):
 		item = self._selected_item()
 		cache.mark_all_as_read()
 		self.populate_list(keep_guid=item.guid if item else None)
-		ui.message("Semua berita ditandai dibaca.")
+		# Translators: said after marking every story as read.
+		ui.message(_("All stories marked read."))
 
 	def on_refresh(self, event):
 		from . import addon_instance
 
 		if addon_instance and addon_instance.request_refresh():
-			ui.message("Memeriksa berita baru...")
+			# Translators: said when Refresh starts a check of the news sites.
+			ui.message(_("Checking for new stories..."))
 		else:
-			ui.message("Gagal menyegarkan. Add-on tidak aktif.")
+			# Translators: said when Refresh cannot start because the add-on is not running.
+			ui.message(_("Could not refresh. The add-on is not running."))
 
 	def on_close(self, event):
 		global active_dialog
@@ -301,14 +348,15 @@ class NusaNewsDialog(wx.Dialog):
 	def reload_settings(self):
 		"""Apply changed sources and new stories, keeping the filters and the selected story."""
 		item = self._selected_item()
-		current_source = self.source_choice.GetString(self.source_choice.GetSelection())
-		self.sources = [ALL] + config.read_settings()["enabled_sources"]
+		source_index = self.source_choice.GetSelection()
+		current_source = self.sources[source_index - 1] if source_index > 0 else None
+		self.sources = config.read_settings()["enabled_sources"]
 		self.current_display_limit = max(
 			self.current_display_limit, config.get_config_val("max_display_count")
 		)
-		self.source_choice.Set(self.sources)
-		index = self.source_choice.FindString(current_source)
-		self.source_choice.SetSelection(index if index != wx.NOT_FOUND else 0)
+		self.source_choice.Set([_all_label(), *self.sources])
+		index = self.sources.index(current_source) + 1 if current_source in self.sources else 0
+		self.source_choice.SetSelection(index)
 		self.populate_list(keep_guid=item.guid if item else None)
 
 
@@ -324,16 +372,19 @@ class NusaNewsReaderDialog(wx.Dialog):
 		main_sizer = wx.BoxSizer(wx.VERTICAL)
 		sHelper = guiHelper.BoxSizerHelper(self, orientation=wx.VERTICAL)
 		self.text_ctrl = sHelper.addLabeledControl(
-			"Isi berita:",
+			# Translators: label of the text box with the story in the article reader.
+			_("Story text:"),
 			wx.TextCtrl,
 			style=wx.TE_MULTILINE | wx.TE_READONLY | wx.TE_RICH2,
 			size=(700, 450),
 		)
 		buttons = guiHelper.ButtonHelper(wx.HORIZONTAL)
-		self.btn_browser = buttons.addButton(self, label="Buka di &browser")
-		self.btn_copy_link = buttons.addButton(self, label="Salin &link")
-		self.btn_copy = buttons.addButton(self, label="&Salin berita")
-		self.btn_close = buttons.addButton(self, id=wx.ID_CANCEL, label="&Tutup")
+		# Translators: button that opens the story on its website.
+		self.btn_browser = buttons.addButton(self, label=_("Open in &browser"))
+		self.btn_copy_link = buttons.addButton(self, label=_("Copy &link"))
+		# Translators: button that copies the title and text of the story.
+		self.btn_copy = buttons.addButton(self, label=_("Copy &story"))
+		self.btn_close = buttons.addButton(self, id=wx.ID_CANCEL, label=_("&Close"))
 		sHelper.addDialogDismissButtons(buttons)
 		main_sizer.Add(sHelper.sizer, 1, wx.EXPAND | wx.ALL, guiHelper.BORDER_FOR_DIALOGS)
 		self.SetSizerAndFit(main_sizer)
@@ -357,7 +408,8 @@ class NusaNewsReaderDialog(wx.Dialog):
 		if content:
 			self._show(content)
 			return
-		self._show("Sedang mengunduh isi berita...", body_loaded=False)
+		# Translators: shown in the article reader while the story downloads.
+		self._show(_("Downloading the story..."), body_loaded=False)
 		# Settings are read here on the main thread, not in the download thread.
 		bypass_ssl = config.get_config_val("bypass_ssl_verification")
 		threading.Thread(
@@ -385,15 +437,20 @@ class NusaNewsReaderDialog(wx.Dialog):
 		if content:
 			cache.update_article_content(guid, content)
 			self._show(content)
-			ui.message("Berita berhasil dimuat.")
+			# Translators: said when the story has downloaded and is shown in the article reader.
+			ui.message(_("Story loaded."))
 		else:
 			self._show(
-				"Gagal memuat isi berita secara offline.\n\n"
-				"Periksa koneksi internet Anda, atau tekan Buka di browser (Alt+B) "
-				"untuk membacanya langsung di situs web.",
+				# Translators: shown in the article reader when the story cannot be downloaded.
+				_(
+					"Could not download the story.\n\n"
+					"Check your internet connection, or press Open in browser (Alt+B) "
+					"to read it on the website."
+				),
 				body_loaded=False,
 			)
-			ui.message("Gagal mengunduh isi berita.")
+			# Translators: said when the story cannot be downloaded.
+			ui.message(_("Could not download the story."))
 
 	def on_open_browser(self, event):
 		try:
@@ -402,13 +459,15 @@ class NusaNewsReaderDialog(wx.Dialog):
 			os.startfile(self.item.url)
 		except Exception:
 			logHandler.log.exception(f"NusaNews: Opening {self.item.url} failed.")
-			ui.message("Gagal membuka browser.")
+			# Translators: said when the web browser cannot be opened.
+			ui.message(_("Could not open the browser."))
 
 	def on_copy_link(self, event):
-		_copy_to_clipboard(self.item.url, "Link berita disalin.")
+		_copy_to_clipboard(self.item.url, _("Link copied."))
 
 	def on_copy(self, event):
-		_copy_to_clipboard(formatting.article_copy_text(self.item, self.body), "Berita disalin.")
+		# Translators: said after copying the title and text of a story.
+		_copy_to_clipboard(formatting.article_copy_text(self.item, self.body), _("Story copied."))
 
 	def on_close(self, event):
 		# Update the story's line before focus goes back to the list, so NVDA reads it once, as read.
@@ -428,70 +487,98 @@ class NusaNewsSettingsPanel(SettingsPanel):
 
 		self.sources_list = list(SOURCE_NAMES)
 		self.sources_checklist = sHelper.addLabeledControl(
-			"&Sumber berita yang dipantau:", nvdaControls.CustomCheckListBox, choices=self.sources_list
+			# Translators: label of the list of news sites the add-on checks.
+			_("News &sources to follow:"),
+			nvdaControls.CustomCheckListBox,
+			choices=self.sources_list,
 		)
 		self.sources_checklist.SetCheckedStrings(settings["enabled_sources"])
 		self.sources_checklist.SetSelection(0)
 
 		self.interval_choice = sHelper.addLabeledControl(
-			"&Periksa berita baru setiap (menit):", wx.Choice, choices=[str(m) for m in REFRESH_INTERVALS]
+			# Translators: label of the choice of how often the add-on checks for news.
+			_("&Check for new stories every (minutes):"),
+			wx.Choice,
+			choices=[str(m) for m in REFRESH_INTERVALS],
 		)
 		self.interval_choice.SetSelection(_nearest_index(REFRESH_INTERVALS, settings["refresh_interval"]))
 
-		notifications = self._group(sHelper, "Notifikasi")
+		# Translators: name of a group of settings.
+		notifications = self._group(sHelper, _("Notifications"))
 		self.notify_choice = notifications.addLabeledControl(
-			"&Cara memberi tahu berita baru:", wx.Choice, choices=[label for _, label in NOTIFICATION_MODES]
+			# Translators: label of the choice of how new stories are announced.
+			_("&How to announce new stories:"),
+			wx.Choice,
+			choices=_notification_mode_labels(),
 		)
-		modes = [mode for mode, _ in NOTIFICATION_MODES]
-		self.notify_choice.SetSelection(
-			modes.index(settings["notification_mode"]) if settings["notification_mode"] in modes else 0
-		)
+		mode = settings["notification_mode"]
+		self.notify_choice.SetSelection(NOTIFICATION_MODES.index(mode) if mode in NOTIFICATION_MODES else 0)
 		self.beep_checkbox = notifications.addItem(
-			wx.CheckBox(self._box(notifications), label="Bunyikan &nada saat ada berita baru")
+			# Translators: check box in the settings.
+			wx.CheckBox(self._box(notifications), label=_("Play a &tone when new stories arrive"))
 		)
 		self.beep_checkbox.SetValue(settings["notification_tone"])
 		self.breaking_checkbox = notifications.addItem(
-			wx.CheckBox(self._box(notifications), label="Umumkan berita &breaking juga saat jam sunyi")
+			# Translators: check box in the settings.
+			wx.CheckBox(self._box(notifications), label=_("Announce &breaking news during quiet hours too"))
 		)
 		self.breaking_checkbox.SetValue(settings["breaking_news_preference"])
 
-		quiet = self._group(sHelper, "Jam sunyi")
-		self.dnd_checkbox = quiet.addItem(wx.CheckBox(self._box(quiet), label="Ak&tifkan jam sunyi"))
+		# Translators: name of a group of settings: hours when new stories are not announced.
+		quiet = self._group(sHelper, _("Quiet hours"))
+		# Translators: check box in the settings.
+		self.dnd_checkbox = quiet.addItem(wx.CheckBox(self._box(quiet), label=_("&Use quiet hours")))
 		self.dnd_checkbox.SetValue(settings["silent_hours_enabled"])
 		self.dnd_checkbox.Bind(wx.EVT_CHECKBOX, self._on_dnd_toggled)
-		self.dnd_start_txt = quiet.addLabeledControl("&Mulai (jam:menit, misalnya 22:00):", wx.TextCtrl)
+		self.dnd_start_txt = quiet.addLabeledControl(
+			# Translators: label of the field for the start of quiet hours.
+			_("Sta&rt (hours:minutes, such as 22:00):"),
+			wx.TextCtrl,
+		)
 		self.dnd_start_txt.SetValue(settings["silent_hours_start"])
-		self.dnd_end_txt = quiet.addLabeledControl("S&elesai (jam:menit, misalnya 06:00):", wx.TextCtrl)
+		self.dnd_end_txt = quiet.addLabeledControl(
+			# Translators: label of the field for the end of quiet hours.
+			_("&End (hours:minutes, such as 06:00):"),
+			wx.TextCtrl,
+		)
 		self.dnd_end_txt.SetValue(settings["silent_hours_end"])
 		self._on_dnd_toggled(None)
 
 		self.display_limit_choice = sHelper.addLabeledControl(
-			"&Jumlah berita yang ditampilkan sekaligus:", wx.Choice, choices=[str(n) for n in DISPLAY_COUNTS]
+			# Translators: label of the choice of how many stories the news list shows before "Load more".
+			_("&Number of stories shown at a time:"),
+			wx.Choice,
+			choices=[str(n) for n in DISPLAY_COUNTS],
 		)
 		self.display_limit_choice.SetSelection(_nearest_index(DISPLAY_COUNTS, settings["max_display_count"]))
 
-		storage = self._group(sHelper, "Penyimpanan")
+		# Translators: name of a group of settings.
+		storage = self._group(sHelper, _("Storage"))
 		self.cache_spin = storage.addLabeledControl(
-			"&Lama penyimpanan berita (hari):",
+			# Translators: label of the number of days the add-on keeps stories.
+			_("&Keep stories for (days):"),
 			nvdaControls.SelectOnFocusSpinCtrl,
 			min=1,
 			max=30,
 			initial=settings["cache_duration"],
 		)
 		self.btn_clear_cache = storage.addItem(
-			wx.Button(self._box(storage), label="&Hapus semua berita tersimpan")
+			# Translators: button that deletes every saved story and article.
+			wx.Button(self._box(storage), label=_("&Delete all saved stories"))
 		)
 		self.btn_clear_cache.Bind(wx.EVT_BUTTON, self.on_clear_cache)
 
 		self.ssl_checkbox = sHelper.addItem(
 			wx.CheckBox(
 				self,
-				label="Lewati pemeriksaan sertifikat &keamanan (hanya jika koneksi selalu gagal; tidak aman)",
+				# Translators: check box in the settings. It makes connections less safe.
+				label=_("Skip security certi&ficate checks (only if connections always fail; not safe)"),
 			)
 		)
 		self.ssl_checkbox.SetValue(settings["bypass_ssl_verification"])
 
-		self.btn_donate = sHelper.addItem(wx.Button(self, label="D&ukungan dan donasi"))
+		# Translators: button in the settings that opens the donation dialog.
+		self.btn_donate = sHelper.addItem(wx.Button(self, label=_("Support and d&onations")))
 		self.btn_donate.Bind(wx.EVT_BUTTON, self.on_donate)
 
 	def _group(self, sHelper: guiHelper.BoxSizerHelper, label: str) -> guiHelper.BoxSizerHelper:
@@ -519,17 +606,26 @@ class NusaNewsSettingsPanel(SettingsPanel):
 	def isValid(self) -> bool:
 		"""Refuse to save quiet hours that are not times, and say which field is wrong."""
 		if self.dnd_checkbox.GetValue():
-			for field, name in ((self.dnd_start_txt, "mulai"), (self.dnd_end_txt, "selesai")):
+			fields = (
+				# Translators: error when the start of quiet hours is not a time.
+				(self.dnd_start_txt, _("The start of quiet hours must be a time such as 22:00.")),
+				# Translators: error when the end of quiet hours is not a time.
+				(self.dnd_end_txt, _("The end of quiet hours must be a time such as 06:00.")),
+			)
+			for field, message in fields:
 				if not _TIME.match(field.GetValue().strip()):
-					MessageDialog.alert(
-						f"Jam {name} jam sunyi harus berupa jam dan menit, misalnya 22:00.",
-						"Jam sunyi tidak valid",
-						self,
-					)
+					# Translators: title of the error about quiet hours.
+					MessageDialog.alert(message, _("Invalid quiet hours"), self)
 					field.SetFocus()
 					return False
 		if not self.sources_checklist.GetCheckedItems():
-			MessageDialog.alert("Pilih setidaknya satu sumber berita.", "Tidak ada sumber berita", self)
+			MessageDialog.alert(
+				# Translators: error when no news source is checked in the settings.
+				_("Choose at least one news source."),
+				# Translators: title of the error about news sources.
+				_("No news source"),
+				self,
+			)
 			self.sources_checklist.SetFocus()
 			return False
 		return super().isValid()
@@ -537,7 +633,7 @@ class NusaNewsSettingsPanel(SettingsPanel):
 	def onSave(self):
 		config.set_config_val("enabled_sources", list(self.sources_checklist.GetCheckedStrings()))
 		config.set_config_val("refresh_interval", REFRESH_INTERVALS[self.interval_choice.GetSelection()])
-		config.set_config_val("notification_mode", NOTIFICATION_MODES[self.notify_choice.GetSelection()][0])
+		config.set_config_val("notification_mode", NOTIFICATION_MODES[self.notify_choice.GetSelection()])
 		config.set_config_val("notification_tone", self.beep_checkbox.GetValue())
 		config.set_config_val("breaking_news_preference", self.breaking_checkbox.GetValue())
 		config.set_config_val("silent_hours_enabled", self.dnd_checkbox.GetValue())
@@ -556,21 +652,27 @@ class NusaNewsSettingsPanel(SettingsPanel):
 
 	def on_clear_cache(self, event):
 		result = MessageDialog.confirm(
-			"Hapus semua berita dan artikel yang tersimpan? Tindakan ini tidak bisa dibatalkan.",
-			"Hapus berita tersimpan",
+			# Translators: question before deleting every saved story.
+			_("Delete all saved stories and articles? This cannot be undone."),
+			# Translators: title of the question before deleting every saved story.
+			_("Delete saved stories"),
 			self,
-			okLabel="&Hapus",
-			cancelLabel="&Batal",
+			# Translators: button that confirms deleting every saved story.
+			okLabel=_("&Delete"),
+			# Translators: button that keeps the saved stories.
+			cancelLabel=_("&Cancel"),
 		)
 		if result != ReturnCode.OK:
 			return
 		try:
 			cache.clear_cache()
-			ui.message("Semua berita tersimpan sudah dihapus.")
+			# Translators: said after deleting every saved story.
+			ui.message(_("All saved stories deleted."))
 			refresh_active_dialog()
 		except Exception:
 			logHandler.log.exception("NusaNews: Clearing the cache failed.")
-			ui.message("Gagal menghapus berita tersimpan.")
+			# Translators: said when deleting the saved stories fails.
+			ui.message(_("Could not delete the saved stories."))
 
 
 def _nearest_index(values: tuple[int, ...], value: int) -> int:

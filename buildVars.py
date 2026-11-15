@@ -22,37 +22,37 @@ addon_info = AddonInfo(
 	# Translators: Long description to be shown for this add-on on add-on information from add-on store
 	addon_description=_(
 		"Follows Indonesian news from Antara, Kompas, Detik, Republika, Liputan6, Merdeka, "
-		"CNN Indonesia and WinPoin. Announces new stories in the background, "
-		"keeps quiet during the hours you choose, and lets you read whole articles "
-		"in an accessible window without opening a browser."
+		"CNN Indonesia and WinPoin. It announces new stories in the background, stays quiet during "
+		"the hours you choose, and opens whole articles in an accessible window, so you do not need a browser."
 	),
 	# version
 	addon_version="1.1.0",
 	# Brief changelog for this version
 	# Translators: what's new content for the add-on version to be shown in the add-on store
 	addon_changelog=_("""
-- Merdeka works again: it now finds articles at Merdeka's new web addresses instead of links from the page footer.
-- Antara works again inside NVDA: its security certificate is now checked with the certificates that come with NVDA, so the "CERTIFICATE_VERIFY_FAILED" error is gone. A certificate error is no longer retried three times.
-- Clean titles and exact publication times: stories now come from each site's RSS feed where it is kept up to date, and from its pages otherwise. Leftovers such as times, section names or "Headline" no longer appear in titles.
-- A story sounds the same everywhere: title first, then source, category and how long ago, with "Breaking" in front only for breaking news and "Belum dibaca" at the end only for unread stories. No more brackets, bars or dashes, which NVDA read differently depending on the punctuation level.
-- Times are shown as "14 menit lalu" or "3 jam lalu" for the last day, and as "13 November 2026 pukul 20.00" for older stories. The list is sorted by publication time, newest first.
-- The article reader shows one fact per line: title, source and category, publication time and link. "Salin berita" copies only the title and the article.
-- Several new stories announced at once are now one message, so a braille display shows them all. The message names the key that opens the reader as set in Input Gestures.
-- The first check after installing, or after deleting saved stories, fills the list quietly and says "NusaNews: N berita dimuat." instead of announcing hundreds of stories. Stories saved by older versions are marked read once, so "Belum dibaca" means new.
-- Faster: stories are kept in memory and saved shortly after a change, article texts are saved separately, old stories are removed after every check, and the list is no longer limited to 500 stories.
-- Settings are the same in every configuration profile from NVDA 2026.3.
-- Settings are grouped and labelled: sources are a checkable list, quiet hours must be times such as 22:00, and deleting saved stories asks with NVDA's own confirmation dialog.
-- The news list has a label, keeps the selected story selected when new stories arrive, and reads a story once when you return from the reader. Refresh is now Alt+G, because Alt+S moves to the source filter.
-- Every story now has the category it was listed under: stories from sidebars, "popular" boxes and other sections of a page are left out.
-- Stories older than the cache period are no longer added, so news from 2023 or 2024 is no longer announced as new.
-- Breaking news is now only about disasters and emergencies. Words such as "presiden" or "waspada" no longer mark ordinary stories as breaking, so they no longer break through quiet hours.
-- The disability category matches whole words only, and no longer picks up stories with words such as "menulis", "lumpuh" or "inklusif".
-- Tempo and MacPoin are removed: Tempo refuses connections from the add-on, and MacPoin has not published since March 2024.
-- Some sources no longer offer a category that the site stopped updating: Detik and Republika have no politics, and Republika has no entertainment.
-- Refresh no longer starts a second background check, so new stories are no longer announced twice. After a refresh, NVDA says how many new stories were found.
-- Stopping NVDA or reloading add-ons no longer waits for the current news check to finish.
-- On secure screens, such as the Windows sign-in screen, the news reader no longer opens and NVDA no longer logs an error when it closes.
-	"""),
+- Merdeka works again. The add-on finds its articles at Merdeka's new web addresses.
+- Antara works again inside NVDA. Its certificate is checked against the certificates that come with NVDA, so the "CERTIFICATE_VERIFY_FAILED" error is gone, and certificate errors are no longer retried.
+- Titles are clean and times are exact. Stories come from each site's RSS feed when the feed is kept up to date, and from its pages otherwise.
+- Each story stays in the category it was listed under. Sidebars, "popular" boxes and other sections of a page are left out.
+- Stories older than the storage period are skipped, so old news is no longer announced as new.
+- A story reads the same in the list, in notifications and in the reader: title first, then source, category and time. "Breaking" comes first only for breaking news, and "Unread" comes last only for unread stories. Brackets, bars and dashes are gone.
+- Times read like "14 minutes ago" or "3 hours ago" during the first day, and as a date and time after that. The newest stories come first.
+- The reader shows the title, the source and category, the publication time and the link on separate lines. "Copy story" copies only the title and the text.
+- Several new stories are announced in one message, so a braille display shows all of them. The message names the key that opens the news list, including a key you set in Input Gestures.
+- The first check after installing, or after deleting saved stories, saves the stories quietly and says how many it loaded. Stories saved by older versions are marked read once.
+- The add-on is faster. It keeps stories in memory, saves them shortly after a change, and stores article texts separately. Old stories are removed after every check, and the list no longer stops at 500 stories.
+- From NVDA 2026.3, the settings are the same in every configuration profile.
+- The settings are grouped and labelled. Sources are a list of check boxes, quiet hours must be times such as 22:00, and NVDA's own dialog confirms deleting saved stories.
+- The news list has a label, keeps your place when new stories arrive, and reads a story only once when you come back from the reader. Refresh is now Alt+R.
+- Breaking news now means disasters and emergencies only. Words such as "presiden" no longer mark ordinary stories as breaking, so those stories stay quiet during quiet hours.
+- The disability category matches whole words only.
+- Tempo and MacPoin are removed. Tempo refuses connections from the add-on, and MacPoin has published nothing since March 2024.
+- Detik and Republika no longer list politics, and Republika no longer lists entertainment, because the sites stopped updating those sections.
+- Refresh no longer starts a second check, so stories are no longer announced twice. After a refresh, NVDA says how many new stories it found.
+- Closing NVDA or reloading add-ons no longer waits for a news check to finish.
+- On secure screens, such as the Windows sign-in screen, the news list no longer opens.
+- The add-on's messages are now written in English, with an Indonesian translation that NVDA uses when its language is Indonesian.
+"""),
 	# Author(s)
 	addon_author="Rexya Muhamad Rizki <rexya2017@gmail.com>",
 	# URL for the add-on documentation support

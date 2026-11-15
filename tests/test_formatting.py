@@ -5,6 +5,7 @@ from datetime import datetime, timedelta, timezone
 import pytest
 from nusaNewsID import cache, formatting
 from nusaNewsID.models import NewsItem
+from poFile import translated
 
 WIB = timezone(timedelta(hours=7))
 NOW = datetime(2026, 11, 15, 8, 0, tzinfo=WIB)
@@ -15,6 +16,16 @@ def wibComputer(monkeypatch):
 	"""Format in WIB whatever the time zone of the computer running the tests (CI runs in UTC)."""
 	monkeypatch.setattr(formatting, "local_zone", WIB)
 	monkeypatch.setattr(formatting, "local_now", lambda: NOW)
+
+
+@pytest.fixture(autouse=True)
+def indonesian(request):
+	"""Most tests read the Indonesian translation, as the reading format was agreed in Indonesian."""
+	if "english" in request.keywords:
+		yield
+		return
+	with translated("id"):
+		yield
 
 
 def _item(**changes) -> NewsItem:
@@ -134,3 +145,15 @@ def test_old_cached_dates_are_read_again():
 def test_old_cached_dates_from_the_story_text_are_dropped():
 	val = {"published_at": "10 Januari 2027", "cached_at": "2026-11-12T15:25:39.299928"}
 	assert cache._published_iso(val) is None
+
+
+@pytest.mark.english
+def test_english_source_text():
+	assert (
+		formatting.list_item_text(_item(), NOW)
+		== "Sapaan Prabowo ke Jenderal Suyudi. Detik, National, 14 minutes ago. Unread."
+	)
+	assert formatting.format_time(NOW - timedelta(minutes=1), NOW) == "1 minute ago"
+	assert formatting.load_more_text(1) == "Load 1 more story"
+	assert formatting.format_date(datetime(2026, 11, 13, 20, 5, tzinfo=WIB)) == "13 November 2026, 20:05"
+	assert formatting.notification_text(_item()) == "New from Detik: Sapaan Prabowo ke Jenderal Suyudi."

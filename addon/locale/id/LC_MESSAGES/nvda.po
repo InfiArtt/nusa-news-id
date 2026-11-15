@@ -1,0 +1,529 @@
+# Indonesian translation of the NusaNewsID add-on for NVDA.
+# This file is distributed under the same license as the nusaNewsID package.
+msgid ""
+msgstr ""
+"Project-Id-Version: nusaNewsID 1.1.0\n"
+"Report-Msgid-Bugs-To: 'nvda-translations@groups.io'\n"
+"PO-Revision-Date: 2026-11-15 16:00+0700\n"
+"Last-Translator: Rexya Muhamad Rizki <rexya2017@gmail.com>\n"
+"Language-Team: Indonesian\n"
+"Language: id\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+
+#. Translators: a month name, used in dates such as "13 November 2026, 20:05".
+msgid "January"
+msgstr "Januari"
+
+#. Translators: a month name.
+msgid "February"
+msgstr "Februari"
+
+#. Translators: a month name.
+msgid "March"
+msgstr "Maret"
+
+#. Translators: a month name.
+msgid "April"
+msgstr "April"
+
+#. Translators: a month name.
+msgid "May"
+msgstr "Mei"
+
+#. Translators: a month name.
+msgid "June"
+msgstr "Juni"
+
+#. Translators: a month name.
+msgid "July"
+msgstr "Juli"
+
+#. Translators: a month name.
+msgid "August"
+msgstr "Agustus"
+
+#. Translators: a month name.
+msgid "September"
+msgstr "September"
+
+#. Translators: a month name.
+msgid "October"
+msgstr "Oktober"
+
+#. Translators: a month name.
+msgid "November"
+msgstr "November"
+
+#. Translators: a month name.
+msgid "December"
+msgstr "Desember"
+
+#. Translators: a news category.
+msgid "National"
+msgstr "Nasional"
+
+#. Translators: a news category.
+msgid "International"
+msgstr "Internasional"
+
+#. Translators: a news category.
+msgid "Technology"
+msgstr "Teknologi"
+
+#. Translators: a news category.
+msgid "Politics"
+msgstr "Politik"
+
+#. Translators: a news category.
+msgid "Economy"
+msgstr "Ekonomi"
+
+#. Translators: a news category.
+msgid "Sports"
+msgstr "Olahraga"
+
+#. Translators: a news category.
+msgid "Entertainment"
+msgstr "Entertainment"
+
+#. Translators: a news category: news about disability and people with disabilities.
+msgid "Disability"
+msgstr "Disabilitas"
+
+#. Translators: a date and time, for example "13 November 2026, 20:05".
+#. Keep the names in braces; you can change their order and the words between them.
+#, python-brace-format
+msgid "{day} {month} {year}, {hour}:{minute}"
+msgstr "{day} {month} {year} pukul {hour}.{minute}"
+
+#. Translators: the time of a story published less than a minute ago.
+msgid "just now"
+msgstr "baru saja"
+
+#. Translators: the time of a story, for example "14 minutes ago".
+#, python-brace-format
+msgid "{count} minute ago"
+msgid_plural "{count} minutes ago"
+msgstr[0] "{count} menit lalu"
+
+#. Translators: the time of a story, for example "3 hours ago".
+#, python-brace-format
+msgid "{count} hour ago"
+msgid_plural "{count} hours ago"
+msgstr[0] "{count} jam lalu"
+
+#. Translators: said before the title of a breaking news story in the news list.
+msgid "Breaking."
+msgstr "Breaking."
+
+#. Translators: said after a story in the news list that has not been opened or marked read.
+msgid "Unread."
+msgstr "Belum dibaca."
+
+#. Translators: the last item of the news list, which shows more stories when pressed.
+#, python-brace-format
+msgid "Load {count} more story"
+msgid_plural "Load {count} more stories"
+msgstr[0] "Muat {count} berita berikutnya"
+
+#. Translators: announces one breaking story, for example "Breaking from Antara: Gempa guncang Maluku."
+#, python-brace-format
+msgid "Breaking from {source}: {title}"
+msgstr "Breaking dari {source}: {title}"
+
+#. Translators: announces one new story, for example "New from Detik: Prabowo tiba di Manila."
+#, python-brace-format
+msgid "New from {source}: {title}"
+msgstr "Berita baru dari {source}: {title}"
+
+#, python-brace-format
+msgid "NusaNews: {count} new story. Press {gesture} to open it."
+msgid_plural "NusaNews: {count} new stories. Press {gesture} to open them."
+msgstr[0] "NusaNews: {count} berita baru. Tekan {gesture} untuk membuka."
+
+#, python-brace-format
+msgid "NusaNews: {count} new story. To open it, assign a key in Input Gestures."
+msgid_plural "NusaNews: {count} new stories. To open them, assign a key in Input Gestures."
+msgstr[0] "NusaNews: {count} berita baru. Tetapkan tombol untuk membukanya di Gestur Masukan."
+
+#. Translators: the second line of an article in the reader, for example "Detik, category National".
+#, python-brace-format
+msgid "{source}, category {category}"
+msgstr "{source}, kategori {category}"
+
+#. Translators: when the site published the story, for example "Published 13 November 2026, 20:05".
+#, python-brace-format
+msgid "Published {date}"
+msgstr "Terbit {date}"
+
+#. Translators: for a story whose site gives no publication time, when the add-on first
+#. found it, for example "Found 13 November 2026, 20:05".
+#, python-brace-format
+msgid "Found {date}"
+msgstr "Ditemukan {date}"
+
+#. Translators: a choice for how new stories are announced: one message with their number.
+msgid "Number of new stories"
+msgstr "Ringkasan jumlah berita baru"
+
+#. Translators: a choice for how new stories are announced: the title of each story.
+msgid "Title of each new story"
+msgstr "Judul setiap berita baru"
+
+#. Translators: the first choice of the source and category filters, which shows everything.
+msgid "All"
+msgstr "Semua"
+
+#. Translators: said when copying fails because another program holds the clipboard.
+msgid "Another program is using the clipboard. Try again."
+msgstr "Papan klip sedang dipakai program lain. Coba lagi."
+
+#. Translators: said when copying to the clipboard fails.
+msgid "Could not copy."
+msgstr "Gagal menyalin."
+
+#. Translators: title of the donation dialog.
+msgid "Donate to NusaNewsID"
+msgstr "Donasi NusaNewsID"
+
+msgid ""
+"You can donate through GoPay to 088222553434, under the name Rexya Muhamad Rizki.\n"
+"\n"
+"Every donation helps keep this add-on going. Thank you!"
+msgstr ""
+"Anda bisa berdonasi lewat GoPay ke 088222553434 atas nama Rexya Muhamad Rizki.\n"
+"\n"
+"Setiap donasi membantu add-on ini terus dikembangkan. Terima kasih, orang baik!"
+
+#. Translators: label of the text box in the donation dialog.
+msgid "Donation information:"
+msgstr "Informasi donasi:"
+
+#. Translators: button that closes a dialog.
+msgid "&Close"
+msgstr "&Tutup"
+
+#. Translators: title of the news list dialog.
+msgid "NusaNews - Indonesian news reader"
+msgstr "NusaNews - Pembaca Berita Indonesia"
+
+#. Translators: label of the filter that shows the stories of one news site.
+msgid "&Source:"
+msgstr "&Sumber:"
+
+#. Translators: label of the filter that shows the stories of one category.
+msgid "Ca&tegory:"
+msgstr "&Kategori:"
+
+#. Translators: check box that shows only the stories not read yet.
+msgid "&Unread only"
+msgstr "Hanya yang &belum dibaca"
+
+#. Translators: label of the news list.
+msgid "News. Press Enter to read the selected story:"
+msgstr "Daftar berita. Tekan Enter untuk membaca:"
+
+#. Translators: button that copies the web address of the selected story.
+msgid "Copy &link"
+msgstr "Salin &link"
+
+#. Translators: button that marks the selected story as read.
+msgid "&Mark read"
+msgstr "Tandai &dibaca"
+
+#. Translators: button that marks every saved story as read.
+msgid "Mark &all read"
+msgstr "Tandai se&mua dibaca"
+
+#. Translators: button that checks the news sites for new stories now.
+msgid "&Refresh"
+msgstr "Se&garkan"
+
+#. Translators: button that opens the donation dialog.
+msgid "D&onate"
+msgstr "D&onasi"
+
+#. Translators: said when the article reader cannot open.
+msgid "Could not open the story."
+msgstr "Gagal membuka berita."
+
+#. Translators: said after copying a story's web address.
+msgid "Link copied."
+msgstr "Link berita disalin."
+
+#. Translators: said after marking a story as read.
+msgid "Marked read."
+msgstr "Ditandai dibaca."
+
+#. Translators: said after marking every story as read.
+msgid "All stories marked read."
+msgstr "Semua berita ditandai dibaca."
+
+#. Translators: said when Refresh starts a check of the news sites.
+msgid "Checking for new stories..."
+msgstr "Memeriksa berita baru..."
+
+#. Translators: said when Refresh cannot start because the add-on is not running.
+msgid "Could not refresh. The add-on is not running."
+msgstr "Gagal menyegarkan. Add-on tidak aktif."
+
+#. Translators: label of the text box with the story in the article reader.
+msgid "Story text:"
+msgstr "Isi berita:"
+
+#. Translators: button that opens the story on its website.
+msgid "Open in &browser"
+msgstr "Buka di &browser"
+
+#. Translators: button that copies the title and text of the story.
+msgid "Copy &story"
+msgstr "&Salin berita"
+
+#. Translators: shown in the article reader while the story downloads.
+msgid "Downloading the story..."
+msgstr "Sedang mengunduh isi berita..."
+
+#. Translators: said when the story has downloaded and is shown in the article reader.
+msgid "Story loaded."
+msgstr "Isi berita sudah dimuat."
+
+msgid ""
+"Could not download the story.\n"
+"\n"
+"Check your internet connection, or press Open in browser (Alt+B) to read it on the website."
+msgstr ""
+"Gagal mengunduh isi berita.\n"
+"\n"
+"Periksa koneksi internet Anda, atau tekan Buka di browser (Alt+B) untuk membacanya di situs web."
+
+#. Translators: said when the story cannot be downloaded.
+msgid "Could not download the story."
+msgstr "Gagal mengunduh isi berita."
+
+#. Translators: said when the web browser cannot be opened.
+msgid "Could not open the browser."
+msgstr "Gagal membuka browser."
+
+#. Translators: said after copying the title and text of a story.
+msgid "Story copied."
+msgstr "Berita disalin."
+
+#. Translators: label of the list of news sites the add-on checks.
+msgid "News &sources to follow:"
+msgstr "&Sumber berita yang dipantau:"
+
+#. Translators: label of the choice of how often the add-on checks for news.
+msgid "&Check for new stories every (minutes):"
+msgstr "&Periksa berita baru setiap (menit):"
+
+#. Translators: name of a group of settings.
+msgid "Notifications"
+msgstr "Notifikasi"
+
+#. Translators: label of the choice of how new stories are announced.
+msgid "&How to announce new stories:"
+msgstr "&Cara memberi tahu berita baru:"
+
+#. Translators: check box in the settings.
+msgid "Play a &tone when new stories arrive"
+msgstr "Bunyikan &nada saat ada berita baru"
+
+#. Translators: check box in the settings.
+msgid "Announce &breaking news during quiet hours too"
+msgstr "Umumkan berita &breaking juga saat jam sunyi"
+
+#. Translators: name of a group of settings: hours when new stories are not announced.
+msgid "Quiet hours"
+msgstr "Jam sunyi"
+
+#. Translators: check box in the settings.
+msgid "&Use quiet hours"
+msgstr "Ak&tifkan jam sunyi"
+
+#. Translators: label of the field for the start of quiet hours.
+msgid "Sta&rt (hours:minutes, such as 22:00):"
+msgstr "&Mulai (jam:menit, misalnya 22:00):"
+
+#. Translators: label of the field for the end of quiet hours.
+msgid "&End (hours:minutes, such as 06:00):"
+msgstr "S&elesai (jam:menit, misalnya 06:00):"
+
+#. Translators: label of the choice of how many stories the news list shows before "Load more".
+msgid "&Number of stories shown at a time:"
+msgstr "&Jumlah berita yang ditampilkan sekaligus:"
+
+#. Translators: name of a group of settings.
+msgid "Storage"
+msgstr "Penyimpanan"
+
+#. Translators: label of the number of days the add-on keeps stories.
+msgid "&Keep stories for (days):"
+msgstr "&Lama penyimpanan berita (hari):"
+
+#. Translators: button that deletes every saved story and article.
+msgid "&Delete all saved stories"
+msgstr "&Hapus semua berita tersimpan"
+
+#. Translators: check box in the settings. It makes connections less safe.
+msgid "Skip security certi&ficate checks (only if connections always fail; not safe)"
+msgstr "Lewati pemeriksaan sertifikat &keamanan (hanya jika koneksi selalu gagal; tidak aman)"
+
+#. Translators: button in the settings that opens the donation dialog.
+msgid "Support and d&onations"
+msgstr "D&ukungan dan donasi"
+
+#. Translators: error when the start of quiet hours is not a time.
+msgid "The start of quiet hours must be a time such as 22:00."
+msgstr "Awal jam sunyi harus berupa jam dan menit, misalnya 22:00."
+
+#. Translators: error when the end of quiet hours is not a time.
+msgid "The end of quiet hours must be a time such as 06:00."
+msgstr "Akhir jam sunyi harus berupa jam dan menit, misalnya 06:00."
+
+#. Translators: title of the error about quiet hours.
+msgid "Invalid quiet hours"
+msgstr "Jam sunyi tidak valid"
+
+#. Translators: error when no news source is checked in the settings.
+msgid "Choose at least one news source."
+msgstr "Pilih setidaknya satu sumber berita."
+
+#. Translators: title of the error about news sources.
+msgid "No news source"
+msgstr "Tidak ada sumber berita"
+
+#. Translators: question before deleting every saved story.
+msgid "Delete all saved stories and articles? This cannot be undone."
+msgstr "Hapus semua berita dan artikel yang tersimpan? Tindakan ini tidak bisa dibatalkan."
+
+#. Translators: title of the question before deleting every saved story.
+msgid "Delete saved stories"
+msgstr "Hapus berita tersimpan"
+
+#. Translators: button that confirms deleting every saved story.
+msgid "&Delete"
+msgstr "&Hapus"
+
+#. Translators: button that keeps the saved stories.
+msgid "&Cancel"
+msgstr "&Batal"
+
+#. Translators: said after deleting every saved story.
+msgid "All saved stories deleted."
+msgstr "Semua berita tersimpan sudah dihapus."
+
+#. Translators: said when deleting the saved stories fails.
+msgid "Could not delete the saved stories."
+msgstr "Gagal menghapus berita tersimpan."
+
+#, python-brace-format
+msgid "NusaNews: {count} story loaded."
+msgid_plural "NusaNews: {count} stories loaded."
+msgstr[0] "NusaNews: {count} berita dimuat."
+
+#, python-brace-format
+msgid "Done, {count} new story."
+msgid_plural "Done, {count} new stories."
+msgstr[0] "Selesai, {count} berita baru."
+
+#. Translators: said when a check started with the Refresh button finds nothing new.
+msgid "Done, no new stories."
+msgstr "Selesai, tidak ada berita baru."
+
+#. Translators: describes the command that opens the news list, in Input Gestures.
+msgid "Opens the NusaNews news list"
+msgstr "Membuka daftar berita NusaNews"
+
+#. Translators: title of the dialog shown when the add-on is installed.
+msgid "Welcome to NusaNewsID"
+msgstr "Selamat Datang di NusaNewsID"
+
+msgid ""
+"Thank you for installing NusaNewsID.\n"
+"\n"
+"This add-on reads news from Indonesian news sites and is made for screen reader users.\n"
+"\n"
+"You can filter the news by source and category.\n"
+"To open the news list, press NVDA+Shift+/.\n"
+"\n"
+"Made by Rexya Muhamad Rizki. You can support its development with the Donate button."
+msgstr ""
+"Terima kasih telah memasang NusaNewsID.\n"
+"\n"
+"Add-on ini membacakan berita dari situs berita Indonesia, dan dibuat untuk pengguna pembaca layar.\n"
+"\n"
+"Anda bisa menyaring berita menurut sumber dan kategori.\n"
+"Untuk membuka daftar berita, tekan NVDA+Shift+/.\n"
+"\n"
+"Dibuat oleh Rexya Muhamad Rizki. Anda bisa mendukung pengembangannya lewat tombol Donasi."
+
+#. Translators: label of the text box in the welcome dialog.
+msgid "About NusaNewsID:"
+msgstr "Tentang NusaNewsID:"
+
+#. Translators: button that closes the welcome dialog so the installation goes on.
+msgid "&Continue installing"
+msgstr "&Lanjutkan instalasi"
+
+#. Add-on summary/title, usually the user visible name of the add-on
+#. Translators: Summary/title for this add-on
+#. to be shown on installation and add-on information found in add-on store
+msgid "NusaNewsID - Indonesian News Reader"
+msgstr "NusaNewsID - Pembaca Berita Indonesia"
+
+msgid "Follows Indonesian news from Antara, Kompas, Detik, Republika, Liputan6, Merdeka, CNN Indonesia and WinPoin. It announces new stories in the background, stays quiet during the hours you choose, and opens whole articles in an accessible window, so you do not need a browser."
+msgstr "Mengikuti berita Indonesia dari Antara, Kompas, Detik, Republika, Liputan6, Merdeka, CNN Indonesia, dan WinPoin. Add-on ini mengumumkan berita baru di latar belakang, diam selama jam yang Anda pilih, dan membuka isi artikel di jendela yang mudah dibaca, tanpa perlu browser."
+
+#. Brief changelog for this version
+#. Translators: what's new content for the add-on version to be shown in the add-on store
+msgid ""
+"\n"
+"- Merdeka works again. The add-on finds its articles at Merdeka's new web addresses.\n"
+"- Antara works again inside NVDA. Its certificate is checked against the certificates that come with NVDA, so the \"CERTIFICATE_VERIFY_FAILED\" error is gone, and certificate errors are no longer retried.\n"
+"- Titles are clean and times are exact. Stories come from each site's RSS feed when the feed is kept up to date, and from its pages otherwise.\n"
+"- Each story stays in the category it was listed under. Sidebars, \"popular\" boxes and other sections of a page are left out.\n"
+"- Stories older than the storage period are skipped, so old news is no longer announced as new.\n"
+"- A story reads the same in the list, in notifications and in the reader: title first, then source, category and time. \"Breaking\" comes first only for breaking news, and \"Unread\" comes last only for unread stories. Brackets, bars and dashes are gone.\n"
+"- Times read like \"14 minutes ago\" or \"3 hours ago\" during the first day, and as a date and time after that. The newest stories come first.\n"
+"- The reader shows the title, the source and category, the publication time and the link on separate lines. \"Copy story\" copies only the title and the text.\n"
+"- Several new stories are announced in one message, so a braille display shows all of them. The message names the key that opens the news list, including a key you set in Input Gestures.\n"
+"- The first check after installing, or after deleting saved stories, saves the stories quietly and says how many it loaded. Stories saved by older versions are marked read once.\n"
+"- The add-on is faster. It keeps stories in memory, saves them shortly after a change, and stores article texts separately. Old stories are removed after every check, and the list no longer stops at 500 stories.\n"
+"- From NVDA 2026.3, the settings are the same in every configuration profile.\n"
+"- The settings are grouped and labelled. Sources are a list of check boxes, quiet hours must be times such as 22:00, and NVDA's own dialog confirms deleting saved stories.\n"
+"- The news list has a label, keeps your place when new stories arrive, and reads a story only once when you come back from the reader. Refresh is now Alt+R.\n"
+"- Breaking news now means disasters and emergencies only. Words such as \"presiden\" no longer mark ordinary stories as breaking, so those stories stay quiet during quiet hours.\n"
+"- The disability category matches whole words only.\n"
+"- Tempo and MacPoin are removed. Tempo refuses connections from the add-on, and MacPoin has published nothing since March 2024.\n"
+"- Detik and Republika no longer list politics, and Republika no longer lists entertainment, because the sites stopped updating those sections.\n"
+"- Refresh no longer starts a second check, so stories are no longer announced twice. After a refresh, NVDA says how many new stories it found.\n"
+"- Closing NVDA or reloading add-ons no longer waits for a news check to finish.\n"
+"- On secure screens, such as the Windows sign-in screen, the news list no longer opens.\n"
+"- The add-on's messages are now written in English, with an Indonesian translation that NVDA uses when its language is Indonesian.\n"
+msgstr ""
+"\n"
+"- Merdeka kembali berfungsi. Add-on menemukan artikelnya di alamat web Merdeka yang baru.\n"
+"- Antara kembali berfungsi di dalam NVDA. Sertifikatnya diperiksa dengan sertifikat bawaan NVDA, jadi error \"CERTIFICATE_VERIFY_FAILED\" tidak muncul lagi, dan error sertifikat tidak lagi dicoba ulang.\n"
+"- Judul berita bersih dan waktunya tepat. Berita diambil dari feed RSS situs jika feed-nya terus diperbarui, dan dari halaman situs jika tidak.\n"
+"- Setiap berita tetap di kategori tempat ia tercantum. Kotak samping, kotak \"populer\", dan bagian lain di halaman tidak ikut diambil.\n"
+"- Berita yang lebih tua dari batas penyimpanan dilewati, jadi berita lama tidak lagi diumumkan sebagai berita baru.\n"
+"- Satu berita dibacakan dengan cara yang sama di daftar, di notifikasi, dan di pembaca artikel: judul dulu, lalu sumber, kategori, dan waktu. \"Breaking\" ada di depan hanya untuk berita breaking, dan \"Belum dibaca\" ada di akhir hanya untuk berita yang belum dibaca. Tanda kurung siku, garis vertikal, dan garis minus sudah tidak ada.\n"
+"- Waktu dibacakan seperti \"14 menit lalu\" atau \"3 jam lalu\" pada hari pertama, lalu berupa tanggal dan jam. Berita terbaru ada di atas.\n"
+"- Pembaca artikel menampilkan judul, sumber dan kategori, waktu terbit, dan link, masing-masing di baris sendiri. \"Salin berita\" hanya menyalin judul dan isi berita.\n"
+"- Beberapa berita baru diumumkan dalam satu pesan, jadi semuanya tampil di layar braille. Pesan itu menyebut tombol pembuka daftar berita, termasuk tombol yang Anda atur di Gestur Masukan.\n"
+"- Pemeriksaan pertama setelah add-on dipasang, atau setelah berita tersimpan dihapus, menyimpan berita tanpa mengumumkannya satu per satu, lalu menyebut jumlah berita yang dimuat. Berita yang disimpan versi lama ditandai dibaca sekali.\n"
+"- Add-on lebih cepat. Berita disimpan di memori, ditulis ke disk sesaat setelah ada perubahan, dan isi artikel disimpan terpisah. Berita lama dihapus setiap kali pemeriksaan selesai, dan daftar tidak lagi berhenti di 500 berita.\n"
+"- Mulai NVDA 2026.3, pengaturan sama di semua profil konfigurasi.\n"
+"- Pengaturan dikelompokkan dan diberi label. Sumber berita berupa daftar kotak centang, jam sunyi harus berupa jam seperti 22:00, dan penghapusan berita tersimpan dikonfirmasi dengan dialog NVDA sendiri.\n"
+"- Daftar berita punya label, tetap di berita yang sama saat berita baru masuk, dan hanya membacakan berita satu kali saat Anda kembali dari pembaca artikel. Segarkan sekarang Alt+G.\n"
+"- Berita breaking sekarang hanya tentang bencana dan keadaan darurat. Kata seperti \"presiden\" tidak lagi membuat berita biasa ditandai breaking, jadi berita itu tetap diam selama jam sunyi.\n"
+"- Kategori Disabilitas hanya mencocokkan kata utuh.\n"
+"- Tempo dan MacPoin dihapus. Tempo menolak koneksi dari add-on, dan MacPoin tidak menerbitkan apa pun sejak Maret 2024.\n"
+"- Detik dan Republika tidak lagi punya kategori Politik, dan Republika tidak lagi punya Entertainment, karena situsnya berhenti memperbarui bagian itu.\n"
+"- Segarkan tidak lagi memulai pemeriksaan kedua, jadi berita tidak lagi diumumkan dua kali. Setelah Segarkan, NVDA menyebut jumlah berita baru yang ditemukan.\n"
+"- Menutup NVDA atau memuat ulang add-on tidak lagi menunggu pemeriksaan berita selesai.\n"
+"- Di layar aman, seperti layar masuk Windows, daftar berita tidak lagi terbuka.\n"
+"- Pesan add-on sekarang ditulis dalam bahasa Inggris, dengan terjemahan Indonesia yang dipakai NVDA jika bahasanya bahasa Indonesia.\n"
