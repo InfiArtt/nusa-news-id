@@ -545,9 +545,14 @@ class NusaNewsReaderDialog(wx.Dialog):
 		(self.web or self.text_ctrl).SetFocus()
 
 	def load_article(self):
-		"""Show the saved article, or download it in a background thread."""
+		"""Show the saved article, or download it in a background thread.
+
+		An article saved by an older version is downloaded again, as it may lack the article's later pages;
+		it is shown only if the download fails.
+		"""
 		article = cache.get_article(self.item.guid)
-		if article and (article.blocks or article.locked_note):
+		self._saved_article = article if article and (article.blocks or article.locked_note) else None
+		if self._saved_article and not article.outdated:
 			self._show(article)
 			return
 		# Translators: shown in the article reader while the story downloads.
@@ -631,6 +636,8 @@ class NusaNewsReaderDialog(wx.Dialog):
 			self._show(article)
 			# Translators: said when the story has downloaded and is shown in the article reader.
 			ui.message(_("Story loaded."))
+		elif self._saved_article:
+			self._show(self._saved_article)
 		else:
 			self._show(
 				None,

@@ -106,7 +106,8 @@ def test_images_need_a_text_alternative(article):
 	_, parsed = _page(article)
 	# The description is visible text after the image, read once, so the image itself has an empty alt.
 	images = [attrs for tag, attrs in parsed.tags if tag == "img"]
-	assert images == [{"src": "https://news.example/a.jpg", "alt": ""}]
+	# The photo loads after the page (data-src), so the page and NVDA never wait for it.
+	assert images == [{"data-src": "https://news.example/a.jpg", "alt": ""}]
 	assert "Photo: Foto pengguna kursi roda" in parsed.texts
 
 

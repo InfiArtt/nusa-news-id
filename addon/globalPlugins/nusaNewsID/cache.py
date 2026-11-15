@@ -31,6 +31,8 @@ from .providers.textUtils import is_breaking, parse_date
 
 CACHE_FILE = "nusaNewsCache.json"
 ARTICLES_DIR = "articles"
+# Format of saved articles. 2: blocks, and every page of articles split over several pages.
+ARTICLE_FORMAT = 2
 SAVE_DELAY_SECONDS = 2.0
 
 _stories: dict[str, dict] | None = None
@@ -340,6 +342,7 @@ def get_article(guid: str) -> Article | None:
 			locked_note=saved.get("locked_note"),
 			summary=saved.get("summary"),
 			author=saved.get("author"),
+			outdated=saved.get("format", 1) < ARTICLE_FORMAT,
 		)
 	except FileNotFoundError:
 		pass
@@ -348,7 +351,7 @@ def get_article(guid: str) -> Article | None:
 		return None
 	try:
 		with open(_article_path(guid, "txt"), encoding="utf-8") as f:
-			return Article(blocks=blocks_from_text(f.read()))
+			return Article(blocks=blocks_from_text(f.read()), outdated=True)
 	except FileNotFoundError:
 		return None
 	except Exception:
@@ -364,6 +367,7 @@ def _write_article(guid: str, article: Article) -> None:
 		"locked_note": article.locked_note,
 		"summary": article.summary,
 		"author": article.author,
+		"format": ARTICLE_FORMAT,
 	}
 	try:
 		os.makedirs(os.path.dirname(path), exist_ok=True)

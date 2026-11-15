@@ -35,6 +35,8 @@ addon_info = AddonInfo(
 - For low vision: Control+plus, Control+minus and Control+0 change the reader's text size from 100 to 400 percent, and the new setting "Reader text size" keeps it. The page uses the Windows colors, including contrast themes, with wider line spacing and lines of at most 70 characters.
 - Articles are cleaner. Ads, "baca juga" boxes and the links after labels such as "Baca:", "Simak:" or "Pilihan Redaksi", sidebars, copyright lines, office addresses and editors' codes such as "(acd/acd)" are left out. A photo has one description, without its credit or buttons such as "Perbesar". Where a story has a video, a line says so. Posts from X, Instagram and other networks are quoted with the account that posted them. A reporter's name at the top of an article becomes the "Written by" line. Video pages without text show their summary.
 - The reader opens in Internet Explorer 11 mode, and the size and place of the news list and the reader are remembered. Both can be maximized.
+- Articles split over several pages, as on Antara, are read whole.
+- The reader no longer waits for photos. Photos load after the text, and photos the reader cannot show, such as Liputan6's, are left out instead of holding the story for several seconds.
 - Under the news list, a box shows the selected story's whole title, its source, category, time and author, and its summary. The list and this box use the reader's text size.
 - A source with no saved stories yet, such as one you just turned on, or InfiArtt with its whole archive, is saved quietly as read instead of being announced story by story.
 - An empty news list now says why it is empty, instead of NVDA saying "unknown".

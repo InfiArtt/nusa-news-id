@@ -9,6 +9,8 @@
 #   line height is 1.5 with space between paragraphs, and the text size can grow to 400 percent.
 # - 1.1.1: images are only shown with a description, as visible text after the image (which then has an
 #   empty alt), so it is read once. Videos and social posts are introduced by a line saying what they are.
+#   Photos load only after the page has loaded (data-src), and a photo the engine cannot show, such as
+#   WebP, is hidden: the engine otherwise holds the page, and NVDA with it, until every photo gives up.
 # - 2.1.1, 2.4.7: every action is a real button with a visible focus outline; the dialog gives the same
 #   shortcut keys, and Escape closes.
 # The page is shown by Internet Explorer's engine, like NVDA's own HTML messages. The reader loads it from a
@@ -66,6 +68,7 @@ a:focus, button:focus { outline: 0.2em solid Highlight; }
 """
 
 # Sends a button's action to the add-on, which catches the address and runs the action.
+# After the page has loaded, starts loading the photos, and hides those that fail.
 SCRIPT = """
 var buttons = document.getElementsByTagName("button");
 for (var i = 0; i < buttons.length; i++) {
@@ -73,6 +76,15 @@ for (var i = 0; i < buttons.length; i++) {
 		window.location.href = "nusanews-action:" + this.getAttribute("data-action");
 	};
 }
+window.onload = function () {
+	var images = document.getElementsByTagName("img");
+	for (var j = 0; j < images.length; j++) {
+		images[j].onerror = function () {
+			this.parentNode.removeChild(this);
+		};
+		images[j].src = images[j].getAttribute("data-src");
+	}
+};
 """
 
 
@@ -119,9 +131,8 @@ def build_page(
 	# Some pages repeat the title as their own first heading; it is already the h1.
 	blocks = [block for block in (article.blocks if article else []) if not _repeats(block.text, title)]
 	if blocks:
-		parts.append(
-			f'<div lang="{article_language}">{blocks_html(_heading_levels(blocks), labels=labels)}</div>'
-		)
+		body = _deferred_images(blocks_html(_heading_levels(blocks), labels=labels))
+		parts.append(f'<div lang="{article_language}">{body}</div>')
 	buttons = []
 	for action in ACTIONS:
 		label = labels[action]
@@ -142,6 +153,11 @@ def build_page(
 		f"{parts[-1]}\n</div>\n"
 		f"<script>{SCRIPT}</script>\n</body>\n</html>\n"
 	)
+
+
+def _deferred_images(markup: str) -> str:
+	"""Photos without src, so the page is shown at once; the script gives them their src after loading."""
+	return markup.replace("<img src=", "<img data-src=")
 
 
 def _heading_levels(blocks: list) -> list:

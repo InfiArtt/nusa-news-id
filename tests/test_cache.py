@@ -207,3 +207,22 @@ def test_always_on_sources_are_refreshed_from_their_api(folder):
 		"2026-11-12T10:00:00+07:00",
 		"zeus",
 	)
+
+
+def test_saved_article_keeps_its_blocks_and_older_formats_are_outdated(folder):
+	cache.init_db()
+	cache.save_news_items([_item(1)])
+	guid = "https://news.example/1"
+	cache.update_article(guid, Article(blocks=blocks_from_text("Isi satu.\n\nIsi dua."), author="Rexya"))
+	saved = cache.get_article(guid)
+	assert [block.text for block in saved.blocks] == ["Isi satu.", "Isi dua."]
+	assert saved.author == "Rexya" and not saved.outdated
+	# An article saved before every page was read: still readable, but downloaded again when opened.
+	path = cache._article_path(guid)
+	with open(path, encoding="utf-8") as f:
+		data = json.load(f)
+	del data["format"]
+	with open(path, "w", encoding="utf-8") as f:
+		json.dump(data, f)
+	old = cache.get_article(guid)
+	assert old.outdated and [block.text for block in old.blocks] == ["Isi satu.", "Isi dua."]

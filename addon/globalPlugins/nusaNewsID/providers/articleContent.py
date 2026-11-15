@@ -11,7 +11,7 @@ import html
 import re
 from dataclasses import dataclass, field
 from html.parser import HTMLParser
-from urllib.parse import urljoin
+from urllib.parse import parse_qs, urljoin, urlparse
 
 import logHandler
 
@@ -180,6 +180,8 @@ class Article:
 	summary: str | None = None
 	# The writer named in the article ("Oleh ... - Reporter"), taken out of the text.
 	author: str | None = None
+	# Saved by an older version of the add-on, which may have kept only the first page.
+	outdated: bool = False
 
 	@property
 	def text(self) -> str:
@@ -707,10 +709,84 @@ def extract_article(markup: str, url: str) -> Article:
 	return Article(blocks=blocks, language=language, author=parser.author)
 
 
+# At most this many pages of one article are downloaded.
+MAX_ARTICLE_PAGES = 10
+# Query values that ask a site for the whole article on one page.
+_WHOLE_ARTICLE = {("page", "all"), ("show", "all"), ("single", "1")}
+
+
+def _same_article_links(markup: str, url: str) -> list[tuple[str, dict[str, list[str]]]]:
+	"""The links of a page that lead to the same article (same address apart from the query)."""
+	base = urlparse(url)
+	links = []
+	for href in re.findall(r"""href\s*=\s*["']([^"'#]+)""", markup, re.IGNORECASE):
+		link = urlparse(urljoin(url, html.unescape(href.strip())))
+		if link.netloc == base.netloc and link.path.rstrip("/") == base.path.rstrip("/") and link.query:
+			links.append((link.geturl(), parse_qs(link.query)))
+	return links
+
+
+def whole_article_url(markup: str, url: str) -> str | None:
+	"""A link of the page to the whole article on one page, such as "?page=all" or "?show=all"."""
+	for link, query in _same_article_links(markup, url):
+		if any(value in query.get(key, []) for key, value in _WHOLE_ARTICLE):
+			return link
+	return None
+
+
+def next_page_urls(markup: str, url: str) -> list[str]:
+	"""The links to the article's further pages ("?page=2", "?page=3"), in order."""
+	pages: dict[int, str] = {}
+	for link, query in _same_article_links(markup, url):
+		number = (query.get("page") or [""])[0]
+		if number.isdigit() and 2 <= int(number) <= MAX_ARTICLE_PAGES:
+			pages.setdefault(int(number), link)
+	return [pages[number] for number in sorted(pages)]
+
+
+def merge_pages(first: Article, others: list[Article]) -> Article:
+	"""One article from its pages: the blocks of every page in order, each text once."""
+	seen = {block.text for block in first.blocks if block.text}
+	for page in others:
+		for block in page.blocks:
+			if block.text and block.text in seen:
+				continue
+			seen.add(block.text)
+			first.blocks.append(block)
+		first.author = first.author or page.author
+	return first
+
+
+def _download(url: str, bypass_ssl: bool) -> str | None:
+	data = fetch_http_data(url, bypass_ssl=bypass_ssl)
+	return _decode(data) if data else None
+
+
 def fetch_article(url: str, bypass_ssl: bool = False) -> Article | None:
-	"""Download a news page and extract its article. None when the download fails or finds no text."""
-	data = fetch_http_data(_rewrite_url_for_full_article(url), bypass_ssl=bypass_ssl)
-	if not data:
+	"""Download a news page and extract its article. None when the download fails or finds no text.
+
+	Articles split over several pages are read whole: from the page's own "whole article" link when it has
+	one, otherwise page by page.
+	"""
+	first_url = _rewrite_url_for_full_article(url)
+	markup = _download(first_url, bypass_ssl)
+	if markup is None:
 		return None
-	article = extract_article(_decode(data), url)
+	article = extract_article(markup, url)
+	page_urls = next_page_urls(markup, url)
+	if not page_urls:
+		return article if article.blocks else None
+	whole_url = whole_article_url(markup, url)
+	if whole_url and whole_url != first_url:
+		whole_markup = _download(whole_url, bypass_ssl)
+		whole = extract_article(whole_markup, url) if whole_markup else None
+		if whole and len(whole.blocks) >= len(article.blocks):
+			return whole
+	pages = []
+	for page_url in page_urls:
+		page_markup = _download(page_url, bypass_ssl)
+		if page_markup:
+			pages.append(extract_article(page_markup, url))
+	if pages:
+		article = merge_pages(article, pages)
 	return article if article.blocks else None

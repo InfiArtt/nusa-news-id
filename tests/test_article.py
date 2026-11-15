@@ -1,5 +1,6 @@
 """Extracting an article: its container, its structure, and what is left out."""
 
+from nusaNewsID.providers import articleContent
 from nusaNewsID.providers.articleContent import blocks_html, blocks_text, extract_article, is_boilerplate
 
 PAGE = """
@@ -142,3 +143,73 @@ def test_video_page_without_text_gives_summary_and_video_note():
 		("p", "Ringkasan video & beritanya."),
 		("video", ""),
 	]
+
+
+ARTICLE_URL = "https://news.example/berita/1/judul"
+
+
+def _paged(body: str, links: str = "") -> str:
+	return f'<html><body><div class="detail__body-text">{body}</div>{links}</body></html>'
+
+
+def test_links_to_further_pages_and_to_the_whole_article():
+	page = _paged(
+		"<p>Isi.</p>",
+		f'<a href="{ARTICLE_URL}?page=1">1</a><a href="{ARTICLE_URL}?page=3">3</a>'
+		f'<a href="{ARTICLE_URL}?page=2">2</a><a href="{ARTICLE_URL}?page=komentar">Komentar</a>'
+		'<a href="https://news.example/indeks?page=2">Indeks</a>'
+		f'<a href="{ARTICLE_URL}?page=all&amp;x=1">Semua</a>',
+	)
+	assert articleContent.next_page_urls(page, ARTICLE_URL) == [
+		f"{ARTICLE_URL}?page=2",
+		f"{ARTICLE_URL}?page=3",
+	]
+	assert articleContent.whole_article_url(page, ARTICLE_URL) == f"{ARTICLE_URL}?page=all&x=1"
+
+
+def test_article_split_over_pages_is_read_page_by_page(monkeypatch):
+	pages = {
+		ARTICLE_URL: _paged(
+			"<p>Halaman satu.</p><p>Diulang di tiap halaman.</p>", f'<a href="{ARTICLE_URL}?page=2">2</a>'
+		),
+		f"{ARTICLE_URL}?page=2": _paged("<p>Diulang di tiap halaman.</p><p>Halaman dua.</p>"),
+	}
+	monkeypatch.setattr(articleContent, "fetch_http_data", lambda url, bypass_ssl=False: pages[url].encode())
+	article = articleContent.fetch_article(ARTICLE_URL)
+	assert [block.text for block in article.blocks] == [
+		"Halaman satu.",
+		"Diulang di tiap halaman.",
+		"Halaman dua.",
+	]
+
+
+def test_whole_article_link_is_used_when_there_are_pages(monkeypatch):
+	requested = []
+	pages = {
+		ARTICLE_URL: _paged(
+			"<p>Halaman satu.</p>",
+			f'<a href="{ARTICLE_URL}?page=2">2</a><a href="{ARTICLE_URL}?page=all">Semua</a>',
+		),
+		f"{ARTICLE_URL}?page=all": _paged("<p>Halaman satu.</p><p>Halaman dua.</p>"),
+	}
+
+	def fetch(url, bypass_ssl=False):
+		requested.append(url)
+		return pages[url].encode()
+
+	monkeypatch.setattr(articleContent, "fetch_http_data", fetch)
+	article = articleContent.fetch_article(ARTICLE_URL)
+	assert [block.text for block in article.blocks] == ["Halaman satu.", "Halaman dua."]
+	assert requested == [ARTICLE_URL, f"{ARTICLE_URL}?page=all"]
+
+
+def test_single_page_article_needs_one_request(monkeypatch):
+	requested = []
+
+	def fetch(url, bypass_ssl=False):
+		requested.append(url)
+		return _paged("<p>Satu halaman saja.</p>", f'<a href="{ARTICLE_URL}?show=all">Semua</a>').encode()
+
+	monkeypatch.setattr(articleContent, "fetch_http_data", fetch)
+	assert articleContent.fetch_article(ARTICLE_URL).blocks[0].text == "Satu halaman saja."
+	assert requested == [ARTICLE_URL]
