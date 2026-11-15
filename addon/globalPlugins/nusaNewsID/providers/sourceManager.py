@@ -1,70 +1,73 @@
 # -*- coding: utf-8 -*-
 # sourceManager.py
 #
-# Documentation Compliance Notes:
-# - Python 3.13 compliant typing.
-# - Decouples provider modules from the background MonitorThread.
-# Threading Notes:
-# - poll_sources() is called exclusively from the background MonitorThread.
-# - Aggregates outputs safely before returning them to the main thread queue.
-# Lifecycle Notes:
-# - Instantiated during GlobalPlugin startup or settings reloads.
-# Design Explanation:
-# - Serves as a registry mapping source names to their respective provider instances.
-# - Iterates through active source-category combinations and fetches items defensively.
+# The registry of news providers, and the loop that asks each enabled provider for each enabled category.
+# poll_sources() runs only in the background MonitorThread.
+
+import threading
 
 import logHandler
-from typing import List
-from ..models import NewsItem
 
-# Registry of source providers
+from ..models import NewsItem
 from .antara import AntaraProvider
-from .kompas import KompasProvider
-from .detik import DetikProvider
-from .republika import RepublikaProvider
-from .liputan6 import Liputan6Provider
-from .merdeka import MerdekaProvider
+from .baseProvider import BaseProvider
 from .cnn import CNNProvider
-from .winpoin import WinPoinProvider
+from .detik import DetikProvider
+from .kompas import KompasProvider
+from .liputan6 import Liputan6Provider
 from .macpoin import MacPoinProvider
+from .merdeka import MerdekaProvider
+from .republika import RepublikaProvider
+from .winpoin import WinPoinProvider
+
+# Every provider, in the order the settings panel shows them.
+PROVIDER_CLASSES: tuple[type[BaseProvider], ...] = (
+	DetikProvider,
+	KompasProvider,
+	AntaraProvider,
+	RepublikaProvider,
+	Liputan6Provider,
+	MerdekaProvider,
+	CNNProvider,
+	WinPoinProvider,
+	MacPoinProvider,
+)
+
+# The source names that can be enabled. Names saved by older versions that are not here, such as Tempo, are ignored.
+SOURCE_NAMES: tuple[str, ...] = tuple(provider.source_name for provider in PROVIDER_CLASSES)
+
 
 class SourceManager:
-	"""Orchestrates news fetching across all configured Indonesian providers."""
-	def __init__(self):
-		self.providers = {
-			"Antara": AntaraProvider(),
-			"Kompas": KompasProvider(),
-			"Detik": DetikProvider(),
-			"Republika": RepublikaProvider(),
-			"Liputan6": Liputan6Provider(),
-			"Merdeka": MerdekaProvider(),
-			"CNN Indonesia": CNNProvider(),
-			"WinPoin": WinPoinProvider(),
-			"MacPoin": MacPoinProvider(),
-		}
+	"""Asks every enabled provider for news, one request at a time."""
 
-	def poll_sources(self, enabled_sources: List[str], enabled_categories: List[str], bypass_ssl: bool = False) -> List[NewsItem]:
-		"""
-		Polls all enabled sources and categories sequentially.
-		"""
-		aggregated_news = []
-		
+	def __init__(self, stop_event: threading.Event | None = None):
+		self.stop_event = stop_event
+		self.providers: dict[str, BaseProvider] = {}
+		for provider_class in PROVIDER_CLASSES:
+			provider = provider_class()
+			provider.stop_event = stop_event
+			self.providers[provider.source_name] = provider
+
+	def poll_sources(
+		self,
+		enabled_sources: list[str],
+		enabled_categories: list[str],
+		bypass_ssl: bool = False,
+	) -> list[NewsItem]:
+		"""Fetch every enabled source and category. Stops early when the stop event is set."""
+		aggregated_news: list[NewsItem] = []
 		for source_name in enabled_sources:
 			provider = self.providers.get(source_name)
-			if not provider:
-				logHandler.log.warning(f"NusaNews: Provider {source_name} is enabled but not registered.")
+			if provider is None:
 				continue
-				
 			for category in enabled_categories:
+				if self.stop_event is not None and self.stop_event.is_set():
+					return aggregated_news
 				try:
-					logHandler.log.debug(f"NusaNews: Polling {source_name} for category {category}")
 					items = provider.fetch_news(category, bypass_ssl=bypass_ssl)
-					if items:
-						aggregated_news.extend(items)
-				except Exception as e:
-					# Catch errors defensively so a failure in one provider doesn't stall the loop
-					logHandler.log.error(
-						f"NusaNews: Exception raised while polling {source_name} - {category}: {e}"
-					)
-					
+				except Exception:
+					# One broken provider must not stop the others.
+					logHandler.log.exception(f"NusaNews: Checking {source_name}, {category} failed.")
+					continue
+				aggregated_news.extend(items)
 		return aggregated_news

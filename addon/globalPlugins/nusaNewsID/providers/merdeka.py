@@ -34,8 +34,8 @@ class MerdekaProvider(BaseProvider):
 	}
 
 	# Regex matching absolute URLs of individual news articles (discarding menus/tags)
-	# Example: https://www.merdeka.com/peristiwa/presiden-jokowi-resmikan-jalan-tol.html
-	html_regex = r"merdeka\.com/[a-zA-Z0-9\-]+/[a-zA-Z0-9\-]+\.html"
+	# Example: https://www.merdeka.com/peristiwa/read/8335388/anwar-hafid-tegaskan-dukungan-sulteng
+	html_regex = r"merdeka\.com/[a-z0-9\-]+/read/\d+/[a-z0-9\-]+"
 
 	def fetch_news(self, category: str, bypass_ssl: bool = False) -> List[NewsItem]:
 		items = []

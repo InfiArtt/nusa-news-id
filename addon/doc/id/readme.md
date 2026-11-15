@@ -6,8 +6,8 @@ Add-on NusaNews memungkinkan Anda untuk memantau dan membaca berita terbaru seca
 
 *   **Pintasan Keyboard Tunggal**: Tekan `NVDA+Shift+/` dari mana saja untuk memunculkan dialog utama pembaca berita.
 *   **Offline Reader Mode (Mode Membaca Offline)**: Membuka dan membaca isi lengkap artikel berita dalam kotak teks multi-baris yang ramah pembaca layar. Anda dapat membaca artikel baris demi baris menggunakan tombol panah atas/bawah standard.
-*   **10 Sumber Berita Populer**:
-    *   *Berita Umum*: Detik.com, Kompas.com, Antara News, Republika, Liputan6, Merdeka.com, Tempo.co, dan CNN Indonesia.
+*   **9 Sumber Berita Populer**:
+    *   *Berita Umum*: Detik.com, Kompas.com, Antara News, Republika, Liputan6, Merdeka.com, dan CNN Indonesia.
     *   *Berita Teknologi*: WinPoin (berita Windows/Microsoft) dan MacPoin (berita Apple/Mac).
 *   **Kategori Berita Terstruktur**: Nasional, Internasional, Teknologi, Politik, Ekonomi, Olahraga, Entertainment, dan Disabilitas.
 *   **Penyaringan Khusus Isu Disabilitas**: Ketika memilih kategori "Disabilitas", add-on secara otomatis menyaring berita dari semua portal menggunakan daftar kata kunci relevan disabilitas yang komprehensif. Ini memastikan daftar berita hanya berisi informasi yang benar-benar berkaitan dengan isu disabilitas di Indonesia.
@@ -53,7 +53,7 @@ Anda dapat menyesuaikan perilaku add-on ini melalui menu Pengaturan NVDA:
 3.  Di dalam daftar kategori sebelah kiri, cari dan pilih **nusaNewsID**.
 4.  Gunakan tombol **Tab** untuk berpindah di antara pilihan pengaturan berikut:
 
-*   **Sumber Berita Aktif**: Centang atau hilangkan centang pada nama-nama portal berita (Detik, Kompas, Antara, Republika, Liputan6, Merdeka, Tempo, CNN Indonesia, WinPoin, MacPoin) yang ingin dipantau.
+*   **Sumber Berita Aktif**: Centang atau hilangkan centang pada nama-nama portal berita (Detik, Kompas, Antara, Republika, Liputan6, Merdeka, CNN Indonesia, WinPoin, MacPoin) yang ingin dipantau.
 *   **Interval Penyegaran (menit)**: Memilih seberapa sering add-on mencari berita baru di latar belakang (2, 5, 10, 15, 30, 60, atau 120 menit).
 *   **Mode Notifikasi**:
     *   *Hanya Ringkasan (Digest)*: NVDA hanya mengumumkan ringkasan jumlah berita (contoh: *"NusaNews: 5 berita baru tersedia"*).
@@ -71,27 +71,7 @@ Anda dapat menyesuaikan perilaku add-on ini melalui menu Pengaturan NVDA:
 
 ## Riwayat Versi
 
-### Versi 1.0.2
-*   Menambahkan fitur "Salin Link" (Alt+L) untuk menyalin tautan/URL berita langsung dari dialog utama dan mode membaca offline.
-*   Menambahkan jendela sambutan pembuka dan instruksi donasi yang ramah pembaca layar saat instalasi addon.
-*   Menambahkan akses informasi donasi langsung di panel Pengaturan NusaNews serta dialog utama Pembaca Berita.
-*   Memperbarui URL kategori Politik pada portal Detik dan Merdeka untuk akurasi dan tangkapan berita yang lebih baik.
-*   Memperbaiki bug kategori Politik kosong pada Detik dan Antara dengan menerapkan dukungan penyimpanan multi-kategori dalam cache.
-*   Menghapus berkas parser RSS (`rssProvider.py`) dan merapikan sisa kode redundan untuk mengoptimalkan kinerja addon.
-
-### Versi 1.0.1
-*   Memperbaiki kategori Olahraga pada portal Merdeka (pembaruan URL ke bolasport).
-*   Memperbaiki ekstraksi tanggal yang hilang di berbagai provider dengan membaca tanggal dari dalam judul berita.
-*   Memperbaiki masalah teks "Berita Terkait" yang ikut terbaca di Reading Mode pada portal Merdeka.
-*   Menambahkan dukungan ekstraksi Gzip untuk memastikan addon tetap dapat menarik data dari server berkeamanan ketat.
-
-### Versi 1.0.0
-*   Rilis awal NusaNewsID dengan dukungan penuh 10 portal berita Indonesia.
-*   Implementasi Mode Membaca Offline (Reader Mode) dengan dukungan multi-halaman otomatis untuk Detik dan Kompas.
-*   Penyaringan cerdas isu disabilitas menggunakan kata kunci lokal terlengkap.
-*   Dukungan DND (Jam Sunyi), limit tampilan awal, dan pagination menggunakan "-- Muat Lebih Banyak --".
-*   Penyimpanan cache berbasis JSON untuk stabilitas tinggi dan kompatibilitas sistem.
-*   Pintasan keyboard aksesibel penuh (`Alt+D`, `Alt+M`, `Alt+S`, `Alt+T`, `Alt+B`).
+Riwayat lengkap ada di file CHANGELOG.md di repositori https://github.com/InfiArtt/nusa-news-id.
 
 ---
 

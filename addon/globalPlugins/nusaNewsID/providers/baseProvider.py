@@ -24,6 +24,8 @@ from ..models import NewsItem
 class BaseProvider:
 	"""Abstract base class representing an Indonesian news source provider."""
 	source_name: str = ""
+	# Set by SourceManager: ends retries and waits when NVDA stops or the add-on is reloaded.
+	stop_event = None
 	
 	def fetch_news(self, category: str, bypass_ssl: bool = False) -> List[NewsItem]:
 		"""Abstract method to fetch and parse news items. Must be overridden by subclasses."""
@@ -65,4 +67,4 @@ class BaseProvider:
 		Delegates to networkUtils.fetch_http_data to avoid circular dependencies.
 		"""
 		from ..networkUtils import fetch_http_data
-		return fetch_http_data(url, bypass_ssl, timeout)
+		return fetch_http_data(url, bypass_ssl, timeout, stop_event=self.stop_event)

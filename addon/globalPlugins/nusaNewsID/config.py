@@ -75,6 +75,19 @@ def get_config_val(key):
 		}
 		return fallbacks.get(key)
 
+def read_settings() -> dict:
+	"""Copy every setting into a plain dict, for the background thread. Call on the main thread only.
+
+	Sources that no longer exist, such as Tempo from older versions, are left out.
+	"""
+	from .providers.sourceManager import SOURCE_NAMES
+
+	settings = {key: get_config_val(key) for key in config_spec}
+	settings["enabled_sources"] = [name for name in settings["enabled_sources"] if name in SOURCE_NAMES]
+	settings["category_filter"] = list(settings["category_filter"])
+	return settings
+
+
 def set_config_val(key, val):
 	"""Writes a value to the configuration system."""
 	try:

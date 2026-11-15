@@ -39,6 +39,9 @@ def refresh_active_dialog():
 def open_news_dialog():
 	"""Safely initializes and displays the news reader dialog on the main thread."""
 	global active_dialog
+	import globalVars
+	if globalVars.appArgs.secure:
+		return
 	if active_dialog:
 		# Bring existing dialog to front
 		active_dialog.Raise()
@@ -359,9 +362,8 @@ class NusaNewsDialog(wx.Dialog):
 	def on_refresh(self, event):
 		"""Triggers manual background monitors check immediately."""
 		from . import addon_instance
-		if addon_instance:
-			ui.message("Segarkan berita...")
-			addon_instance.reload_monitor()
+		if addon_instance and addon_instance.request_refresh():
+			ui.message("Memeriksa berita baru...")
 		else:
 			ui.message("Gagal menyegarkan. Addon tidak aktif.")
 
@@ -489,16 +491,17 @@ class NusaNewsReaderDialog(wx.Dialog):
 			self.text_ctrl.SetValue(header + "Sedang mengunduh isi berita...")
 			
 			# Start background fetch thread
+			# Settings are read here on the main thread, not in the download thread.
+			bypass_ssl = config.get_config_val("bypass_ssl_verification")
 			threading.Thread(
 				target=self._bg_fetch,
-				args=(self.item.guid, url),
+				args=(self.item.guid, url, bypass_ssl),
 				daemon=True
 			).start()
 
-	def _bg_fetch(self, guid, url):
+	def _bg_fetch(self, guid, url, bypass_ssl):
 		"""Worker function running in a background thread."""
 		from .providers.htmlProvider import fetch_article_content
-		bypass_ssl = config.get_config_val("bypass_ssl_verification")
 		content = fetch_article_content(url, bypass_ssl=bypass_ssl)
 		
 		# Dispatch UI updates back to the main thread
@@ -600,7 +603,8 @@ class NusaNewsSettingsPanel(SettingsPanel):
 	def _create_sources_group(self, sHelper):
 		sHelper.addItem(wx.StaticText(self, label="Sumber Berita Aktif: Pilih sumber berita yang diaktifkan:"))
 		
-		self.sources_list = ["Detik", "Kompas", "Antara", "Republika", "Liputan6", "Merdeka", "Tempo", "CNN Indonesia", "WinPoin", "MacPoin"]
+		from .providers.sourceManager import SOURCE_NAMES
+		self.sources_list = list(SOURCE_NAMES)
 		self.source_checkboxes = {}
 		
 		enabled_sources = config.get_config_val("enabled_sources")
@@ -713,17 +717,10 @@ class NusaNewsSettingsPanel(SettingsPanel):
 		limit_str = self.display_limit_choice.GetString(self.display_limit_choice.GetSelection())
 		config.set_config_val("max_display_count", int(limit_str))
 		
-		# Trigger background thread reload synchronously
+		# Hand the new settings to the background thread. NVDA writes nvda.ini itself.
 		from . import addon_instance
 		if addon_instance:
-			addon_instance.reload_monitor()
-
-		# Explicitly persist NVDA configuration changes to nvda.ini
-		try:
-			import config as nvda_config
-			nvda_config.conf.save()
-		except Exception as e:
-			logHandler.log.error(f"NusaNews: Failed to save configuration to disk: {e}")
+			addon_instance.apply_settings()
 
 		# Refresh the active news dialog if open to apply new filters/sources immediately
 		refresh_active_dialog()

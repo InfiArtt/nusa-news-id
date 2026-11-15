@@ -6,8 +6,8 @@ The NusaNews add-on allows you to monitor and read the latest news directly and 
 
 *   **Single Keyboard Shortcut**: Press `NVDA+Shift+/` from anywhere to summon the main news reader dialog.
 *   **Offline Reader Mode**: Open and read full news articles offline inside a multi-line, read-only text control. Read articles line-by-line or paragraph-by-paragraph using standard screen review arrow keys.
-*   **10 Popular News Sources**:
-    *   *General News*: Detik.com, Kompas.com, Antara News, Republika, Liputan6, Merdeka.com, Tempo.co, and CNN Indonesia.
+*   **9 Popular News Sources**:
+    *   *General News*: Detik.com, Kompas.com, Antara News, Republika, Liputan6, Merdeka.com, and CNN Indonesia.
     *   *Technology News*: WinPoin (Windows/Microsoft news) and MacPoin (Apple/Mac news).
 *   **Structured Categories**: Nasional, Internasional, Teknologi, Politik, Ekonomi, Olahraga, Entertainment, and Disabilitas.
 *   **Disability Topic Filtering**: When selecting the "Disabilitas" category, the add-on automatically filters articles from all portals using a comprehensive list of localized disability-related keywords. This ensures only articles highly relevant to disability issues in Indonesia are shown.
@@ -53,7 +53,7 @@ You can customize the add-on settings through NVDA's Preferences:
 3.  In the Category list on the left, find and select **nusaNewsID**.
 4.  Use **Tab** to navigate through the following configuration controls:
 
-*   **Active News Sources**: Check or uncheck news portals (Detik, Kompas, Antara, Republika, Liputan6, Merdeka, Tempo, CNN Indonesia, WinPoin, MacPoin) to enable/disable them.
+*   **Active News Sources**: Check or uncheck news portals (Detik, Kompas, Antara, Republika, Liputan6, Merdeka, CNN Indonesia, WinPoin, MacPoin) to enable/disable them.
 *   **Refresh Interval (minutes)**: Select how frequently the add-on polls for updates in the background (2, 5, 10, 15, 30, 60, or 120 minutes).
 *   **Notification Mode**:
     *   *Digest*: NVDA speaks a summary count of new articles (e.g. *"NusaNews: 5 new articles available"*).
@@ -71,27 +71,7 @@ You can customize the add-on settings through NVDA's Preferences:
 
 ## Version History
 
-### Version 1.0.2
-*   Added "Copy Link" feature (Alt+L) to copy news URLs directly from the main list and offline reader dialogs.
-*   Added a screen reader-friendly welcome and donation dialog upon addon installation.
-*   Added direct access to donation details in both the NusaNews Settings panel and the main News Reader dialog.
-*   Updated the Politik category URLs for Detik and Merdeka portals for better accuracy and coverage.
-*   Fixed a bug where the Politik category was empty for Detik and Antara by adding multi-category support to the local cache.
-*   Deleted the unused RSS parser module (`rssProvider.py`) and cleaned up redundant logic to optimize performance.
-
-### Version 1.0.1
-*   Fixed the Sports (Olahraga) category on Merdeka portal by updating the endpoint to bolasport.
-*   Fixed missing date extraction across multiple providers by parsing date metadata directly from article titles.
-*   Fixed an issue in Reading Mode for Merdeka where "Related News" text blocks were erroneously appended to the main article.
-*   Added Gzip decompression support to ensure the add-on can fetch data from servers with strict encoding requirements.
-
-### Version 1.0.0
-*   Initial release of NusaNewsID with full support for 10 Indonesian news portals.
-*   Implemented Offline Reader Mode with multi-page concatenation for Detik and Kompas.
-*   Integrated high-relevance keyword filtering for the disability category.
-*   Supported DND (Quiet Hours), display limits, and incremental pagination with "-- Muat Lebih Banyak --".
-*   Adopted JSON-based caching engine for local speed and database stability.
-*   Mapped full keyboard navigation and shortcuts (`Alt+D`, `Alt+M`, `Alt+S`, `Alt+T`, `Alt+B`).
+The full history is in CHANGELOG.md in the repository https://github.com/InfiArtt/nusa-news-id.
 
 ---
 
