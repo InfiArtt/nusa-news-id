@@ -11,13 +11,13 @@ Bahasa add-on mengikuti bahasa NVDA. Panduan ini memakai nama tombol dan pesan d
 
 ## Sumber dan kategori
 
-Ada sepuluh kategori: Nasional, Internasional, Teknologi, Politik, Ekonomi, Olahraga, Entertainment, Disabilitas, Artikel InfiArtt, dan Pusat Pengetahuan. Tidak semua sumber punya semua kategori, karena add-on hanya mengambil bagian yang masih diperbarui oleh situsnya.
+Ada sepuluh kategori: Nasional, Internasional, Teknologi, Politik, Ekonomi, Olahraga, Entertainment, Disabilitas, Artikel InfiArtt, dan Pusat Pengetahuan InfiArtt. Tidak semua sumber punya semua kategori, karena add-on hanya mengambil bagian yang masih diperbarui oleh situsnya.
 
 - Antara, Kompas, Liputan6, Merdeka, dan CNN Indonesia: semua kategori.
 - Detik: semua kategori kecuali Politik.
 - Republika: Nasional, Internasional, Teknologi, Ekonomi, Olahraga, dan Disabilitas.
 - WinPoin, berita Windows dan Microsoft: Teknologi.
-- InfiArtt, organisasi yang membuat add-on ini: Artikel InfiArtt (dari infiartt.com/posts) dan Pusat Pengetahuan (panduan dari infiartt.com/kb). InfiArtt selalu diperiksa dan tidak bisa dimatikan, jadi artikel dan panduan barunya selalu muncul di daftar berita. Artikel khusus anggota InfiArtt menampilkan ringkasannya saja; bukalah di browser dan masuk untuk membacanya.
+- InfiArtt, organisasi yang membuat add-on ini: Artikel InfiArtt (dari infiartt.com/posts) dan Pusat Pengetahuan InfiArtt (panduan dari infiartt.com/kb). InfiArtt selalu diperiksa dan tidak bisa dimatikan. Aturan umur berita di bawah tidak berlaku untuk InfiArtt: semua artikel dan panduannya ada di daftar, berapa pun umurnya, dan tidak dihapus oleh batas penyimpanan. Artikel khusus anggota InfiArtt menampilkan ringkasannya saja; bukalah di browser dan masuk untuk membacanya.
 
 Berita diambil dari feed RSS situs jika feed-nya terus diperbarui, dan dari halaman kategori jika tidak. Setiap berita tetap di kategori tempat ia tercantum. Berita yang lebih tua dari batas penyimpanan tidak diambil.
 
@@ -46,7 +46,7 @@ Tekan Enter pada berita untuk membacanya.
 
 Di atas daftar ada filter dan pilihan berikut:
 
-- Sumber (Alt+S): tampilkan berita dari satu sumber saja, atau Semua.
+- Sumber (Alt+S): tampilkan berita dari satu sumber saja, atau Semua. InfiArtt ada tepat di bawah Semua.
 - Kategori (Alt+K): tampilkan satu kategori saja, atau Semua.
 - Hanya yang belum dibaca (Alt+B): sembunyikan berita yang sudah dibaca.
 
@@ -106,7 +106,7 @@ Semua pemberitahuan juga tampil di layar braille.
 
 Berita breaking adalah berita tentang bencana dan keadaan darurat. Add-on mengenalinya dari kata utuh di judul: gempa, tsunami, erupsi, meletus, banjir bandang, longsor, kebakaran hutan, bencana, darurat, evakuasi, peringatan dini, bom, teroris, dan "breaking news".
 
-Pemeriksaan pertama setelah add-on dipasang, atau setelah semua berita tersimpan dihapus, tidak mengumumkan berita satu per satu. Berita itu disimpan sebagai sudah dibaca, lalu NVDA mengucapkan satu pesan, misalnya "NusaNews: 450 berita dimuat."
+Pemeriksaan pertama setelah add-on dipasang, atau setelah semua berita tersimpan dihapus, tidak mengumumkan berita satu per satu. Berita itu disimpan sebagai sudah dibaca, lalu NVDA mengucapkan satu pesan, misalnya "NusaNews: 450 berita dimuat." Sumber yang belum punya berita tersimpan, misalnya sumber yang baru Anda aktifkan, juga disimpan diam-diam sebagai sudah dibaca saat pertama kali diambil.
 
 ## Jam sunyi
 
@@ -130,7 +130,7 @@ Buka menu NVDA, Pilihan, Settings, lalu pilih kategori NusaNewsID. Mulai NVDA 20
 - Jumlah berita yang ditampilkan sekaligus: 20, 50, atau 100.
 - Ukuran teks pembaca (persen): 100 sampai 400 persen. Control+tambah dan Control+kurang di pembaca juga mengubahnya.
 - Grup Penyimpanan:
-  - Lama penyimpanan berita (hari): 1 sampai 30 hari. Berita yang lebih lama dihapus setiap kali pemeriksaan selesai.
+  - Lama penyimpanan berita (hari): 1 sampai 30 hari. Berita yang lebih lama dihapus setiap kali pemeriksaan selesai, kecuali artikel dan panduan InfiArtt.
   - Hapus semua berita tersimpan: menghapus semua berita dan isi artikel yang tersimpan, setelah Anda menekan Hapus di dialog konfirmasi. Tindakan ini tidak bisa dibatalkan.
 - Lewati pemeriksaan sertifikat keamanan: pakai hanya jika semua koneksi selalu gagal karena masalah sertifikat di komputer Anda. Pilihan ini membuat koneksi tidak aman.
 - Dukungan dan donasi.

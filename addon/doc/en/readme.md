@@ -11,13 +11,13 @@ The add-on uses NVDA's language. This guide uses the English names of buttons an
 
 ## Sources and categories
 
-There are ten categories: National, International, Technology, Politics, Economy, Sports, Entertainment, Disability, InfiArtt articles and Knowledge base. Not every source has every category, because the add-on only follows sections that the site still updates.
+There are ten categories: National, International, Technology, Politics, Economy, Sports, Entertainment, Disability, InfiArtt articles and InfiArtt knowledge base. Not every source has every category, because the add-on only follows sections that the site still updates.
 
 - Antara, Kompas, Liputan6, Merdeka and CNN Indonesia: every category.
 - Detik: every category except Politics.
 - Republika: National, International, Technology, Economy, Sports and Disability.
 - WinPoin, news about Windows and Microsoft: Technology.
-- InfiArtt, the organization that makes this add-on: InfiArtt articles (from infiartt.com/posts) and Knowledge base (guides from infiartt.com/kb). InfiArtt is always checked and cannot be turned off, so its new articles and guides always reach the news list. Articles only InfiArtt members can read show their summary; open them in the browser and sign in to read them.
+- InfiArtt, the organization that makes this add-on: InfiArtt articles (from infiartt.com/posts) and InfiArtt knowledge base (guides from infiartt.com/kb). InfiArtt is always checked and cannot be turned off. The age rule below does not apply to InfiArtt: all its articles and guides are in the list, however old, and storage never removes them. Articles only InfiArtt members can read show their summary; open them in the browser and sign in to read them.
 
 Stories come from a site's RSS feed when the feed is kept up to date, and from its category pages otherwise. Each story stays in the category it was listed under. Stories older than the storage period are skipped.
 
@@ -46,7 +46,7 @@ Press Enter on a story to read it.
 
 Above the list are these filters:
 
-- Source (Alt+S): show one source only, or All.
+- Source (Alt+S): show one source only, or All. InfiArtt comes right after All.
 - Category (Alt+T): show one category only, or All.
 - Unread only (Alt+U): hide stories you have read.
 
@@ -106,7 +106,7 @@ Every announcement also appears on a braille display.
 
 Breaking news means stories about disasters and emergencies. The add-on recognizes them by whole words in the title: gempa, tsunami, erupsi, meletus, banjir bandang, longsor, kebakaran hutan, bencana, darurat, evakuasi, peringatan dini, bom, teroris and "breaking news".
 
-The first check after installing the add-on, or after deleting every saved story, does not announce stories one by one. It saves them as read, and NVDA says one message, such as "NusaNews: 450 stories loaded."
+The first check after installing the add-on, or after deleting every saved story, does not announce stories one by one. It saves them as read, and NVDA says one message, such as "NusaNews: 450 stories loaded." A source with no saved stories yet, such as one you just turned on, is also saved quietly as read the first time.
 
 ## Quiet hours
 
@@ -130,7 +130,7 @@ Open the NVDA menu, Preferences, Settings, and choose the NusaNewsID category. F
 - Number of stories shown at a time: 20, 50 or 100.
 - Reader text size (percent): 100 to 400 percent. Control+plus and Control+minus in the reader change it too.
 - Storage group:
-  - Keep stories for (days): 1 to 30 days. Older stories are removed after every check.
+  - Keep stories for (days): 1 to 30 days. Older stories are removed after every check, except InfiArtt articles and guides.
   - Delete all saved stories: deletes every saved story and article text after you press Delete in the confirmation dialog. This cannot be undone.
 - Skip security certificate checks: use this only if every connection fails because of a certificate problem on your computer. It makes the connections unsafe.
 - Support and donations.

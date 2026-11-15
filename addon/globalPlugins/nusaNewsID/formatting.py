@@ -65,7 +65,7 @@ def category_label(category: str) -> str:
 		# Translators: a news category: articles published on infiartt.com.
 		"Artikel InfiArtt": _("InfiArtt articles"),
 		# Translators: a news category: guides in the InfiArtt knowledge base.
-		"Pusat Pengetahuan": _("Knowledge base"),
+		"Pusat Pengetahuan": _("InfiArtt knowledge base"),
 	}
 	return labels.get(category, category)
 

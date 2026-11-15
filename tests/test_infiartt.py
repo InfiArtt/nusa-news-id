@@ -14,7 +14,6 @@ NOW = datetime(2026, 11, 15, 8, 0, tzinfo=WIB)
 @pytest.fixture(autouse=True)
 def fixedNow(monkeypatch):
 	monkeypatch.setattr(textUtils, "now", lambda: NOW)
-	monkeypatch.setattr(infiartt, "now", lambda: NOW)
 	monkeypatch.setattr(baseProvider, "now", lambda: NOW)
 
 
@@ -84,6 +83,7 @@ PAGES = {
 
 class FakeInfiArtt(infiartt.InfiArttProvider):
 	def __init__(self):
+		super().__init__()
 		self.requested: list[str] = []
 
 	def _request_http(self, url, bypass_ssl=False, timeout=10):
@@ -91,21 +91,36 @@ class FakeInfiArtt(infiartt.InfiArttProvider):
 		return PAGES.get(url)
 
 
-def test_new_articles_only_and_old_ones_end_the_paging():
+def test_every_article_whatever_its_age():
 	site = FakeInfiArtt()
-	(item,) = site.fetch_news(infiartt.ARTICLES)
-	assert item.title == "NVDA 2026.3 Resmi Rilis"
-	assert item.source == "InfiArtt" and item.category == "Artikel InfiArtt"
-	assert item.published_at == "2026-11-14T07:40:30+07:00"
-	assert item.summary == "Versi baru NVDA."
+	items = site.fetch_news(infiartt.ARTICLES, max_age_days=1)
+	assert [item.title for item in items] == ["NVDA 2026.3 Resmi Rilis", "Artikel lama sekali"]
+	assert items[0].source == "InfiArtt" and items[0].category == "Artikel InfiArtt"
+	assert items[0].published_at == "2026-11-14T07:40:30+07:00"
+	assert items[0].summary == "Versi baru NVDA."
+	# The first check reads every page; page 2 is missing in the fake, which ends it.
+	assert site.requested == [
+		"https://infiartt.com/api/v1/posts?page=1",
+		"https://infiartt.com/api/v1/posts?page=2",
+	]
+
+
+def test_later_checks_stop_at_a_known_article():
+	site = FakeInfiArtt()
+	site.fetch_news(infiartt.ARTICLES)
+	site.requested.clear()
+	site.fetch_news(infiartt.ARTICLES)
 	assert site.requested == ["https://infiartt.com/api/v1/posts?page=1"]
 
 
-def test_knowledge_base_guides_dated_by_the_sitemap():
-	(item,) = FakeInfiArtt().fetch_news(infiartt.KNOWLEDGE_BASE)
-	assert item.title == "Teks Tautan yang Deskriptif"
-	assert item.url == "https://infiartt.com/kb/33/teks-tautan"
-	assert item.published_at == "2026-11-12T00:00:00+07:00"
+def test_every_knowledge_base_guide_whatever_its_age():
+	items = FakeInfiArtt().fetch_news(infiartt.KNOWLEDGE_BASE, max_age_days=1)
+	assert [(item.title, item.published_at) for item in items] == [
+		("Teks Tautan yang Deskriptif", "2026-11-12T00:00:00+07:00"),
+		("Panduan Lama", "2024-01-01T00:00:00+07:00"),
+		("Panduan tanpa tanggal", None),
+	]
+	assert items[0].url == "https://infiartt.com/kb/33/teks-tautan"
 
 
 def test_article_and_guide_text_from_the_api():

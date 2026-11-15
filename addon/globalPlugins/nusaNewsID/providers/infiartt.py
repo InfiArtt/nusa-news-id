@@ -5,22 +5,24 @@
 # Unlike the news sites, InfiArtt has a JSON API (the one InfiApp uses), so this provider reads it
 # instead of pages: /api/v1/posts for articles and /api/v1/kb for the knowledge base. The knowledge base
 # list has no dates, so they come from the sitemap's lastmod.
+# The news sites' rules on age do not apply: every article and guide is listed, however old, and the
+# cache keeps them (prune_cache leaves the always-on sources alone).
 
 import html
 import json
 import re
-from datetime import datetime, timedelta
+from datetime import datetime
 
 from ..models import NewsItem
 from .articleContent import Article, parse_blocks
 from .baseProvider import BaseProvider, CategorySource
-from .textUtils import clean_title, is_breaking, now, parse_date
+from .textUtils import clean_title, is_breaking, parse_date
 
 SITE = "https://infiartt.com"
 ARTICLES = "Artikel InfiArtt"
 KNOWLEDGE_BASE = "Pusat Pengetahuan"
-# Article pages to read per check; the API gives 10 articles per page.
-MAX_PAGES = 3
+# A limit on article pages per check, in case the API keeps saying there are more; it gives 10 per page.
+MAX_PAGES = 100
 
 
 class InfiArttProvider(BaseProvider):
@@ -33,12 +35,17 @@ class InfiArttProvider(BaseProvider):
 		KNOWLEDGE_BASE: CategorySource(rss=f"{SITE}/api/v1/kb"),
 	}
 
+	def __init__(self) -> None:
+		# Article addresses already listed by this provider since NVDA started. The first check reads
+		# every page; later checks stop at the first page with an article seen before.
+		self._known_articles: set[str] = set()
+
 	def fetch_news(self, category: str, bypass_ssl: bool = False, max_age_days: int = 7) -> list[NewsItem]:
-		oldest = now() - timedelta(days=max_age_days)
+		"""Every article or guide; max_age_days is ignored for InfiArtt."""
 		if category == ARTICLES:
-			return self._articles(bypass_ssl, oldest)
+			return self._articles(bypass_ssl)
 		if category == KNOWLEDGE_BASE:
-			return self._knowledge_base(bypass_ssl, oldest)
+			return self._knowledge_base(bypass_ssl)
 		return []
 
 	def _json(self, url: str, bypass_ssl: bool) -> dict | None:
@@ -68,7 +75,7 @@ class InfiArttProvider(BaseProvider):
 			is_breaking=is_breaking(title),
 		)
 
-	def _articles(self, bypass_ssl: bool, oldest: datetime) -> list[NewsItem]:
+	def _articles(self, bypass_ssl: bool) -> list[NewsItem]:
 		items: list[NewsItem] = []
 		for page in range(1, MAX_PAGES + 1):
 			if self._stopped():
@@ -76,22 +83,22 @@ class InfiArttProvider(BaseProvider):
 			data = self._json(f"{SITE}/api/v1/posts?page={page}", bypass_ssl)
 			if not data:
 				break
-			reached_old = False
+			reached_known = False
 			for post in data.get("items", []):
-				published = parse_date(post.get("published_at"))
-				if published is not None and published < oldest:
-					reached_old = True
+				if not (post.get("title") and post.get("url")):
 					continue
-				if post.get("title") and post.get("url"):
-					items.append(
-						self._item(post["title"], post["url"], ARTICLES, published, post.get("excerpt"))
-					)
-			# The API lists the newest first, so an old article means the rest are older still.
-			if reached_old or not data.get("has_more"):
+				if post["url"] in self._known_articles:
+					reached_known = True
+				published = parse_date(post.get("published_at"))
+				items.append(self._item(post["title"], post["url"], ARTICLES, published, post.get("excerpt")))
+			# The API lists the newest first: after a page with a known article, the rest are known too.
+			if reached_known or not data.get("has_more"):
 				break
+		if not self._stopped():
+			self._known_articles.update(item.url for item in items)
 		return items
 
-	def _knowledge_base(self, bypass_ssl: bool, oldest: datetime) -> list[NewsItem]:
+	def _knowledge_base(self, bypass_ssl: bool) -> list[NewsItem]:
 		tree = self._json(f"{SITE}/api/v1/kb", bypass_ssl)
 		if not tree:
 			return []
@@ -107,9 +114,7 @@ class InfiArttProvider(BaseProvider):
 		items: list[NewsItem] = []
 		for node in _leaves(tree.get("items", [])):
 			url, updated = pages.get(node["id"], (f"{SITE}/kb/{node['id']}", None))
-			# Without a date it cannot be told from an old guide, so it waits until the sitemap lists it.
-			if updated is None or updated < oldest:
-				continue
+			# A guide the sitemap does not list yet has no date; the list then shows when it was found.
 			items.append(self._item(node["title"], url, KNOWLEDGE_BASE, updated, None))
 		return items
 

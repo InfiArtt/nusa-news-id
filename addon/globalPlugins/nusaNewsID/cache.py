@@ -147,10 +147,18 @@ def is_empty() -> bool:
 	return not _data()
 
 
-def save_news_items(items: list[NewsItem], mark_seen: bool = False) -> list[NewsItem]:
+def sources() -> set[str]:
+	"""The sources that have at least one saved story."""
+	return {val.get("source", "") for val in _data().values()}
+
+
+def save_news_items(
+	items: list[NewsItem], mark_seen: bool = False, quiet_sources: set[str] | None = None
+) -> list[NewsItem]:
 	"""Add the stories not cached yet and return them. A story found again in another category gets it too.
 
-	mark_seen saves the new stories as read, for the first fill of an empty cache.
+	mark_seen saves every new story as read, for the first fill of an empty cache; quiet_sources does the
+	same for the stories of those sources only (a source's first fill).
 	"""
 	stories = _data()
 	new_items: list[NewsItem] = []
@@ -168,7 +176,7 @@ def save_news_items(items: list[NewsItem], mark_seen: bool = False) -> list[News
 					"summary": item.summary,
 					"published_at": item.published_at,
 					"is_breaking": item.is_breaking,
-					"seen": mark_seen,
+					"seen": mark_seen or item.source in (quiet_sources or ()),
 					"cached_at": now_str,
 				}
 				new_items.append(item)
@@ -263,12 +271,17 @@ def get_unread_count() -> int:
 	return sum(1 for val in _data().values() if not val.get("seen", False))
 
 
-def prune_cache(retention_days: int) -> None:
-	"""Remove stories found more than retention_days ago, with their saved article texts."""
+def prune_cache(retention_days: int, keep_sources: tuple[str, ...] = ()) -> None:
+	"""Remove stories found more than retention_days ago, with their saved article texts.
+
+	Stories of keep_sources (InfiArtt, which lists its whole archive) are never removed.
+	"""
 	cutoff = datetime.datetime.now().astimezone() - datetime.timedelta(days=retention_days)
 	stories = _data()
 	to_delete = []
 	for guid, val in stories.items():
+		if val.get("source") in keep_sources:
+			continue
 		cached_at = parse_iso(val.get("cached_at"))
 		if cached_at is not None and cached_at < cutoff:
 			to_delete.append(guid)

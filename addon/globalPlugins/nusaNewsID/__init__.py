@@ -19,7 +19,7 @@ from scriptHandler import script
 from . import cache, config
 from .configSpec import DATA_VERSION
 from .notificationManager import NotificationManager
-from .providers.sourceManager import SourceManager
+from .providers.sourceManager import ALWAYS_ON_SOURCES, SourceManager
 
 addonHandler.initTranslation()
 
@@ -97,7 +97,7 @@ class GlobalPlugin(globalPluginHandler.GlobalPlugin):
 		self.settings = config.read_settings()
 		cache.init_db()
 		self._upgrade_saved_data()
-		cache.prune_cache(self.settings["cache_duration"])
+		cache.prune_cache(self.settings["cache_duration"], keep_sources=ALWAYS_ON_SOURCES)
 
 		import gui
 
@@ -156,11 +156,18 @@ class GlobalPlugin(globalPluginHandler.GlobalPlugin):
 			# A check from a thread that was stopped meanwhile, for example while add-ons were reloaded.
 			return
 		try:
-			cache.prune_cache(self.settings["cache_duration"])
+			cache.prune_cache(self.settings["cache_duration"], keep_sources=ALWAYS_ON_SOURCES)
 			# The first fill of an empty cache (new install, or after clearing it) is saved as read and
-			# not announced story by story: all of them would be "new".
+			# not announced story by story: all of them would be "new". The same goes for a source with no
+			# saved story yet, such as one just turned on, or InfiArtt with its whole archive.
 			first_fill = cache.is_empty()
-			new_items = cache.save_news_items(items, mark_seen=first_fill) if items else []
+			cached_sources = cache.sources()
+			quiet_sources = {item.source for item in items} - cached_sources
+			new_items = (
+				cache.save_news_items(items, mark_seen=first_fill, quiet_sources=quiet_sources)
+				if items
+				else []
+			)
 		except Exception:
 			logHandler.log.exception("NusaNews: Saving the stories failed.")
 			return
@@ -188,7 +195,9 @@ class GlobalPlugin(globalPluginHandler.GlobalPlugin):
 				# Translators: said when a check started with the Refresh button finds nothing new.
 				ui.message(_("Done, no new stories."))
 		elif new_items:
-			self.notification_manager.notify_new_items(new_items)
+			announced = [item for item in new_items if item.source not in quiet_sources]
+			if announced:
+				self.notification_manager.notify_new_items(announced)
 		if new_items:
 			from .gui import refresh_active_dialog
 

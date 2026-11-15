@@ -1,13 +1,18 @@
 """The global plugin: secure screens, refresh results and stale checks."""
 
 import sys
-from types import ModuleType
+from types import ModuleType, SimpleNamespace
 
 import nusaNewsID
 import nvda_mocks
 import pytest
 from nusaNewsID import cache
 from poFile import translated
+
+
+def _stories(count: int) -> list:
+	"""Stand-ins for NewsItems from a source that already has saved stories."""
+	return [SimpleNamespace(source="Detik") for _ in range(count)]
 
 
 @pytest.fixture
@@ -39,35 +44,42 @@ def plugin(monkeypatch, securePlugin):
 	monkeypatch.setitem(sys.modules, "nusaNewsID.gui", fakeGui)
 	securePlugin.refreshed = refreshed
 	securePlugin.settings = {"cache_duration": 7}
-	monkeypatch.setattr(cache, "prune_cache", lambda days: None)
+	monkeypatch.setattr(cache, "prune_cache", lambda days, keep_sources=(): None)
 	monkeypatch.setattr(cache, "is_empty", lambda: False)
+	monkeypatch.setattr(cache, "sources", lambda: {"Detik", "InfiArtt"})
 	nvda_mocks.spoken.clear()
 	with translated("id"):
 		yield securePlugin
 
 
 def test_manual_refresh_reports_new_stories(plugin, monkeypatch):
-	monkeypatch.setattr(cache, "save_news_items", lambda items, mark_seen=False: items[:2])
+	monkeypatch.setattr(
+		cache, "save_news_items", lambda items, mark_seen=False, quiet_sources=None: items[:2]
+	)
 	assert plugin.request_refresh()
-	plugin.on_check_finished(plugin.monitor_thread, ["a", "b", "c"])
+	plugin.on_check_finished(plugin.monitor_thread, _stories(3))
 	assert nvda_mocks.spoken == ["Selesai, 2 berita baru."]
 	assert plugin.refreshed == [True]
 
 
 def test_manual_refresh_reports_nothing_new(plugin, monkeypatch):
-	monkeypatch.setattr(cache, "save_news_items", lambda items, mark_seen=False: [])
+	monkeypatch.setattr(cache, "save_news_items", lambda items, mark_seen=False, quiet_sources=None: [])
 	plugin.request_refresh()
-	plugin.on_check_finished(plugin.monitor_thread, ["a"])
+	plugin.on_check_finished(plugin.monitor_thread, _stories(1))
 	assert nvda_mocks.spoken == ["Selesai, tidak ada berita baru."]
 
 
 def test_check_from_a_stopped_thread_is_ignored(plugin, monkeypatch):
 	saved = []
-	monkeypatch.setattr(cache, "save_news_items", lambda items, mark_seen=False: saved.append(items) or items)
+	monkeypatch.setattr(
+		cache,
+		"save_news_items",
+		lambda items, mark_seen=False, quiet_sources=None: saved.append(items) or items,
+	)
 	oldThread = nusaNewsID.MonitorThread(plugin)
-	plugin.on_check_finished(oldThread, ["a"])
+	plugin.on_check_finished(oldThread, _stories(1))
 	plugin.monitor_thread.stop()
-	plugin.on_check_finished(plugin.monitor_thread, ["a"])
+	plugin.on_check_finished(plugin.monitor_thread, _stories(1))
 	assert saved == []
 	assert nvda_mocks.spoken == []
 
@@ -76,9 +88,11 @@ def test_first_fill_is_saved_as_read_and_announced_once(plugin, monkeypatch):
 	calls = []
 	monkeypatch.setattr(cache, "is_empty", lambda: True)
 	monkeypatch.setattr(
-		cache, "save_news_items", lambda items, mark_seen=False: calls.append(mark_seen) or items
+		cache,
+		"save_news_items",
+		lambda items, mark_seen=False, quiet_sources=None: calls.append(mark_seen) or items,
 	)
 	plugin.request_refresh()
-	plugin.on_check_finished(plugin.monitor_thread, ["a", "b", "c"])
+	plugin.on_check_finished(plugin.monitor_thread, _stories(3))
 	assert calls == [True]
 	assert nvda_mocks.spoken == ["NusaNews: 3 berita dimuat."]

@@ -38,8 +38,8 @@ def _notification_mode_labels() -> list[str]:
 
 
 def _listed_sources() -> list[str]:
-	"""The sources of the news list's filter: the enabled ones, then InfiArtt, which is always on."""
-	return config.read_settings()["enabled_sources"] + list(ALWAYS_ON_SOURCES)
+	"""The sources of the news list's filter: InfiArtt first, as it is always on, then the enabled ones."""
+	return list(ALWAYS_ON_SOURCES) + config.read_settings()["enabled_sources"]
 
 
 def _all_label() -> str:

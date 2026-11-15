@@ -123,3 +123,42 @@ def test_list_is_newest_first_without_a_500_limit(folder):
 	items = cache.get_news_items(["Detik"], ["Nasional"])
 	assert len(items) == 600
 	assert items[0].title == "Berita nomor 599"
+
+
+def test_prune_keeps_the_always_on_sources(folder):
+	cache.init_db()
+	infiartt = NewsItem(
+		title="Panduan lama InfiArtt",
+		source="InfiArtt",
+		url="https://infiartt.com/kb/1",
+		guid="https://infiartt.com/kb/1",
+		category="Pusat Pengetahuan",
+	)
+	cache.save_news_items([_item(1), infiartt])
+	for val in cache._stories.values():
+		val["cached_at"] = "2020-01-01T00:00:00"
+	cache.prune_cache(7, keep_sources=("InfiArtt",))
+	assert [
+		item.guid for item in cache.get_news_items(["Detik", "InfiArtt"], ["Nasional", "Pusat Pengetahuan"])
+	] == ["https://infiartt.com/kb/1"]
+
+
+def test_a_new_source_is_saved_quietly(folder):
+	cache.init_db()
+	cache.save_news_items([_item(1)])
+	infiartt = NewsItem(
+		title="Artikel InfiArtt",
+		source="InfiArtt",
+		url="https://infiartt.com/a",
+		guid="https://infiartt.com/a",
+		category="Artikel InfiArtt",
+	)
+	assert cache.sources() == {"Detik"}
+	cache.save_news_items([_item(2), infiartt], quiet_sources={"InfiArtt"})
+	unread = {
+		item.guid
+		for item in cache.get_news_items(
+			["Detik", "InfiArtt"], ["Nasional", "Artikel InfiArtt"], filter_unread_only=True
+		)
+	}
+	assert unread == {"https://news.example/1", "https://news.example/2"}
