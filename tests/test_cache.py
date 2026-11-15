@@ -5,6 +5,7 @@ import json
 import pytest
 from nusaNewsID import cache
 from nusaNewsID.models import NewsItem
+from nusaNewsID.providers.articleContent import Article, blocks_from_text
 
 
 @pytest.fixture
@@ -83,7 +84,7 @@ def test_old_file_loads_and_moves_article_text_out(folder):
 		encoding="utf-8",
 	)
 	cache.init_db()
-	assert cache.get_article_content("https://news.example/1") == "Isi artikel lama."
+	assert cache.get_article("https://news.example/1").text == "Isi artikel lama."
 	(item,) = cache.get_news_items(["Detik"], ["Nasional"])
 	assert item.published_at == "2026-11-14T22:00:00+07:00"
 	cache.flush()
@@ -96,20 +97,20 @@ def test_prune_removes_old_stories_and_their_articles(folder):
 	cache.init_db()
 	cache.save_news_items([_item(1), _item(2)])
 	cache._stories["https://news.example/1"]["cached_at"] = "2020-01-01T00:00:00"
-	cache.update_article_content("https://news.example/1", "Isi.")
+	cache.update_article("https://news.example/1", Article(blocks=blocks_from_text("Isi.")))
 	cache.prune_cache(7)
 	assert [item.guid for item in cache.get_news_items(["Detik"], ["Nasional"])] == ["https://news.example/2"]
-	assert cache.get_article_content("https://news.example/1") is None
+	assert cache.get_article("https://news.example/1") is None
 
 
 def test_clear_removes_everything(folder):
 	cache.init_db()
 	cache.save_news_items([_item(1)])
-	cache.update_article_content("https://news.example/1", "Isi.")
+	cache.update_article("https://news.example/1", Article(blocks=blocks_from_text("Isi.")))
 	cache.clear_cache()
 	assert cache.is_empty()
 	assert _file(folder) == {}
-	assert cache.get_article_content("https://news.example/1") is None
+	assert cache.get_article("https://news.example/1") is None
 
 
 def test_list_is_newest_first_without_a_500_limit(folder):
@@ -122,3 +123,106 @@ def test_list_is_newest_first_without_a_500_limit(folder):
 	items = cache.get_news_items(["Detik"], ["Nasional"])
 	assert len(items) == 600
 	assert items[0].title == "Berita nomor 599"
+
+
+def test_prune_keeps_the_always_on_sources(folder):
+	cache.init_db()
+	infiartt = NewsItem(
+		title="Panduan lama InfiArtt",
+		source="InfiArtt",
+		url="https://infiartt.com/kb/1",
+		guid="https://infiartt.com/kb/1",
+		category="Pusat Pengetahuan",
+	)
+	cache.save_news_items([_item(1), infiartt])
+	for val in cache._stories.values():
+		val["cached_at"] = "2020-01-01T00:00:00"
+	cache.prune_cache(7, keep_sources=("InfiArtt",))
+	assert [
+		item.guid for item in cache.get_news_items(["Detik", "InfiArtt"], ["Nasional", "Pusat Pengetahuan"])
+	] == ["https://infiartt.com/kb/1"]
+
+
+def test_a_new_source_is_saved_quietly(folder):
+	cache.init_db()
+	cache.save_news_items([_item(1)])
+	infiartt = NewsItem(
+		title="Artikel InfiArtt",
+		source="InfiArtt",
+		url="https://infiartt.com/a",
+		guid="https://infiartt.com/a",
+		category="Artikel InfiArtt",
+	)
+	assert cache.sources() == {"Detik"}
+	cache.save_news_items([_item(2), infiartt], quiet_sources={"InfiArtt"})
+	unread = {
+		item.guid
+		for item in cache.get_news_items(
+			["Detik", "InfiArtt"], ["Nasional", "Artikel InfiArtt"], filter_unread_only=True
+		)
+	}
+	assert unread == {"https://news.example/1", "https://news.example/2"}
+
+
+def test_author_is_saved_and_filled_in_later(folder):
+	cache.init_db()
+	cache.save_news_items([_item(1)])
+	with_author = NewsItem(
+		title="Berita nomor 1",
+		source="Detik",
+		url="https://news.example/1",
+		guid="https://news.example/1",
+		category="Nasional",
+		author="Rexya",
+	)
+	assert cache.save_news_items([with_author]) == []
+	(item,) = cache.get_news_items(["Detik"], ["Nasional"])
+	assert item.author == "Rexya"
+
+
+def test_always_on_sources_are_refreshed_from_their_api(folder):
+	cache.init_db()
+	old = NewsItem(
+		title="Panduan",
+		source="InfiArtt",
+		url="https://infiartt.com/kb/1",
+		guid="https://infiartt.com/kb/1",
+		category="Pusat Pengetahuan",
+		published_at="2026-11-12T00:00:00+07:00",
+	)
+	cache.save_news_items([old])
+	new = NewsItem(
+		title="Panduan baru",
+		source="InfiArtt",
+		url="https://infiartt.com/kb/1",
+		guid="https://infiartt.com/kb/1",
+		category="Pusat Pengetahuan",
+		published_at="2026-11-12T10:00:00+07:00",
+		author="zeus",
+	)
+	cache.save_news_items([new], refresh_sources=("InfiArtt",))
+	(item,) = cache.get_news_items(["InfiArtt"], ["Pusat Pengetahuan"])
+	assert (item.title, item.published_at, item.author) == (
+		"Panduan baru",
+		"2026-11-12T10:00:00+07:00",
+		"zeus",
+	)
+
+
+def test_saved_article_keeps_its_blocks_and_older_formats_are_outdated(folder):
+	cache.init_db()
+	cache.save_news_items([_item(1)])
+	guid = "https://news.example/1"
+	cache.update_article(guid, Article(blocks=blocks_from_text("Isi satu.\n\nIsi dua."), author="Rexya"))
+	saved = cache.get_article(guid)
+	assert [block.text for block in saved.blocks] == ["Isi satu.", "Isi dua."]
+	assert saved.author == "Rexya" and not saved.outdated
+	# An article saved before every page was read: still readable, but downloaded again when opened.
+	path = cache._article_path(guid)
+	with open(path, encoding="utf-8") as f:
+		data = json.load(f)
+	del data["format"]
+	with open(path, "w", encoding="utf-8") as f:
+		json.dump(data, f)
+	old = cache.get_article(guid)
+	assert old.outdated and [block.text for block in old.blocks] == ["Isi satu.", "Isi dua."]

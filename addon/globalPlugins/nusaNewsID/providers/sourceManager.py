@@ -12,6 +12,7 @@ from .antara import AntaraProvider
 from .baseProvider import BaseProvider
 from .cnn import CNNProvider
 from .detik import DetikProvider
+from .infiartt import InfiArttProvider
 from .kompas import KompasProvider
 from .liputan6 import Liputan6Provider
 from .merdeka import MerdekaProvider
@@ -30,6 +31,10 @@ PROVIDER_CLASSES: tuple[type[BaseProvider], ...] = (
 	WinPoinProvider,
 )
 
+# Sources that are always checked and cannot be turned off: InfiArtt makes this add-on.
+ALWAYS_ON_CLASSES: tuple[type[BaseProvider], ...] = (InfiArttProvider,)
+ALWAYS_ON_SOURCES: tuple[str, ...] = tuple(provider.source_name for provider in ALWAYS_ON_CLASSES)
+
 # The categories, in the order the news list offers them. Their names are stored in the cache.
 CATEGORIES: tuple[str, ...] = (
 	"Nasional",
@@ -40,11 +45,21 @@ CATEGORIES: tuple[str, ...] = (
 	"Olahraga",
 	"Entertainment",
 	"Disabilitas",
+	"Artikel InfiArtt",
+	"Pusat Pengetahuan",
 )
 
-# The source names that can be enabled.
+# The source names that can be turned on and off in the settings.
 # Names saved by older versions that are not here, such as Tempo and MacPoin, are ignored.
 SOURCE_NAMES: tuple[str, ...] = tuple(provider.source_name for provider in PROVIDER_CLASSES)
+
+
+def provider_for(source_name: str) -> BaseProvider:
+	"""A new provider for a source name, for downloading one article. Unknown names get the generic one."""
+	for provider_class in PROVIDER_CLASSES + ALWAYS_ON_CLASSES:
+		if provider_class.source_name == source_name:
+			return provider_class()
+	return BaseProvider()
 
 
 class SourceManager:
@@ -53,7 +68,7 @@ class SourceManager:
 	def __init__(self, stop_event: threading.Event | None = None):
 		self.stop_event = stop_event
 		self.providers: dict[str, BaseProvider] = {}
-		for provider_class in PROVIDER_CLASSES:
+		for provider_class in PROVIDER_CLASSES + ALWAYS_ON_CLASSES:
 			provider = provider_class()
 			provider.stop_event = stop_event
 			self.providers[provider.source_name] = provider
@@ -65,13 +80,18 @@ class SourceManager:
 		bypass_ssl: bool = False,
 		max_age_days: int = 7,
 	) -> list[NewsItem]:
-		"""Fetch every enabled source and category. Stops early when the stop event is set."""
+		"""Fetch every enabled source and category, and every category of the always-on sources.
+
+		Stops early when the stop event is set.
+		"""
 		aggregated_news: list[NewsItem] = []
-		for source_name in enabled_sources:
+		jobs = [(name, enabled_categories) for name in enabled_sources if name not in ALWAYS_ON_SOURCES]
+		jobs += [(name, list(self.providers[name].categories)) for name in ALWAYS_ON_SOURCES]
+		for source_name, categories in jobs:
 			provider = self.providers.get(source_name)
 			if provider is None:
 				continue
-			for category in enabled_categories:
+			for category in categories:
 				if self.stop_event is not None and self.stop_event.is_set():
 					return aggregated_news
 				try:

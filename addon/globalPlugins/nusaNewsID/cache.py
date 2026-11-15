@@ -20,10 +20,19 @@ import logHandler
 
 from .formatting import parse_iso, story_time
 from .models import NewsItem
+from .providers.articleContent import (
+	Article,
+	blocks_from_json,
+	blocks_from_text,
+	blocks_to_json,
+	parse_blocks,
+)
 from .providers.textUtils import is_breaking, parse_date
 
 CACHE_FILE = "nusaNewsCache.json"
 ARTICLES_DIR = "articles"
+# Format of saved articles. 2: blocks, and every page of articles split over several pages.
+ARTICLE_FORMAT = 2
 SAVE_DELAY_SECONDS = 2.0
 
 _stories: dict[str, dict] | None = None
@@ -53,9 +62,10 @@ def get_cache_path() -> str:
 	return os.path.join(cache_dir, CACHE_FILE)
 
 
-def _article_path(guid: str) -> str:
+def _article_path(guid: str, extension: str = "json") -> str:
+	"""Articles are saved as JSON (structure and language); version 1.1.0 drafts saved plain .txt."""
 	name = hashlib.sha1(guid.encode("utf-8")).hexdigest()
-	return os.path.join(get_cache_dir(), ARTICLES_DIR, f"{name}.txt")
+	return os.path.join(get_cache_dir(), ARTICLES_DIR, f"{name}.{extension}")
 
 
 def init_db() -> None:
@@ -80,7 +90,7 @@ def init_db() -> None:
 			changed = True
 		content = val.pop("content", None)
 		if content:
-			_write_article(guid, content)
+			_write_article(guid, Article(blocks=blocks_from_text(content)))
 			changed = True
 	with _lock:
 		_stories = stories
@@ -145,10 +155,22 @@ def is_empty() -> bool:
 	return not _data()
 
 
-def save_news_items(items: list[NewsItem], mark_seen: bool = False) -> list[NewsItem]:
+def sources() -> set[str]:
+	"""The sources that have at least one saved story."""
+	return {val.get("source", "") for val in _data().values()}
+
+
+def save_news_items(
+	items: list[NewsItem],
+	mark_seen: bool = False,
+	quiet_sources: set[str] | None = None,
+	refresh_sources: tuple[str, ...] = (),
+) -> list[NewsItem]:
 	"""Add the stories not cached yet and return them. A story found again in another category gets it too.
 
-	mark_seen saves the new stories as read, for the first fill of an empty cache.
+	mark_seen saves every new story as read, for the first fill of an empty cache; quiet_sources does the
+	same for the stories of those sources only (a source's first fill). For refresh_sources (InfiArtt, whose
+	API is the source of truth), saved stories take the title, time, summary and author found now.
 	"""
 	stories = _data()
 	new_items: list[NewsItem] = []
@@ -166,12 +188,27 @@ def save_news_items(items: list[NewsItem], mark_seen: bool = False) -> list[News
 					"summary": item.summary,
 					"published_at": item.published_at,
 					"is_breaking": item.is_breaking,
-					"seen": mark_seen,
+					"author": item.author,
+					"seen": mark_seen or item.source in (quiet_sources or ()),
 					"cached_at": now_str,
 				}
 				new_items.append(item)
 				changed = True
 				continue
+			if item.source in refresh_sources:
+				for field_name, value in (
+					("title", item.title),
+					("published_at", item.published_at),
+					("summary", item.summary),
+					("author", item.author),
+				):
+					if value and entry.get(field_name) != value:
+						entry[field_name] = value
+						changed = True
+			if item.author and not entry.get("author"):
+				# Stories saved before the author was read get it the next time they are found.
+				entry["author"] = item.author
+				changed = True
 			categories = [c.strip() for c in entry.get("category", "").split(",") if c.strip()]
 			if item.category not in categories:
 				categories.append(item.category)
@@ -212,6 +249,7 @@ def get_news_items(
 				is_breaking=is_breaking(title),
 				seen=seen,
 				found_at=val.get("cached_at"),
+				author=val.get("author"),
 			)
 		)
 	# Newest first, by publication time, or by when the add-on found the story if the site gives no time.
@@ -261,12 +299,17 @@ def get_unread_count() -> int:
 	return sum(1 for val in _data().values() if not val.get("seen", False))
 
 
-def prune_cache(retention_days: int) -> None:
-	"""Remove stories found more than retention_days ago, with their saved article texts."""
+def prune_cache(retention_days: int, keep_sources: tuple[str, ...] = ()) -> None:
+	"""Remove stories found more than retention_days ago, with their saved article texts.
+
+	Stories of keep_sources (InfiArtt, which lists its whole archive) are never removed.
+	"""
 	cutoff = datetime.datetime.now().astimezone() - datetime.timedelta(days=retention_days)
 	stories = _data()
 	to_delete = []
 	for guid, val in stories.items():
+		if val.get("source") in keep_sources:
+			continue
 		cached_at = parse_iso(val.get("cached_at"))
 		if cached_at is not None and cached_at < cutoff:
 			to_delete.append(guid)
@@ -276,17 +319,39 @@ def prune_cache(retention_days: int) -> None:
 		for guid in to_delete:
 			del stories[guid]
 	for guid in to_delete:
-		with contextlib.suppress(FileNotFoundError):
-			os.remove(_article_path(guid))
+		for extension in ("json", "txt"):
+			with contextlib.suppress(FileNotFoundError):
+				os.remove(_article_path(guid, extension))
 	_schedule_save()
 	logHandler.log.info(f"NusaNews: Removed {len(to_delete)} stories older than {retention_days} days.")
 
 
-def get_article_content(guid: str) -> str | None:
-	"""The saved text of an article, or None when it was never downloaded."""
+def get_article(guid: str) -> Article | None:
+	"""The saved article, or None when it was never downloaded."""
 	try:
 		with open(_article_path(guid), encoding="utf-8") as f:
-			return f.read()
+			saved = json.load(f)
+		# Articles saved before blocks were kept have their HTML instead.
+		if isinstance(saved.get("blocks"), list):
+			blocks = blocks_from_json(saved["blocks"])
+		else:
+			blocks = parse_blocks(saved.get("html", ""), "", whole_document=True)
+		return Article(
+			blocks=blocks,
+			language=saved.get("language") or "id",
+			locked_note=saved.get("locked_note"),
+			summary=saved.get("summary"),
+			author=saved.get("author"),
+			outdated=saved.get("format", 1) < ARTICLE_FORMAT,
+		)
+	except FileNotFoundError:
+		pass
+	except Exception:
+		logHandler.log.exception("NusaNews: Reading a saved article failed.")
+		return None
+	try:
+		with open(_article_path(guid, "txt"), encoding="utf-8") as f:
+			return Article(blocks=blocks_from_text(f.read()), outdated=True)
 	except FileNotFoundError:
 		return None
 	except Exception:
@@ -294,20 +359,42 @@ def get_article_content(guid: str) -> str | None:
 		return None
 
 
-def _write_article(guid: str, content: str) -> None:
+def _write_article(guid: str, article: Article) -> None:
 	path = _article_path(guid)
+	saved = {
+		"blocks": blocks_to_json(article.blocks),
+		"language": article.language,
+		"locked_note": article.locked_note,
+		"summary": article.summary,
+		"author": article.author,
+		"format": ARTICLE_FORMAT,
+	}
 	try:
 		os.makedirs(os.path.dirname(path), exist_ok=True)
 		with open(path, "w", encoding="utf-8") as f:
-			f.write(content)
+			json.dump(saved, f, ensure_ascii=False)
+		with contextlib.suppress(FileNotFoundError):
+			os.remove(_article_path(guid, "txt"))
 	except Exception:
 		logHandler.log.exception("NusaNews: Saving an article failed.")
 
 
-def update_article_content(guid: str, content: str) -> None:
-	"""Save a downloaded article's text, for reading it again without the network."""
-	if guid in _data():
-		_write_article(guid, content)
+def update_article(guid: str, article: Article) -> bool:
+	"""Save a downloaded article, for reading it again without the network.
+
+	A writer named in the article becomes the story's author when the story has none.
+	True when that changed the story.
+	"""
+	story = _data().get(guid)
+	if story is None:
+		return False
+	_write_article(guid, article)
+	if article.author and not story.get("author"):
+		with _lock:
+			story["author"] = article.author
+		_schedule_save()
+		return True
+	return False
 
 
 def clear_cache() -> None:

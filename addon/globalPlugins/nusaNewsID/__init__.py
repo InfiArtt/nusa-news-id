@@ -6,6 +6,7 @@
 # and everything that touches the cache, wx or speech runs on the main thread through wx.CallAfter.
 
 import contextlib
+import random
 import threading
 
 import addonHandler
@@ -19,7 +20,7 @@ from scriptHandler import script
 from . import cache, config
 from .configSpec import DATA_VERSION
 from .notificationManager import NotificationManager
-from .providers.sourceManager import SourceManager
+from .providers.sourceManager import ALWAYS_ON_SOURCES, SourceManager
 
 addonHandler.initTranslation()
 
@@ -27,6 +28,10 @@ addonHandler.initTranslation()
 addon_instance = None
 
 STARTUP_DELAY_SECONDS = 5.0
+# When the donation reminder is on: first shown this many minutes after NVDA starts, then again after the
+# second range, as in Emoji ID.
+FIRST_REMINDER_MINUTES = (20, 45)
+NEXT_REMINDER_MINUTES = (90, 180)
 
 
 class MonitorThread(threading.Thread):
@@ -87,6 +92,8 @@ class GlobalPlugin(globalPluginHandler.GlobalPlugin):
 		self.notification_manager = NotificationManager()
 		self._manual_refresh_pending = False
 		self.settings: dict = {}
+		self._update_timer: wx.CallLater | None = None
+		self._reminder_timer: wx.CallLater | None = None
 		# No network access, settings panel or reader on secure screens such as the sign-in screen.
 		if globalVars.appArgs.secure:
 			logHandler.log.debug("NusaNews: Secure screen, the add-on stays inactive.")
@@ -97,7 +104,7 @@ class GlobalPlugin(globalPluginHandler.GlobalPlugin):
 		self.settings = config.read_settings()
 		cache.init_db()
 		self._upgrade_saved_data()
-		cache.prune_cache(self.settings["cache_duration"])
+		cache.prune_cache(self.settings["cache_duration"], keep_sources=ALWAYS_ON_SOURCES)
 
 		import gui
 
@@ -107,10 +114,50 @@ class GlobalPlugin(globalPluginHandler.GlobalPlugin):
 
 		self.monitor_thread = MonitorThread(self)
 		self.monitor_thread.start()
+		wx.CallAfter(self._after_start)
+
+	def _after_start(self) -> None:
+		"""The welcome if the installer could not show it, the update check and the donation reminder."""
+		if addon_instance is not self:
+			return
+		if config.get_config_val("first_run"):
+			config.set_config_val("first_run", False)
+			from . import donation
+
+			wx.CallAfter(donation.show_welcome)
+		from . import updateCheck
+
+		self._update_timer = updateCheck.schedule_auto_check()
+		self.schedule_reminder(*FIRST_REMINDER_MINUTES)
+
+	def schedule_reminder(self, min_minutes: int = 0, max_minutes: int = 0) -> None:
+		"""Show the donation reminder after a while, when it is turned on. Main thread only."""
+		if self._reminder_timer is not None:
+			self._reminder_timer.Stop()
+			self._reminder_timer = None
+		if addon_instance is not self or not config.get_config_val("donation_reminder"):
+			return
+		if not max_minutes:
+			min_minutes, max_minutes = FIRST_REMINDER_MINUTES
+		delay = random.randint(min_minutes * 60000, max_minutes * 60000)
+		self._reminder_timer = wx.CallLater(delay, self._on_reminder_due)
+
+	def _on_reminder_due(self) -> None:
+		self._reminder_timer = None
+		if addon_instance is not self or not config.get_config_val("donation_reminder"):
+			return
+		from . import donation
+
+		donation.show_reminder()
+		self.schedule_reminder(*NEXT_REMINDER_MINUTES)
 
 	def terminate(self, *args, **kwargs):
 		"""Stop the thread without waiting for a request to finish, and remove the settings panel."""
 		global addon_instance
+		for timer in (self._update_timer, self._reminder_timer):
+			if timer is not None and timer.IsRunning():
+				timer.Stop()
+		self._update_timer = self._reminder_timer = None
 		if self.monitor_thread is not None:
 			self.monitor_thread.stop()
 			self.monitor_thread.join(timeout=1.0)
@@ -156,11 +203,23 @@ class GlobalPlugin(globalPluginHandler.GlobalPlugin):
 			# A check from a thread that was stopped meanwhile, for example while add-ons were reloaded.
 			return
 		try:
-			cache.prune_cache(self.settings["cache_duration"])
+			cache.prune_cache(self.settings["cache_duration"], keep_sources=ALWAYS_ON_SOURCES)
 			# The first fill of an empty cache (new install, or after clearing it) is saved as read and
-			# not announced story by story: all of them would be "new".
+			# not announced story by story: all of them would be "new". The same goes for a source with no
+			# saved story yet, such as one just turned on, or InfiArtt with its whole archive.
 			first_fill = cache.is_empty()
-			new_items = cache.save_news_items(items, mark_seen=first_fill) if items else []
+			cached_sources = cache.sources()
+			quiet_sources = {item.source for item in items} - cached_sources
+			new_items = (
+				cache.save_news_items(
+					items,
+					mark_seen=first_fill,
+					quiet_sources=quiet_sources,
+					refresh_sources=ALWAYS_ON_SOURCES,
+				)
+				if items
+				else []
+			)
 		except Exception:
 			logHandler.log.exception("NusaNews: Saving the stories failed.")
 			return
@@ -188,7 +247,9 @@ class GlobalPlugin(globalPluginHandler.GlobalPlugin):
 				# Translators: said when a check started with the Refresh button finds nothing new.
 				ui.message(_("Done, no new stories."))
 		elif new_items:
-			self.notification_manager.notify_new_items(new_items)
+			announced = [item for item in new_items if item.source not in quiet_sources]
+			if announced:
+				self.notification_manager.notify_new_items(announced)
 		if new_items:
 			from .gui import refresh_active_dialog
 

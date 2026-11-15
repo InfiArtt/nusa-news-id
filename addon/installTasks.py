@@ -1,87 +1,75 @@
 # installTasks.py
 #
-# Runs when NVDA installs or removes the add-on: a welcome dialog, and the settings section.
+# Runs when NVDA installs or removes the add-on: the welcome with its donation invitation, as in InfiArtt's
+# Emoji ID add-on, and the settings section.
+# Only NVDA's own message dialogs are used, run on the main thread with wxCallOnMain, so the installation
+# waits for the user without blocking NVDA.
 
 import addonHandler
+import api
+import config
 import gui
-import wx
+import logHandler
+from gui.guiHelper import wxCallOnMain
+from gui.message import MessageDialog, ReturnCode
 
-addonHandler.initTranslation()
+# Keep in sync with globalPlugins/nusaNewsID/donation.py, which cannot be imported while installing.
+GOPAY_NUMBER = "085128011831"
+GOPAY_NAME = "Rexya Muhamad Rizki"
+CONFIG_SECTION = "nusaNewsID"
 
 
-class DonationDialog(wx.Dialog):
-	"""Read-only donation information.
-
-	The same dialog as in gui.py, which cannot be imported while the add-on is being installed.
-	"""
-
-	def __init__(self, parent):
-		# Translators: title of the donation dialog.
-		super().__init__(parent, title=_("Donate to NusaNewsID"), style=wx.DEFAULT_DIALOG_STYLE)
-		sizer = wx.BoxSizer(wx.VERTICAL)
-		# Translators: the text of the donation dialog. Keep the phone number and the name.
-		msg = _(
-			"You can donate through GoPay to 088222553434, under the name Rexya Muhamad Rizki.\n\n"
-			"Every donation helps keep this add-on going. Thank you!"
+def _show_welcome() -> None:
+	"""Invite the user to donate and, if they agree, show and copy the GoPay number. Main thread."""
+	gui.mainFrame.prePopup()
+	try:
+		answer = MessageDialog.confirm(
+			_(
+				# Translators: the welcome shown while the add-on is being installed. Keep NVDA+Shift+/.
+				"Welcome to NusaNewsID!\n\n"
+				"This add-on follows Indonesian news sites in the background, announces new stories, and "
+				"opens whole articles in a window made for screen readers. Press NVDA+Shift+/ to open the "
+				"news list.\n\n"
+				"If this add-on helps you, you can support its developer with a voluntary donation through "
+				"GoPay. Choose Donate to see the number, or Not now to go on with the installation."
+			),
+			# Translators: title of the welcome shown while the add-on is being installed.
+			_("Welcome to NusaNewsID"),
+			# Translators: button of the installation welcome that shows the donation details.
+			okLabel=_("&Donate"),
+			# Translators: button of the installation welcome that goes on with the installation.
+			cancelLabel=_("&Not now"),
 		)
-		# Translators: label of the text box in the donation dialog.
-		sizer.Add(wx.StaticText(self, label=_("Donation information:")), 0, wx.LEFT | wx.RIGHT | wx.TOP, 10)
-		text = wx.TextCtrl(self, style=wx.TE_MULTILINE | wx.TE_READONLY, size=(400, 150))
-		text.SetValue(msg)
-		sizer.Add(text, 1, wx.EXPAND | wx.ALL, 10)
-		# Translators: button that closes a dialog.
-		btn = wx.Button(self, wx.ID_OK, label=_("&Close"))
-		sizer.Add(btn, 0, wx.ALIGN_CENTER | wx.BOTTOM, 10)
-		self.SetSizerAndFit(sizer)
-		self.Centre()
-		text.SetFocus()
-
-
-class WelcomeDialog(wx.Dialog):
-	"""Shown when the add-on is installed."""
-
-	def __init__(self, parent):
-		# Translators: title of the dialog shown when the add-on is installed.
-		super().__init__(parent, title=_("Welcome to NusaNewsID"), style=wx.DEFAULT_DIALOG_STYLE)
-		sizer = wx.BoxSizer(wx.VERTICAL)
-		# Translators: the text of the dialog shown when the add-on is installed.
-		# Keep NVDA+Shift+/ and the name.
-		msg = _(
-			"Thank you for installing NusaNewsID.\n\n"
-			"This add-on reads news from Indonesian news sites and is made for screen reader users.\n\n"
-			"You can filter the news by source and category.\n"
-			"To open the news list, press NVDA+Shift+/.\n\n"
-			"Made by Rexya Muhamad Rizki. You can support its development with the Donate button."
+		if answer != ReturnCode.OK:
+			return
+		copied = api.copyToClip(GOPAY_NUMBER)
+		details = _(
+			# Translators: the donation details. {number} is the GoPay phone number, {name} the account
+			# holder.
+			"Support the NusaNewsID developer\n\n"
+			"Method: GoPay\n"
+			"Phone number: {number}\n"
+			"Name: {name}\n\n"
+			"Every donation, whatever the amount, helps keep this add-on updated. Thank you!"
+		).format(number=GOPAY_NUMBER, name=GOPAY_NAME)
+		if copied:
+			# Translators: added to the donation details after the GoPay number was copied.
+			details += "\n\n" + _("The GoPay number has been copied to the clipboard.")
+		MessageDialog.alert(
+			details,
+			# Translators: title of the dialog that shows the GoPay donation details.
+			_("GoPay donation - NusaNewsID"),
 		)
-		# Translators: label of the text box in the welcome dialog.
-		sizer.Add(wx.StaticText(self, label=_("About NusaNewsID:")), 0, wx.LEFT | wx.RIGHT | wx.TOP, 10)
-		self.text = wx.TextCtrl(self, style=wx.TE_MULTILINE | wx.TE_READONLY, size=(450, 200))
-		self.text.SetValue(msg)
-		sizer.Add(self.text, 1, wx.EXPAND | wx.ALL, 10)
+	finally:
+		gui.mainFrame.postPopup()
 
-		btn_sizer = wx.BoxSizer(wx.HORIZONTAL)
-		# Translators: button that closes the welcome dialog so the installation goes on.
-		self.btn_continue = wx.Button(self, label=_("&Continue installing"))
-		# Translators: button that opens the donation dialog.
-		self.btn_donate = wx.Button(self, label=_("D&onate"))
-		btn_sizer.Add(self.btn_continue, 0, wx.RIGHT, 10)
-		btn_sizer.Add(self.btn_donate, 0)
-		sizer.Add(btn_sizer, 0, wx.ALIGN_CENTER | wx.BOTTOM, 10)
 
-		self.btn_continue.Bind(wx.EVT_BUTTON, self.on_continue)
-		self.btn_donate.Bind(wx.EVT_BUTTON, self.on_donate)
-		self.SetSizerAndFit(sizer)
-		self.Centre()
-		# Start on the text, so NVDA reads the welcome first.
-		self.text.SetFocus()
-
-	def on_continue(self, event):
-		self.EndModal(wx.ID_OK)
-
-	def on_donate(self, event):
-		dlg = DonationDialog(self)
-		dlg.ShowModal()
-		dlg.Destroy()
+def _mark_welcome_shown() -> None:
+	"""Stop the add-on from showing the welcome again after NVDA restarts."""
+	spec = config.conf.spec.setdefault(CONFIG_SECTION, {})
+	spec.setdefault("first_run", "boolean(default=True)")
+	config.conf[CONFIG_SECTION]["first_run"] = False
+	config.conf.save()
 
 
 def _loadConfigSpec():
@@ -107,24 +95,24 @@ def _registerSettings():
 
 
 def onInstall():
-	"""Hook executed by NVDA when the addon is installed."""
+	"""Hook executed by NVDA when the add-on is installed."""
+	# Translations are loaded here rather than when the module is imported: NVDA also imports this module
+	# from the old version while it installs an update, and gettext would then keep the old catalog.
+	addonHandler.initTranslation()
 	try:
 		_registerSettings()
 	except Exception:
-		import logHandler
-
 		logHandler.log.exception("NusaNews: Registering the settings section failed.")
-
-	def show_welcome():
-		app = wx.GetApp()
-		if app and hasattr(gui, "mainFrame"):
-			dlg = WelcomeDialog(gui.mainFrame)
-			dlg.ShowModal()
-			dlg.Destroy()
-
-	# NVDA executes onInstall in a background thread during addon installation.
-	# We must use wx.CallAfter to safely spawn GUI elements on the main thread.
-	wx.CallAfter(show_welcome)
+	try:
+		wxCallOnMain(_show_welcome)
+	except Exception:
+		# A failed dialog must never fail the installation; the add-on shows its welcome after the restart.
+		logHandler.log.exception("NusaNews: Showing the installation welcome failed.")
+		return
+	try:
+		wxCallOnMain(_mark_welcome_shown)
+	except Exception:
+		logHandler.log.exception("NusaNews: Saving that the welcome was shown failed.")
 
 
 def onUninstall():
@@ -133,4 +121,4 @@ def onUninstall():
 		from config import configSections
 	except ImportError:
 		return
-	configSections.unregisterSection("nusaNewsID")
+	configSections.unregisterSection(CONFIG_SECTION)

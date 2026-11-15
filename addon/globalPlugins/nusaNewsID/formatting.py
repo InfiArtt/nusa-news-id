@@ -62,6 +62,10 @@ def category_label(category: str) -> str:
 		"Entertainment": _("Entertainment"),
 		# Translators: a news category: news about disability and people with disabilities.
 		"Disabilitas": _("Disability"),
+		# Translators: a news category: articles published on infiartt.com.
+		"Artikel InfiArtt": _("InfiArtt articles"),
+		# Translators: a news category: guides in the InfiArtt knowledge base.
+		"Pusat Pengetahuan": _("InfiArtt knowledge base"),
 	}
 	return labels.get(category, category)
 
@@ -135,6 +139,9 @@ def list_item_text(item: NewsItem, now: datetime | None = None) -> str:
 		parts.append(_("Breaking."))
 	parts.append(_sentence(item.title))
 	details = [item.source, category_label(item.category)]
+	if item.author:
+		# Translators: who wrote a story, in the news list, for example "by Rexya".
+		details.append(_("by {author}").format(author=item.author))
 	when = format_time(story_time(item), now)
 	if when:
 		details.append(when)
@@ -181,11 +188,19 @@ def digest_text(count: int, gesture: str | None) -> str:
 
 def article_header(item: NewsItem) -> str:
 	"""The lines above an article's text, one fact per line."""
+	return "\n".join([item.title, *article_detail_lines(item), item.url])
+
+
+def article_detail_lines(item: NewsItem) -> list[str]:
+	"""The lines between an article's title and its link: source and category, and the time."""
 	# Translators: the second line of an article in the reader, for example "Detik, category National".
 	details = _("{source}, category {category}").format(
 		source=item.source, category=category_label(item.category)
 	)
-	lines = [item.title, details]
+	lines = [details]
+	if item.author:
+		# Translators: who wrote a story, in the article reader, for example "Written by Rexya".
+		lines.append(_("Written by {author}").format(author=item.author))
 	published = parse_iso(item.published_at)
 	if published:
 		# Translators: when the site published the story, for example "Published 13 November 2026, 20:05".
@@ -196,8 +211,16 @@ def article_header(item: NewsItem) -> str:
 			# Translators: for a story whose site gives no publication time, when the add-on first
 			# found it, for example "Found 13 November 2026, 20:05".
 			lines.append(_("Found {date}").format(date=format_date(found)))
-	lines.append(item.url)
-	return "\n".join(lines)
+	return lines
+
+
+def preview_text(item: NewsItem) -> str:
+	"""The preview under the news list: the whole title, its details, and the summary when there is one."""
+	parts = [item.title, *article_detail_lines(item)]
+	summary = (item.summary or "").strip()
+	if summary and summary != item.title:
+		parts.extend(["", summary])
+	return "\n".join(parts)
 
 
 def article_text(item: NewsItem, body: str) -> str:

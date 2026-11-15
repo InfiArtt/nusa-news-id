@@ -4,6 +4,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: nusaNewsID 1.1.0\n"
 "Report-Msgid-Bugs-To: 'nvda-translations@groups.io'\n"
+"POT-Creation-Date: 2026-11-15 21:46+0700\n"
 "PO-Revision-Date: 2026-11-15 16:00+0700\n"
 "Last-Translator: Rexya Muhamad Rizki <rexya2017@gmail.com>\n"
 "Language-Team: Indonesian\n"
@@ -12,6 +13,108 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=1; plural=0;\n"
+
+#. Translators: the donation details. {number} is the GoPay phone number, {name} the account holder.
+#. Translators: the donation details. {number} is the GoPay phone number, {name} the account
+#. holder.
+#, python-brace-format
+msgid ""
+"Support the NusaNewsID developer\n"
+"\n"
+"Method: GoPay\n"
+"Phone number: {number}\n"
+"Name: {name}\n"
+"\n"
+"Every donation, whatever the amount, helps keep this add-on updated. Thank "
+"you!"
+msgstr ""
+"Dukungan untuk pengembang NusaNewsID\n"
+"\n"
+"Metode: GoPay\n"
+"Nomor HP: {number}\n"
+"Atas nama: {name}\n"
+"\n"
+"Donasi berapa pun membantu add-on ini terus diperbarui. Terima kasih!"
+
+#. Translators: title of the dialog that shows the GoPay donation details.
+msgid "GoPay donation - NusaNewsID"
+msgstr "Informasi Donasi GoPay - NusaNewsID"
+
+msgid "Donation details:"
+msgstr "Rincian donasi:"
+
+#. Translators: button that copies the GoPay number to the clipboard.
+msgid "Co&py number"
+msgstr "&Salin nomor"
+
+#. Translators: button that closes a dialog.
+msgid "&Close"
+msgstr "&Tutup"
+
+#. Translators: said after the GoPay number is copied. {number} is the number.
+#, python-brace-format
+msgid "GoPay number {number} copied."
+msgstr "Nomor GoPay {number} disalin ke papan klip."
+
+#. Translators: said when the GoPay number could not be copied.
+msgid "Could not copy the number."
+msgstr "Gagal menyalin nomor ke papan klip."
+
+#. Translators: button that opens the donation details.
+#. Translators: button of the installation welcome that shows the donation details.
+msgid "&Donate"
+msgstr "&Donasi"
+
+#. Translators: button that closes the donation invitation.
+#. Translators: a button that closes the update window; the add-on asks again another day.
+#. Translators: button of the installation welcome that goes on with the installation.
+msgid "&Not now"
+msgstr "&Tidak sekarang"
+
+#. Translators: the welcome shown once after installing. Keep NVDA+Shift+/.
+msgid ""
+"Welcome to NusaNewsID!\n"
+"\n"
+"This add-on follows Indonesian news sites in the background, announces new "
+"stories, and opens whole articles in a window made for screen readers. Press "
+"NVDA+Shift+/ to open the news list.\n"
+"\n"
+"If this add-on helps you, you can support its developer with a voluntary "
+"donation through GoPay. Choose Donate to see the number, or Not now to close "
+"this message."
+msgstr ""
+"Selamat datang di NusaNewsID!\n"
+"\n"
+"Add-on ini mengikuti situs berita Indonesia di latar belakang, mengumumkan "
+"berita baru, dan membuka isi artikel di jendela yang dibuat untuk pembaca "
+"layar. Tekan NVDA+Shift+/ untuk membuka daftar berita.\n"
+"\n"
+"Kalau add-on ini bermanfaat, Anda bisa mendukung pengembangnya lewat donasi "
+"sukarela melalui GoPay. Pilih Donasi untuk melihat nomornya, atau Tidak "
+"sekarang untuk menutup pesan ini."
+
+#. Translators: title of the welcome shown once after installing.
+#. Translators: title of the welcome shown while the add-on is being installed.
+msgid "Welcome to NusaNewsID"
+msgstr "Selamat Datang di NusaNewsID"
+
+#. Translators: title of the occasional donation reminder.
+msgid "Support the developer - NusaNewsID"
+msgstr "Dukungan Pengembang - NusaNewsID"
+
+#. Translators: the occasional donation reminder.
+msgid ""
+"We hope NusaNewsID helps you keep up with the news every day.\n"
+"\n"
+"If you want this add-on to keep being updated, you can support its developer "
+"with a voluntary donation through GoPay. You can turn this reminder off in "
+"the NusaNewsID settings."
+msgstr ""
+"Semoga NusaNewsID membantu Anda mengikuti berita setiap hari.\n"
+"\n"
+"Kalau Anda ingin add-on ini terus diperbarui, Anda bisa mendukung "
+"pengembangnya lewat donasi sukarela melalui GoPay. Pengingat ini bisa "
+"dimatikan di pengaturan NusaNewsID."
 
 #. Translators: a month name, used in dates such as "13 November 2026, 20:05".
 msgid "January"
@@ -93,6 +196,14 @@ msgstr "Entertainment"
 msgid "Disability"
 msgstr "Disabilitas"
 
+#. Translators: a news category: articles published on infiartt.com.
+msgid "InfiArtt articles"
+msgstr "Artikel InfiArtt"
+
+#. Translators: a news category: guides in the InfiArtt knowledge base.
+msgid "InfiArtt knowledge base"
+msgstr "Pusat Pengetahuan InfiArtt"
+
 #. Translators: a date and time, for example "13 November 2026, 20:05".
 #. Keep the names in braces; you can change their order and the words between them.
 #, python-brace-format
@@ -118,6 +229,11 @@ msgstr[0] "{count} jam lalu"
 #. Translators: said before the title of a breaking news story in the news list.
 msgid "Breaking."
 msgstr "Breaking."
+
+#. Translators: who wrote a story, in the news list, for example "by Rexya".
+#, python-brace-format
+msgid "by {author}"
+msgstr "oleh {author}"
 
 #. Translators: said after a story in the news list that has not been opened or marked read.
 msgid "Unread."
@@ -145,14 +261,22 @@ msgid_plural "NusaNews: {count} new stories. Press {gesture} to open them."
 msgstr[0] "NusaNews: {count} berita baru. Tekan {gesture} untuk membuka."
 
 #, python-brace-format
-msgid "NusaNews: {count} new story. To open it, assign a key in Input Gestures."
-msgid_plural "NusaNews: {count} new stories. To open them, assign a key in Input Gestures."
-msgstr[0] "NusaNews: {count} berita baru. Tetapkan tombolnya di Input Gestures NVDA."
+msgid ""
+"NusaNews: {count} new story. To open it, assign a key in Input Gestures."
+msgid_plural ""
+"NusaNews: {count} new stories. To open them, assign a key in Input Gestures."
+msgstr[0] ""
+"NusaNews: {count} berita baru. Tetapkan tombolnya di Input Gestures NVDA."
 
 #. Translators: the second line of an article in the reader, for example "Detik, category National".
 #, python-brace-format
 msgid "{source}, category {category}"
 msgstr "{source}, kategori {category}"
+
+#. Translators: who wrote a story, in the article reader, for example "Written by Rexya".
+#, python-brace-format
+msgid "Written by {author}"
+msgstr "Ditulis oleh {author}"
 
 #. Translators: when the site published the story, for example "Published 13 November 2026, 20:05".
 #, python-brace-format
@@ -185,27 +309,6 @@ msgstr "Papan klip sedang dipakai program lain. Coba lagi."
 msgid "Could not copy."
 msgstr "Gagal menyalin."
 
-#. Translators: title of the donation dialog.
-msgid "Donate to NusaNewsID"
-msgstr "Donasi NusaNewsID"
-
-msgid ""
-"You can donate through GoPay to 088222553434, under the name Rexya Muhamad Rizki.\n"
-"\n"
-"Every donation helps keep this add-on going. Thank you!"
-msgstr ""
-"Anda bisa berdonasi lewat GoPay ke 088222553434 atas nama Rexya Muhamad Rizki.\n"
-"\n"
-"Setiap donasi membantu add-on ini terus dikembangkan. Terima kasih, orang baik!"
-
-#. Translators: label of the text box in the donation dialog.
-msgid "Donation information:"
-msgstr "Informasi donasi:"
-
-#. Translators: button that closes a dialog.
-msgid "&Close"
-msgstr "&Tutup"
-
 #. Translators: title of the news list dialog.
 msgid "NusaNews - Indonesian news reader"
 msgstr "NusaNews - Pembaca Berita Indonesia"
@@ -222,9 +325,16 @@ msgstr "&Kategori:"
 msgid "&Unread only"
 msgstr "Hanya yang &belum dibaca"
 
+#. The list and the preview grow with the window, so each label is its own item above its control.
+#. The label makes NVDA name the list when it gets focus.
 #. Translators: label of the news list.
 msgid "News. Press Enter to read the selected story:"
 msgstr "Daftar berita. Tekan Enter untuk membaca:"
+
+#. Translators: label of the box under the news list that shows the selected story's
+#. whole title, source, category, time, author and summary.
+msgid "Selected story:"
+msgstr "Berita yang dipilih:"
 
 #. Translators: button that copies the web address of the selected story.
 msgid "Copy &link"
@@ -245,6 +355,12 @@ msgstr "Se&garkan"
 #. Translators: button that opens the donation dialog.
 msgid "D&onate"
 msgstr "D&onasi"
+
+#. An empty list is read as "unknown"; this line says why it is empty.
+#. Translators: the only line of the news list when no saved story matches the filters.
+msgid "No stories here yet. New stories appear after the next check."
+msgstr ""
+"Belum ada berita di sini. Berita baru muncul setelah pemeriksaan berikutnya."
 
 #. Translators: said when the article reader cannot open.
 msgid "Could not open the story."
@@ -270,10 +386,6 @@ msgstr "Memeriksa berita baru..."
 msgid "Could not refresh. The add-on is not running."
 msgstr "Gagal menyegarkan. Add-on tidak aktif."
 
-#. Translators: label of the text box with the story in the article reader.
-msgid "Story text:"
-msgstr "Isi berita:"
-
 #. Translators: button that opens the story on its website.
 msgid "Open in &browser"
 msgstr "Buka di &browser"
@@ -282,26 +394,67 @@ msgstr "Buka di &browser"
 msgid "Copy &story"
 msgstr "&Salin berita"
 
+#. Translators: name of the group of buttons at the end of a story in the reader.
+msgid "Actions"
+msgstr "Tindakan"
+
+#. Translators: the description under a photo in the article reader, for example
+#. "Photo: Residents queue at the bus stop."
+#, python-brace-format
+msgid "Photo: {description}"
+msgstr "Foto: {description}"
+
+#. Translators: shown in the article reader where the story has a video.
+msgid "This story has a video. Press Open in browser to watch it."
+msgstr "Berita ini memuat video. Tekan Buka di browser untuk menontonnya."
+
+#. Translators: introduces a post from a social network quoted in a story, for example
+#. "Post on X by @SpaceX:".
+#, python-brace-format
+msgid "Post on {network} by {handle}:"
+msgstr "Unggahan {network} dari {handle}:"
+
+#. Translators: introduces a post from a social network quoted in a story, when the post does not
+#. name its account, for example "Post on Instagram:".
+#, python-brace-format
+msgid "Post on {network}:"
+msgstr "Unggahan {network}:"
+
+#. Translators: label of the text box with the story in the article reader.
+msgid "Story text:"
+msgstr "Isi berita:"
+
 #. Translators: shown in the article reader while the story downloads.
 msgid "Downloading the story..."
 msgstr "Sedang mengunduh isi berita..."
+
+msgid ""
+"Only InfiArtt members can read this article. Press Open in browser and sign "
+"in to read it."
+msgstr ""
+"Artikel ini hanya bisa dibaca anggota InfiArtt. Tekan Buka di browser, lalu "
+"masuk untuk membacanya."
 
 #. Translators: said when the story has downloaded and is shown in the article reader.
 msgid "Story loaded."
 msgstr "Isi berita sudah dimuat."
 
 msgid ""
-"Could not download the story.\n"
-"\n"
-"Check your internet connection, or press Open in browser (Alt+B) to read it on the website."
+"Could not download the story. Check your internet connection, or press Open "
+"in browser (Alt+B) to read it on the website."
 msgstr ""
-"Gagal mengunduh isi berita.\n"
-"\n"
-"Periksa koneksi internet Anda, atau tekan Buka di browser (Alt+B) untuk membacanya di situs web."
+"Gagal mengunduh isi berita. Periksa koneksi internet Anda, atau tekan Buka "
+"di browser (Alt+B) untuk membacanya di situs web."
 
 #. Translators: said when the story cannot be downloaded.
 msgid "Could not download the story."
 msgstr "Gagal mengunduh isi berita."
+
+#. Translators: said when the text size of the article reader changes,
+#. for example "Text size 150 percent".
+#, python-brace-format
+msgid "Text size {percent} percent"
+msgstr "Ukuran teks {percent} persen"
 
 #. Translators: said when the web browser cannot be opened.
 msgid "Could not open the browser."
@@ -312,11 +465,11 @@ msgid "Story copied."
 msgstr "Berita disalin."
 
 #. Translators: label of the list of news sites the add-on checks.
-msgid "News &sources to follow:"
-msgstr "&Sumber berita yang dipantau:"
+msgid "News &sources to follow (InfiArtt is always checked):"
+msgstr "&Sumber berita yang dipantau (InfiArtt selalu diperiksa):"
 
 #. Translators: label of the choice of how often the add-on checks for news.
-msgid "&Check for new stories every (minutes):"
+msgid "Check for new stories e&very (minutes):"
 msgstr "&Periksa berita baru setiap (menit):"
 
 #. Translators: name of a group of settings.
@@ -325,7 +478,7 @@ msgstr "Notifikasi"
 
 #. Translators: label of the choice of how new stories are announced.
 msgid "&How to announce new stories:"
-msgstr "&Cara memberi tahu berita baru:"
+msgstr "Cara member&i tahu berita baru:"
 
 #. Translators: check box in the settings.
 msgid "Play a &tone when new stories arrive"
@@ -355,6 +508,11 @@ msgstr "S&elesai (jam:menit, misalnya 06:00):"
 msgid "&Number of stories shown at a time:"
 msgstr "&Jumlah berita yang ditampilkan sekaligus:"
 
+#. Translators: label of the choice of text size in the article reader, in percent.
+#. Control+plus and Control+minus in the reader change it too.
+msgid "Reader te&xt size (percent):"
+msgstr "Uku&ran teks pembaca (persen):"
+
 #. Translators: name of a group of settings.
 msgid "Storage"
 msgstr "Penyimpanan"
@@ -368,12 +526,31 @@ msgid "&Delete all saved stories"
 msgstr "&Hapus semua berita tersimpan"
 
 #. Translators: check box in the settings. It makes connections less safe.
-msgid "Skip security certi&ficate checks (only if connections always fail; not safe)"
-msgstr "Lewati pemeriksaan sertifikat &keamanan (hanya jika koneksi selalu gagal; tidak aman)"
+msgid ""
+"Skip security certi&ficate checks (only if connections always fail; not safe)"
+msgstr ""
+"Lewati pemeriksaan sertifikat &keamanan (hanya jika koneksi selalu gagal; "
+"tidak aman)"
 
-#. Translators: button in the settings that opens the donation dialog.
-msgid "Support and d&onations"
-msgstr "D&ukungan dan donasi"
+#. Translators: name of a group of settings: new versions of the add-on, and donations.
+msgid "Updates and support"
+msgstr "Pembaruan dan dukungan"
+
+#. Translators: check box in the settings.
+msgid "Check GitHub for new versions once a &day"
+msgstr "Periksa versi baru di GitHub sehari seka&li"
+
+#. Translators: button in the settings that looks for a new version now.
+msgid "Check for &updates now"
+msgstr "Periksa &pembaruan sekarang"
+
+#. Translators: check box in the settings.
+msgid "Show a donation &reminder now and then"
+msgstr "Tampilkan pengingat &donasi sesekali"
+
+#. Translators: button in the settings that shows how to donate.
+msgid "Support the developer (GoPay d&onation)..."
+msgstr "Dukung pengembang (d&onasi GoPay)..."
 
 #. Translators: error when the start of quiet hours is not a time.
 msgid "The start of quiet hours must be a time such as 22:00."
@@ -397,7 +574,9 @@ msgstr "Tidak ada sumber berita"
 
 #. Translators: question before deleting every saved story.
 msgid "Delete all saved stories and articles? This cannot be undone."
-msgstr "Hapus semua berita dan artikel yang tersimpan? Tindakan ini tidak bisa dibatalkan."
+msgstr ""
+"Hapus semua berita dan artikel yang tersimpan? Tindakan ini tidak bisa "
+"dibatalkan."
 
 #. Translators: title of the question before deleting every saved story.
 msgid "Delete saved stories"
@@ -419,6 +598,58 @@ msgstr "Semua berita tersimpan sudah dihapus."
 msgid "Could not delete the saved stories."
 msgstr "Gagal menghapus berita tersimpan."
 
+#. Translators: said when the user checks for updates while a check or download is going on.
+msgid "Already checking for updates. The answer comes in a moment."
+msgstr "Pembaruan sedang diperiksa. Jawabannya sebentar lagi."
+
+#. Translators: said while the add-on looks for a new version.
+msgid "Checking for updates..."
+msgstr "Memeriksa pembaruan..."
+
+#. Translators: said when the user checked for a new version and has the newest one.
+#, python-brace-format
+msgid "You have the newest version, {version}."
+msgstr "Anda sudah memakai versi terbaru, {version}."
+
+#. Translators: said when the add-on's GitHub page has no published version yet.
+msgid "No version has been published on GitHub yet."
+msgstr "Belum ada versi yang diterbitkan di GitHub."
+
+#. Translators: said when looking for a new version failed, such as with no internet connection.
+msgid ""
+"Could not check for updates. Check your internet connection and try again."
+msgstr "Gagal memeriksa pembaruan. Periksa koneksi internet, lalu coba lagi."
+
+#. Translators: said when the new version could not be downloaded or was damaged.
+msgid "The new version could not be downloaded. Try again later."
+msgstr "Versi baru gagal diunduh. Coba lagi nanti."
+
+#. Translators: said while a new version of the add-on downloads, for example
+#. "Downloading NusaNewsID 1.2.0...".
+#, python-brace-format
+msgid "Downloading NusaNewsID {version}..."
+msgstr "Mengunduh NusaNewsID {version}..."
+
+msgid "NusaNewsID update"
+msgstr "Pembaruan NusaNewsID"
+
+#. Translators: the top of the window that offers a new version, with both version numbers.
+#, python-brace-format
+msgid "NusaNewsID {new} is available. You have version {current}."
+msgstr "NusaNewsID {new} sudah tersedia. Versi yang Anda pakai {current}."
+
+#. Translators: the label of the text that says what changed in the new version.
+msgid "&What's new:"
+msgstr "&Yang baru:"
+
+#. Translators: shown when a new version has no description of its changes.
+msgid "No description."
+msgstr "Tidak ada keterangan."
+
+#. Translators: a button that downloads and installs the new version.
+msgid "&Download and install"
+msgstr "&Unduh dan pasang"
+
 #, python-brace-format
 msgid "NusaNews: {count} story loaded."
 msgid_plural "NusaNews: {count} stories loaded."
@@ -437,36 +668,31 @@ msgstr "Selesai, tidak ada berita baru."
 msgid "Opens the NusaNews news list"
 msgstr "Membuka daftar berita NusaNews"
 
-#. Translators: title of the dialog shown when the add-on is installed.
-msgid "Welcome to NusaNewsID"
-msgstr "Selamat Datang di NusaNewsID"
-
+#. Translators: the welcome shown while the add-on is being installed. Keep NVDA+Shift+/.
 msgid ""
-"Thank you for installing NusaNewsID.\n"
+"Welcome to NusaNewsID!\n"
 "\n"
-"This add-on reads news from Indonesian news sites and is made for screen reader users.\n"
+"This add-on follows Indonesian news sites in the background, announces new "
+"stories, and opens whole articles in a window made for screen readers. Press "
+"NVDA+Shift+/ to open the news list.\n"
 "\n"
-"You can filter the news by source and category.\n"
-"To open the news list, press NVDA+Shift+/.\n"
-"\n"
-"Made by Rexya Muhamad Rizki. You can support its development with the Donate button."
+"If this add-on helps you, you can support its developer with a voluntary "
+"donation through GoPay. Choose Donate to see the number, or Not now to go on "
+"with the installation."
 msgstr ""
-"Terima kasih telah memasang NusaNewsID.\n"
+"Selamat datang di NusaNewsID!\n"
 "\n"
-"Add-on ini membacakan berita dari situs berita Indonesia, dan dibuat untuk pengguna pembaca layar.\n"
+"Add-on ini mengikuti situs berita Indonesia di latar belakang, mengumumkan "
+"berita baru, dan membuka isi artikel di jendela yang dibuat untuk pembaca "
+"layar. Tekan NVDA+Shift+/ untuk membuka daftar berita.\n"
 "\n"
-"Anda bisa menyaring berita menurut sumber dan kategori.\n"
-"Untuk membuka daftar berita, tekan NVDA+Shift+/.\n"
-"\n"
-"Dibuat oleh Rexya Muhamad Rizki. Anda bisa mendukung pengembangannya lewat tombol Donasi."
+"Kalau add-on ini bermanfaat, Anda bisa mendukung pengembangnya lewat donasi "
+"sukarela melalui GoPay. Pilih Donasi untuk melihat nomornya, atau Tidak "
+"sekarang untuk melanjutkan instalasi."
 
-#. Translators: label of the text box in the welcome dialog.
-msgid "About NusaNewsID:"
-msgstr "Tentang NusaNewsID:"
-
-#. Translators: button that closes the welcome dialog so the installation goes on.
-msgid "&Continue installing"
-msgstr "&Lanjutkan instalasi"
+#. Translators: added to the donation details after the GoPay number was copied.
+msgid "The GoPay number has been copied to the clipboard."
+msgstr "Nomor GoPay sudah disalin ke papan klip."
 
 #. Add-on summary/title, usually the user visible name of the add-on
 #. Translators: Summary/title for this add-on
@@ -474,56 +700,224 @@ msgstr "&Lanjutkan instalasi"
 msgid "NusaNewsID - Indonesian News Reader"
 msgstr "NusaNewsID - Pembaca Berita Indonesia"
 
-msgid "Follows Indonesian news from Antara, Kompas, Detik, Republika, Liputan6, Merdeka, CNN Indonesia and WinPoin. It announces new stories in the background, stays quiet during the hours you choose, and opens whole articles in an accessible window, so you do not need a browser."
-msgstr "Mengikuti berita Indonesia dari Antara, Kompas, Detik, Republika, Liputan6, Merdeka, CNN Indonesia, dan WinPoin. Add-on ini mengumumkan berita baru di latar belakang, diam selama jam yang Anda pilih, dan membuka isi artikel di jendela yang mudah dibaca, tanpa perlu browser."
+msgid ""
+"Follows Indonesian news from Antara, Kompas, Detik, Republika, Liputan6, "
+"Merdeka, CNN Indonesia and WinPoin. It announces new stories in the "
+"background, stays quiet during the hours you choose, and opens whole "
+"articles in an accessible window, so you do not need a browser."
+msgstr ""
+"Mengikuti berita Indonesia dari Antara, Kompas, Detik, Republika, Liputan6, "
+"Merdeka, CNN Indonesia, dan WinPoin. Add-on ini mengumumkan berita baru di "
+"latar belakang, diam selama jam yang Anda pilih, dan membuka isi artikel di "
+"jendela yang mudah dibaca, tanpa perlu browser."
 
 #. Brief changelog for this version
 #. Translators: what's new content for the add-on version to be shown in the add-on store
 msgid ""
 "\n"
-"- Merdeka works again. The add-on finds its articles at Merdeka's new web addresses.\n"
-"- Antara works again inside NVDA. Its certificate is checked against the certificates that come with NVDA, so the \"CERTIFICATE_VERIFY_FAILED\" error is gone, and certificate errors are no longer retried.\n"
-"- Titles are clean and times are exact. Stories come from each site's RSS feed when the feed is kept up to date, and from its pages otherwise.\n"
-"- Each story stays in the category it was listed under. Sidebars, \"popular\" boxes and other sections of a page are left out.\n"
-"- Stories older than the storage period are skipped, so old news is no longer announced as new.\n"
-"- A story reads the same in the list, in notifications and in the reader: title first, then source, category and time. \"Breaking\" comes first only for breaking news, and \"Unread\" comes last only for unread stories. Brackets, bars and dashes are gone.\n"
-"- Times read like \"14 minutes ago\" or \"3 hours ago\" during the first day, and as a date and time after that. The newest stories come first.\n"
-"- The reader shows the title, the source and category, the publication time and the link on separate lines. \"Copy story\" copies only the title and the text.\n"
-"- Several new stories are announced in one message, so a braille display shows all of them. The message names the key that opens the news list, including a key you set in Input Gestures.\n"
-"- The first check after installing, or after deleting saved stories, saves the stories quietly and says how many it loaded. Stories saved by older versions are marked read once.\n"
-"- The add-on is faster. It keeps stories in memory, saves them shortly after a change, and stores article texts separately. Old stories are removed after every check, and the list no longer stops at 500 stories.\n"
-"- From NVDA 2026.3, the settings are the same in every configuration profile.\n"
-"- The settings are grouped and labelled. Sources are a list of check boxes, quiet hours must be times such as 22:00, and NVDA's own dialog confirms deleting saved stories.\n"
-"- The news list has a label, keeps your place when new stories arrive, and reads a story only once when you come back from the reader. Refresh is now Alt+R.\n"
-"- Breaking news now means disasters and emergencies only. Words such as \"presiden\" no longer mark ordinary stories as breaking, so those stories stay quiet during quiet hours.\n"
+"- InfiArtt, the organization that makes this add-on, is now a source that is "
+"always on. New articles from infiartt.com/posts and new guides from the "
+"knowledge base at infiartt.com/kb appear in two new categories, InfiArtt "
+"articles and InfiArtt knowledge base, right below All in the source filter. "
+"Every InfiArtt article and guide is listed, however old, and stays in "
+"storage. The list and the reader name each one's author. The add-on reads "
+"them through InfiArtt's own API.\n"
+"- The reader shows the article as a web page that NVDA reads in browse mode, "
+"with the article's headings, lists, quotes and links, so you can move by "
+"heading with H. The article is marked as Indonesian, so NVDA can switch to "
+"an Indonesian voice.\n"
+"- For low vision: Control+plus, Control+minus and Control+0 change the "
+"reader's text size from 100 to 400 percent, and the new setting \"Reader "
+"text size\" keeps it. The page uses the Windows colors, including contrast "
+"themes, with wider line spacing and lines of at most 70 characters.\n"
+"- Articles are cleaner. Ads, \"baca juga\" boxes and the links after labels "
+"such as \"Baca:\", \"Simak:\" or \"Pilihan Redaksi\", sidebars, copyright "
+"lines, office addresses and editors' codes such as \"(acd/acd)\" are left "
+"out. A photo has one description, without its credit or buttons such as "
+"\"Perbesar\". Where a story has a video, a line says so. Posts from X, "
+"Instagram and other networks are quoted with the account that posted them. A "
+"reporter's name at the top of an article becomes the \"Written by\" line. "
+"Video pages without text show their summary.\n"
+"- The reader opens in Internet Explorer 11 mode, and the size and place of "
+"the news list and the reader are remembered. Both can be maximized.\n"
+"- Articles split over several pages, as on Antara, are read whole.\n"
+"- The reader no longer waits for photos. Photos load after the text, and "
+"photos the reader cannot show, such as Liputan6's, are left out instead of "
+"holding the story for several seconds.\n"
+"- New versions are offered from GitHub. Once a day, a while after NVDA "
+"starts, the add-on looks for a newer release; the update window shows what "
+"changed, and Download and install installs it with NVDA's own installer "
+"after checking the file. The setting \"Check GitHub for new versions once a "
+"day\" turns this off, and \"Check for updates now\" checks right away.\n"
+"- The welcome after installing and the donation details are the same as in "
+"Emoji ID, with the GoPay number 085128011831 and a Copy number button. An "
+"occasional donation reminder can be turned on in the settings; it is off by "
+"default.\n"
+"- Under the news list, a box shows the selected story's whole title, its "
+"source, category, time and author, and its summary. The list and this box "
+"use the reader's text size.\n"
+"- A source with no saved stories yet, such as one you just turned on, or "
+"InfiArtt with its whole archive, is saved quietly as read instead of being "
+"announced story by story.\n"
+"- An empty news list now says why it is empty, instead of NVDA saying "
+"\"unknown\".\n"
+"- Merdeka works again. The add-on finds its articles at Merdeka's new web "
+"addresses.\n"
+"- Antara works again inside NVDA. Its certificate is checked against the "
+"certificates that come with NVDA, so the \"CERTIFICATE_VERIFY_FAILED\" error "
+"is gone, and certificate errors are no longer retried.\n"
+"- Titles are clean and times are exact. Stories come from each site's RSS "
+"feed when the feed is kept up to date, and from its pages otherwise.\n"
+"- Each story stays in the category it was listed under. Sidebars, "
+"\"popular\" boxes and other sections of a page are left out.\n"
+"- Stories older than the storage period are skipped, so old news is no "
+"longer announced as new.\n"
+"- A story reads the same in the list, in notifications and in the reader: "
+"title first, then source, category and time. \"Breaking\" comes first only "
+"for breaking news, and \"Unread\" comes last only for unread stories. "
+"Brackets, bars and dashes are gone.\n"
+"- Times read like \"14 minutes ago\" or \"3 hours ago\" during the first "
+"day, and as a date and time after that. The newest stories come first.\n"
+"- The reader shows the title, the source and category, the publication time "
+"and the link on separate lines. \"Copy story\" copies only the title and the "
+"text.\n"
+"- Several new stories are announced in one message, so a braille display "
+"shows all of them. The message names the key that opens the news list, "
+"including a key you set in Input Gestures.\n"
+"- The first check after installing, or after deleting saved stories, saves "
+"the stories quietly and says how many it loaded. Stories saved by older "
+"versions are marked read once.\n"
+"- The add-on is faster. It keeps stories in memory, saves them shortly after "
+"a change, and stores article texts separately. Old stories are removed after "
+"every check, and the list no longer stops at 500 stories.\n"
+"- From NVDA 2026.3, the settings are the same in every configuration "
+"profile.\n"
+"- The settings are grouped and labelled. Sources are a list of check boxes, "
+"quiet hours must be times such as 22:00, and NVDA's own dialog confirms "
+"deleting saved stories.\n"
+"- The news list has a label, keeps your place when new stories arrive, and "
+"reads a story only once when you come back from the reader. Refresh is now "
+"Alt+R.\n"
+"- Breaking news now means disasters and emergencies only. Words such as "
+"\"presiden\" no longer mark ordinary stories as breaking, so those stories "
+"stay quiet during quiet hours.\n"
 "- The disability category matches whole words only.\n"
-"- Tempo and MacPoin are removed. Tempo refuses connections from the add-on, and MacPoin has published nothing since March 2024.\n"
-"- Detik and Republika no longer list politics, and Republika no longer lists entertainment, because the sites stopped updating those sections.\n"
-"- Refresh no longer starts a second check, so stories are no longer announced twice. After a refresh, NVDA says how many new stories it found.\n"
-"- Closing NVDA or reloading add-ons no longer waits for a news check to finish.\n"
-"- On secure screens, such as the Windows sign-in screen, the news list no longer opens.\n"
-"- The add-on's messages are now written in English, with an Indonesian translation that NVDA uses when its language is Indonesian.\n"
+"- Tempo and MacPoin are removed. Tempo refuses connections from the add-on, "
+"and MacPoin has published nothing since March 2024.\n"
+"- Detik and Republika no longer list politics, and Republika no longer lists "
+"entertainment, because the sites stopped updating those sections.\n"
+"- Refresh no longer starts a second check, so stories are no longer "
+"announced twice. After a refresh, NVDA says how many new stories it found.\n"
+"- Closing NVDA or reloading add-ons no longer waits for a news check to "
+"finish.\n"
+"- On secure screens, such as the Windows sign-in screen, the news list no "
+"longer opens.\n"
+"- The add-on's messages are now written in English, with an Indonesian "
+"translation that NVDA uses when its language is Indonesian.\n"
 msgstr ""
 "\n"
-"- Merdeka kembali berfungsi. Add-on menemukan artikelnya di alamat web Merdeka yang baru.\n"
-"- Antara kembali berfungsi di dalam NVDA. Sertifikatnya diperiksa dengan sertifikat bawaan NVDA, jadi error \"CERTIFICATE_VERIFY_FAILED\" tidak muncul lagi, dan error sertifikat tidak lagi dicoba ulang.\n"
-"- Judul berita bersih dan waktunya tepat. Berita diambil dari feed RSS situs jika feed-nya terus diperbarui, dan dari halaman situs jika tidak.\n"
-"- Setiap berita tetap di kategori tempat ia tercantum. Kotak samping, kotak \"populer\", dan bagian lain di halaman tidak ikut diambil.\n"
-"- Berita yang lebih tua dari batas penyimpanan dilewati, jadi berita lama tidak lagi diumumkan sebagai berita baru.\n"
-"- Satu berita dibacakan dengan cara yang sama di daftar, di notifikasi, dan di pembaca artikel: judul dulu, lalu sumber, kategori, dan waktu. \"Breaking\" ada di depan hanya untuk berita breaking, dan \"Belum dibaca\" ada di akhir hanya untuk berita yang belum dibaca. Tanda kurung siku, garis vertikal, dan garis minus sudah tidak ada.\n"
-"- Waktu dibacakan seperti \"14 menit lalu\" atau \"3 jam lalu\" pada hari pertama, lalu berupa tanggal dan jam. Berita terbaru ada di atas.\n"
-"- Pembaca artikel menampilkan judul, sumber dan kategori, waktu terbit, dan link, masing-masing di baris sendiri. \"Salin berita\" hanya menyalin judul dan isi berita.\n"
-"- Beberapa berita baru diumumkan dalam satu pesan, jadi semuanya tampil di layar braille. Pesan itu menyebut tombol pembuka daftar berita, termasuk tombol yang Anda atur di Input Gestures.\n"
-"- Pemeriksaan pertama setelah add-on dipasang, atau setelah berita tersimpan dihapus, menyimpan berita tanpa mengumumkannya satu per satu, lalu menyebut jumlah berita yang dimuat. Berita yang disimpan versi lama ditandai dibaca sekali.\n"
-"- Add-on lebih cepat. Berita disimpan di memori, ditulis ke disk sesaat setelah ada perubahan, dan isi artikel disimpan terpisah. Berita lama dihapus setiap kali pemeriksaan selesai, dan daftar tidak lagi berhenti di 500 berita.\n"
+"- InfiArtt, organisasi yang membuat add-on ini, sekarang menjadi sumber yang "
+"selalu aktif. Artikel baru dari infiartt.com/posts dan panduan baru dari "
+"pusat pengetahuan di infiartt.com/kb muncul di dua kategori baru, Artikel "
+"InfiArtt dan Pusat Pengetahuan InfiArtt, dan InfiArtt ada tepat di bawah "
+"Semua di filter sumber. Semua artikel dan panduan InfiArtt ditampilkan, "
+"berapa pun umurnya, dan tetap tersimpan. Daftar berita dan pembaca artikel "
+"menyebut penulisnya. Add-on membacanya lewat API milik InfiArtt sendiri.\n"
+"- Pembaca artikel menampilkan berita sebagai halaman web yang dibaca NVDA "
+"dalam mode browse, lengkap dengan judul bagian, daftar, kutipan, dan tautan "
+"dari artikel aslinya, jadi Anda bisa berpindah per judul bagian dengan H. "
+"Isi berita ditandai berbahasa Indonesia, jadi NVDA bisa berganti ke suara "
+"bahasa Indonesia.\n"
+"- Untuk pengguna low vision: Control+tambah, Control+kurang, dan Control+0 "
+"mengubah ukuran teks pembaca dari 100 sampai 400 persen, dan pengaturan baru "
+"\"Ukuran teks pembaca\" menyimpannya. Halaman memakai warna Windows, "
+"termasuk tema kontras, dengan jarak baris lebih lega dan baris paling "
+"panjang 70 karakter.\n"
+"- Isi artikel lebih bersih. Iklan, kotak \"baca juga\" dan tautan sesudah "
+"label seperti \"Baca:\", \"Simak:\", atau \"Pilihan Redaksi\", kotak "
+"samping, catatan hak cipta, alamat kantor redaksi, dan kode editor seperti "
+"\"(acd/acd)\" tidak ikut. Foto punya satu keterangan saja, tanpa kredit foto "
+"dan tanpa tombol seperti \"Perbesar\". Jika berita memuat video, ada satu "
+"baris yang memberi tahu. Unggahan X, Instagram, dan media sosial lain "
+"dikutip bersama akun pengunggahnya. Nama reporter di awal artikel menjadi "
+"baris \"Ditulis oleh\". Halaman video tanpa teks menampilkan ringkasannya.\n"
+"- Pembaca artikel berjalan dalam mode Internet Explorer 11, dan ukuran serta "
+"posisi daftar berita dan pembaca artikel diingat. Keduanya bisa "
+"dimaksimalkan.\n"
+"- Berita yang terbagi beberapa halaman, seperti di Antara, dibaca utuh.\n"
+"- Pembaca artikel tidak lagi menunggu foto. Foto dimuat setelah teks, dan "
+"foto yang tidak bisa ditampilkan, seperti foto Liputan6, dilewati, bukan "
+"menahan berita selama beberapa detik.\n"
+"- Versi baru ditawarkan dari GitHub. Sehari sekali, sesaat setelah NVDA "
+"berjalan, add-on mencari rilis yang lebih baru; jendela pembaruan "
+"menampilkan apa yang berubah, dan Unduh dan pasang memasangnya dengan "
+"pemasang NVDA sendiri setelah filenya diperiksa. Pengaturan \"Periksa versi "
+"baru di GitHub sehari sekali\" mematikannya, dan \"Periksa pembaruan "
+"sekarang\" memeriksa saat itu juga.\n"
+"- Sambutan saat instalasi dan rincian donasi sama seperti di Emoji ID, "
+"dengan nomor GoPay 085128011831 dan tombol Salin nomor. Pengingat donasi "
+"sesekali bisa dinyalakan di pengaturan; bawaannya mati.\n"
+"- Di bawah daftar berita ada kotak yang menampilkan judul lengkap berita "
+"yang dipilih, sumber, kategori, waktu, dan penulisnya, serta ringkasannya. "
+"Daftar dan kotak ini memakai ukuran teks pembaca.\n"
+"- Sumber yang belum punya berita tersimpan, misalnya sumber yang baru Anda "
+"aktifkan, atau InfiArtt dengan seluruh arsipnya, disimpan diam-diam sebagai "
+"sudah dibaca, bukan diumumkan satu per satu.\n"
+"- Daftar berita yang kosong sekarang menjelaskan kenapa kosong, bukan "
+"dibacakan NVDA sebagai \"unknown\".\n"
+"- Merdeka kembali berfungsi. Add-on menemukan artikelnya di alamat web "
+"Merdeka yang baru.\n"
+"- Antara kembali berfungsi di dalam NVDA. Sertifikatnya diperiksa dengan "
+"sertifikat bawaan NVDA, jadi error \"CERTIFICATE_VERIFY_FAILED\" tidak "
+"muncul lagi, dan error sertifikat tidak lagi dicoba ulang.\n"
+"- Judul berita bersih dan waktunya tepat. Berita diambil dari feed RSS situs "
+"jika feed-nya terus diperbarui, dan dari halaman situs jika tidak.\n"
+"- Setiap berita tetap di kategori tempat ia tercantum. Kotak samping, kotak "
+"\"populer\", dan bagian lain di halaman tidak ikut diambil.\n"
+"- Berita yang lebih tua dari batas penyimpanan dilewati, jadi berita lama "
+"tidak lagi diumumkan sebagai berita baru.\n"
+"- Satu berita dibacakan dengan cara yang sama di daftar, di notifikasi, dan "
+"di pembaca artikel: judul dulu, lalu sumber, kategori, dan waktu. "
+"\"Breaking\" ada di depan hanya untuk berita breaking, dan \"Belum dibaca\" "
+"ada di akhir hanya untuk berita yang belum dibaca. Tanda kurung siku, garis "
+"vertikal, dan garis minus sudah tidak ada.\n"
+"- Waktu dibacakan seperti \"14 menit lalu\" atau \"3 jam lalu\" pada hari "
+"pertama, lalu berupa tanggal dan jam. Berita terbaru ada di atas.\n"
+"- Pembaca artikel menampilkan judul, sumber dan kategori, waktu terbit, dan "
+"link, masing-masing di baris sendiri. \"Salin berita\" hanya menyalin judul "
+"dan isi berita.\n"
+"- Beberapa berita baru diumumkan dalam satu pesan, jadi semuanya tampil di "
+"layar braille. Pesan itu menyebut tombol pembuka daftar berita, termasuk "
+"tombol yang Anda atur di Input Gestures.\n"
+"- Pemeriksaan pertama setelah add-on dipasang, atau setelah berita tersimpan "
+"dihapus, menyimpan berita tanpa mengumumkannya satu per satu, lalu menyebut "
+"jumlah berita yang dimuat. Berita yang disimpan versi lama ditandai dibaca "
+"sekali.\n"
+"- Add-on lebih cepat. Berita disimpan di memori, ditulis ke disk sesaat "
+"setelah ada perubahan, dan isi artikel disimpan terpisah. Berita lama "
+"dihapus setiap kali pemeriksaan selesai, dan daftar tidak lagi berhenti di "
+"500 berita.\n"
 "- Mulai NVDA 2026.3, pengaturan sama di semua profil konfigurasi.\n"
-"- Pengaturan dikelompokkan dan diberi label. Sumber berita berupa daftar kotak centang, jam sunyi harus berupa jam seperti 22:00, dan penghapusan berita tersimpan dikonfirmasi dengan dialog NVDA sendiri.\n"
-"- Daftar berita punya label, tetap di berita yang sama saat berita baru masuk, dan hanya membacakan berita satu kali saat Anda kembali dari pembaca artikel. Segarkan sekarang Alt+G.\n"
-"- Berita breaking sekarang hanya tentang bencana dan keadaan darurat. Kata seperti \"presiden\" tidak lagi membuat berita biasa ditandai breaking, jadi berita itu tetap diam selama jam sunyi.\n"
+"- Pengaturan dikelompokkan dan diberi label. Sumber berita berupa daftar "
+"kotak centang, jam sunyi harus berupa jam seperti 22:00, dan penghapusan "
+"berita tersimpan dikonfirmasi dengan dialog NVDA sendiri.\n"
+"- Daftar berita punya label, tetap di berita yang sama saat berita baru "
+"masuk, dan hanya membacakan berita satu kali saat Anda kembali dari pembaca "
+"artikel. Segarkan sekarang Alt+G.\n"
+"- Berita breaking sekarang hanya tentang bencana dan keadaan darurat. Kata "
+"seperti \"presiden\" tidak lagi membuat berita biasa ditandai breaking, jadi "
+"berita itu tetap diam selama jam sunyi.\n"
 "- Kategori Disabilitas hanya mencocokkan kata utuh.\n"
-"- Tempo dan MacPoin dihapus. Tempo menolak koneksi dari add-on, dan MacPoin tidak menerbitkan apa pun sejak Maret 2024.\n"
-"- Detik dan Republika tidak lagi punya kategori Politik, dan Republika tidak lagi punya Entertainment, karena situsnya berhenti memperbarui bagian itu.\n"
-"- Segarkan tidak lagi memulai pemeriksaan kedua, jadi berita tidak lagi diumumkan dua kali. Setelah Segarkan, NVDA menyebut jumlah berita baru yang ditemukan.\n"
-"- Menutup NVDA atau memuat ulang add-on tidak lagi menunggu pemeriksaan berita selesai.\n"
-"- Di layar aman, seperti layar masuk Windows, daftar berita tidak lagi terbuka.\n"
-"- Pesan add-on sekarang ditulis dalam bahasa Inggris, dengan terjemahan Indonesia yang dipakai NVDA jika bahasanya bahasa Indonesia.\n"
+"- Tempo dan MacPoin dihapus. Tempo menolak koneksi dari add-on, dan MacPoin "
+"tidak menerbitkan apa pun sejak Maret 2024.\n"
+"- Detik dan Republika tidak lagi punya kategori Politik, dan Republika tidak "
+"lagi punya Entertainment, karena situsnya berhenti memperbarui bagian itu.\n"
+"- Segarkan tidak lagi memulai pemeriksaan kedua, jadi berita tidak lagi "
+"diumumkan dua kali. Setelah Segarkan, NVDA menyebut jumlah berita baru yang "
+"ditemukan.\n"
+"- Menutup NVDA atau memuat ulang add-on tidak lagi menunggu pemeriksaan "
+"berita selesai.\n"
+"- Di layar aman, seperti layar masuk Windows, daftar berita tidak lagi "
+"terbuka.\n"
+"- Pesan add-on sekarang ditulis dalam bahasa Inggris, dengan terjemahan "
+"Indonesia yang dipakai NVDA jika bahasanya bahasa Indonesia.\n"

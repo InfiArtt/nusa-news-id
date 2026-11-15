@@ -90,6 +90,12 @@ class BaseProvider:
 				)
 		return self._accept(found, category, source, oldest)
 
+	def fetch_article(self, url: str, bypass_ssl: bool = False):
+		"""Download one story's article for the reader. Providers with an API override this."""
+		from .articleContent import fetch_article
+
+		return fetch_article(url, bypass_ssl)
+
 	def _stopped(self) -> bool:
 		return self.stop_event is not None and self.stop_event.is_set()
 

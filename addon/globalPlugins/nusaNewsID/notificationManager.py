@@ -111,10 +111,12 @@ def reader_gesture_text() -> str | None:
 
 		from . import GlobalPlugin, addon_instance
 
+		# NVDA keeps the plugin's own keys as script functions (script_openNewsReader), and the keys changed
+		# in Input Gestures as script names (openNewsReader).
 		gestures = [
 			gesture
 			for gesture, script in (getattr(addon_instance, "_gestureMap", None) or {}).items()
-			if script == SCRIPT_NAME
+			if getattr(script, "__name__", script) == f"script_{SCRIPT_NAME}"
 		]
 		for cls, gesture, script in inputCore.manager.userGestureMap.getScriptsForAllGestures():
 			if not issubclass(GlobalPlugin, cls) and cls is not GlobalPlugin:

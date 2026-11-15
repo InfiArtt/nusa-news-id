@@ -30,4 +30,14 @@ CONFIG_SPEC: dict[str, str] = {
 	"bypass_ssl_verification": "boolean(default=false)",
 	"max_display_count": "integer(default=50, min=20, max=100)",
 	"data_version": "integer(default=0, min=0)",
+	"reader_zoom": "integer(default=100, min=50, max=400)",
+	# Where the news list and the reader were last: x, y, width, height and 1 when maximized.
+	"list_window": "int_list(default=list())",
+	"reader_window": "int_list(default=list())",
+	# Updates from GitHub, checked at most once a day, and when that was last done (seconds since 1970).
+	"check_updates": "boolean(default=true)",
+	"last_update_check": "integer(default=0, min=0)",
+	# The welcome after installing is shown once; the donation reminder is off unless turned on.
+	"first_run": "boolean(default=true)",
+	"donation_reminder": "boolean(default=false)",
 }
