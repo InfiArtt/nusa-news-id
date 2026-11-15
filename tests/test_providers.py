@@ -165,3 +165,13 @@ def test_every_real_provider_is_well_formed():
 		assert set(provider.categories) <= categories
 		for source in provider.categories.values():
 			assert source.rss or source.pages
+
+
+def test_a_date_in_the_future_is_not_a_publication_date():
+	site = FakeSite(
+		{
+			"https://fake.example/news": b'<a href="/news/read/1">Konser digelar pada akhir tahun ini</a><span>29 Desember 2026</span>',
+		}
+	)
+	(item,) = site.fetch_news("Nasional")
+	assert item.published_at is None

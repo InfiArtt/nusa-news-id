@@ -10,7 +10,7 @@ import ui
 import wx
 from gui.settingsDialogs import SettingsPanel
 
-from . import cache, config
+from . import cache, config, formatting
 from .models import NewsItem
 
 # Pointer to active dialog to allow background refreshes
@@ -233,15 +233,15 @@ class NusaNewsDialog(wx.Dialog):
 
 		# Rebuild ListBox string items
 		self.news_listbox.Clear()
+		now = formatting.local_now()
 		for item in self.news_items:
-			seen_status = "[Baru] " if not item.seen else ""
-			breaking_status = "[BREAKING] " if item.is_breaking else ""
-			display_text = f"{seen_status}{breaking_status}[{item.source}] {item.title}"
-			self.news_listbox.Append(display_text)
+			self.news_listbox.Append(formatting.list_item_text(item, now))
 
 		# Append load more option if there are more items available
 		if total_count > self.current_display_limit:
-			self.news_listbox.Append("-- Muat Lebih Banyak --")
+			remaining = total_count - self.current_display_limit
+			next_count = min(config.get_config_val("max_display_count"), remaining)
+			self.news_listbox.Append(formatting.load_more_text(next_count))
 
 		# Select first item if list is not empty and set_default_selection is True
 		if self.news_items and set_default_selection:
@@ -256,7 +256,7 @@ class NusaNewsDialog(wx.Dialog):
 			self.btn_mark_read.Enable(False)
 			self.btn_copy_link.Enable(False)
 		elif selection == len(self.news_items):
-			# Selected the "-- Muat Lebih Banyak --" option
+			# Selected the load more item
 			self.btn_mark_read.Enable(False)
 			self.btn_copy_link.Enable(False)
 		else:
@@ -284,7 +284,7 @@ class NusaNewsDialog(wx.Dialog):
 		if selection == wx.NOT_FOUND:
 			return
 
-		# Check if they selected "-- Muat Lebih Banyak --"
+		# Check if they selected the load more item
 		if selection == len(self.news_items):
 			self.on_load_more()
 			return
@@ -462,34 +462,21 @@ class NusaNewsReaderDialog(wx.Dialog):
 		self.text_ctrl.SetFocus()
 
 	def load_article(self):
-		"""Loads the article body from cache or triggers background download."""
-		title = self.item.title
-		source = self.item.source
-		cat = self.item.category
-		date = self.item.published_at or "-"
-		url = self.item.url
-
-		# Format header metadata
-		header = (
-			f"Judul: {title}\n"
-			f"Sumber: {source} | Kategori: {cat} | Tanggal: {date}\n"
-			f"Link: {url}\n"
-			f"{'-' * 60}\n\n"
-		)
-
-		# Check if content is already cached
+		"""Shows the article from the cache, or downloads it in a background thread."""
 		if self.item.content:
-			self.text_ctrl.SetValue(header + self.item.content)
-			self.text_ctrl.SetInsertionPoint(0)
+			self._show(self.item.content)
 		else:
-			self.text_ctrl.SetValue(header + "Sedang mengunduh isi berita...")
-
-			# Start background fetch thread
+			self._show("Sedang mengunduh isi berita...", body_loaded=False)
 			# Settings are read here on the main thread, not in the download thread.
 			bypass_ssl = config.get_config_val("bypass_ssl_verification")
 			threading.Thread(
-				target=self._bg_fetch, args=(self.item.guid, url, bypass_ssl), daemon=True
+				target=self._bg_fetch, args=(self.item.guid, self.item.url, bypass_ssl), daemon=True
 			).start()
+
+	def _show(self, body: str, body_loaded: bool = True) -> None:
+		self.body = body if body_loaded else ""
+		self.text_ctrl.SetValue(formatting.article_text(self.item, body))
+		self.text_ctrl.SetInsertionPoint(0)
 
 	def _bg_fetch(self, guid, url, bypass_ssl):
 		"""Worker function running in a background thread."""
@@ -505,33 +492,17 @@ class NusaNewsReaderDialog(wx.Dialog):
 		if not self:
 			return
 
-		title = self.item.title
-		source = self.item.source
-		cat = self.item.category
-		date = self.item.published_at or "-"
-		url = self.item.url
-
-		header = (
-			f"Judul: {title}\n"
-			f"Sumber: {source} | Kategori: {cat} | Tanggal: {date}\n"
-			f"Link: {url}\n"
-			f"{'-' * 60}\n\n"
-		)
-
 		if content:
-			# Save to cache database
 			cache.update_article_content(guid, content)
-			# Update the text control value
-			self.text_ctrl.SetValue(header + content)
-			self.text_ctrl.SetInsertionPoint(0)
+			self._show(content)
 			ui.message("Berita berhasil dimuat.")
 		else:
-			self.text_ctrl.SetValue(
-				header + "Gagal memuat isi berita secara offline.\n\n"
-				"Silakan periksa koneksi internet Anda atau gunakan tombol 'Buka di Browser' (Alt+B) "
-				"untuk membaca langsung di situs web."
+			self._show(
+				"Gagal memuat isi berita secara offline.\n\n"
+				"Silakan periksa koneksi internet Anda atau gunakan tombol Buka di Browser (Alt+B) "
+				"untuk membaca langsung di situs web.",
+				body_loaded=False,
 			)
-			self.text_ctrl.SetInsertionPoint(0)
 			ui.message("Gagal mengunduh isi berita.")
 
 	def on_open_browser(self, event):
@@ -563,7 +534,7 @@ class NusaNewsReaderDialog(wx.Dialog):
 		"""Copies the article content to clipboard."""
 		if wx.TheClipboard.Open():
 			try:
-				wx.TheClipboard.SetData(wx.TextDataObject(self.text_ctrl.GetValue()))
+				wx.TheClipboard.SetData(wx.TextDataObject(formatting.article_copy_text(self.item, self.body)))
 				ui.message("Isi berita disalin ke clipboard.")
 			except Exception as e:
 				logHandler.log.error(f"NusaNews: Failed to copy to clipboard: {e}")

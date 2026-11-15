@@ -1,6 +1,6 @@
 # models.py
 #
-# NewsItem, one story from a news site.
+# NewsItem, one story from a news site. How it is read out is in formatting.py.
 
 from dataclasses import dataclass, field
 
@@ -14,11 +14,9 @@ class NewsItem:
 	category: str
 	summary: str | None = None
 	content: str | None = None
-	published_at: str | None = None  # Expected ISO format string
+	# When the site published it, as an ISO 8601 time with its zone, or None when the site gives no time.
+	published_at: str | None = None
 	is_breaking: bool = False
 	seen: bool = field(default=False, compare=False)
-
-	def format_announcement(self) -> str:
-		"""Formats the news item for consistent screen reader speech and braille announcements."""
-		prefix = "BREAKING NEWS: " if self.is_breaking else ""
-		return f"{prefix}{self.source}, Kategori {self.category}: {self.title}"
+	# When the add-on first found it (the cache's cached_at), for stories without a publication time.
+	found_at: str | None = field(default=None, compare=False)

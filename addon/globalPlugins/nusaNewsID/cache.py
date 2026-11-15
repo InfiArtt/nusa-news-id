@@ -10,7 +10,9 @@ import os
 import globalVars
 import logHandler
 
+from .formatting import parse_iso, story_time
 from .models import NewsItem
+from .providers.textUtils import is_breaking, parse_date
 
 CACHE_FILE = "nusaNewsCache.json"
 
@@ -155,28 +157,46 @@ def get_news_items(
 		if filter_unread_only and seen:
 			continue
 
+		title = val.get("title", "")
 		items.append(
 			NewsItem(
 				guid=guid,
-				title=val.get("title", ""),
+				title=title,
 				source=source,
 				url=val.get("url", ""),
 				category=matched_category,
 				summary=val.get("summary"),
 				content=val.get("content"),
-				published_at=val.get("published_at"),
-				is_breaking=val.get("is_breaking", False),
+				published_at=_published_iso(val),
+				# Worked out again, so stories saved by older versions follow today's rule.
+				is_breaking=is_breaking(title),
 				seen=seen,
+				found_at=val.get("cached_at"),
 			)
 		)
 
-	# Sort items by cache date descending
-	def get_sort_key(item: NewsItem):
-		val = cache_data.get(item.guid, {})
-		return val.get("cached_at", "") or item.published_at or ""
-
-	items.sort(key=get_sort_key, reverse=True)
+	# Newest first, by publication time, or by when the add-on found the story if the site gives no time.
+	oldest = datetime.datetime.min.replace(tzinfo=datetime.UTC)
+	items.sort(key=lambda item: story_time(item) or oldest, reverse=True)
 	return items[:500]
+
+
+def _published_iso(val: dict) -> str | None:
+	"""The publication time as ISO 8601.
+
+	Versions before 1.1.0 stored the site's text, such as "10 jam lalu" or "15/11/2026";
+	it is read again, counting relative times from when the story was saved.
+	That text was sometimes a sentence from the story ("... 29 Desember 2026"), so a time after the
+	story was saved is not a publication time and is dropped.
+	"""
+	published = val.get("published_at")
+	if not published or parse_iso(published):
+		return published or None
+	cachedAt = parse_iso(val.get("cached_at"))
+	parsed = parse_date(published, cachedAt)
+	if parsed is None or (cachedAt is not None and parsed > cachedAt + datetime.timedelta(hours=1)):
+		return None
+	return parsed.isoformat(timespec="seconds")
 
 
 def mark_as_read(guid: str):

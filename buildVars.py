@@ -34,6 +34,10 @@ addon_info = AddonInfo(
 - Merdeka works again: it now finds articles at Merdeka's new web addresses instead of links from the page footer.
 - Antara works again inside NVDA: its security certificate is now checked with the certificates that come with NVDA, so the "CERTIFICATE_VERIFY_FAILED" error is gone. A certificate error is no longer retried three times.
 - Clean titles and exact publication times: stories now come from each site's RSS feed where it is kept up to date, and from its pages otherwise. Leftovers such as times, section names or "Headline" no longer appear in titles.
+- A story sounds the same everywhere: title first, then source, category and how long ago, with "Breaking" in front only for breaking news and "Belum dibaca" at the end only for unread stories. No more brackets, bars or dashes, which NVDA read differently depending on the punctuation level.
+- Times are shown as "14 menit lalu" or "3 jam lalu" for the last day, and as "13 November 2026 pukul 20.00" for older stories. The list is sorted by publication time, newest first.
+- The article reader shows one fact per line: title, source and category, publication time and link. "Salin berita" copies only the title and the article.
+- Several new stories announced at once are now one message, so a braille display shows them all. The message names the key that opens the reader as set in Input Gestures.
 - Every story now has the category it was listed under: stories from sidebars, "popular" boxes and other sections of a page are left out.
 - Stories older than the cache period are no longer added, so news from 2023 or 2024 is no longer announced as new.
 - Breaking news is now only about disasters and emergencies. Words such as "presiden" or "waspada" no longer mark ordinary stories as breaking, so they no longer break through quiet hours.

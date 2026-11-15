@@ -101,6 +101,7 @@ class BaseProvider:
 		oldest: datetime,
 	) -> list[NewsItem]:
 		"""Apply the same rules to every source's stories."""
+		latest = now() + timedelta(hours=1)
 		sections = re.compile(source.sections) if source.sections else None
 		seen: set[str] = set()
 		items: list[NewsItem] = []
@@ -113,6 +114,9 @@ class BaseProvider:
 			if len(title) < MIN_TITLE_LENGTH:
 				continue
 			published = self._date_from_url(story.url) or story.published
+			if published is not None and published > latest:
+				# A date in the future is a date mentioned in the text, not when the story was published.
+				published = None
 			if published is not None and published < oldest:
 				continue
 			if (

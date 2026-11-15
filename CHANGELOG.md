@@ -17,12 +17,23 @@ Format mengikuti Keep a Changelog. Ringkasan berbahasa Inggris untuk versi yang 
 - Judul berita bersih di semua sumber. Sisa teks seperti jam ("18:13Jangan Biarkan ..."), nama kanal ("Nasional - , 03:33 ...", "... Politik Nasional", "detikJatimJumat, 12:00 WIB ..."), dan kata "Headline" tidak lagi ikut terbaca. Judul diambil dari judul utama kartu berita, bukan dari seluruh teks tautan.
 - Kategori berita akurat. Tautan dari kotak samping (misalnya "Terkini" di Antara), kotak "Populer", menu, footer, dan kanal lain di halaman yang sama tidak lagi masuk ke kategori yang sedang diambil. Contohnya, berita Cek Fakta tidak lagi masuk Teknologi Liputan6, dan berita sepak bola tidak lagi masuk Nasional Antara.
 - Tanggal terbit dibaca dengan benar dan disimpan dalam satu format waktu standar. Waktu relatif seperti "10 jam lalu" dihitung dari jam pengambilan. CNN Indonesia dan Kompas memakai waktu yang tercantum di alamat artikel. Tanggal Republika tidak lagi tertukar ke artikel lain.
+- Tanggal yang tersimpan sebagai teks oleh versi lama, misalnya "10 jam lalu", dibaca ulang dari waktu berita disimpan. Teks yang ternyata kalimat dari isi berita, misalnya "... 29 Desember 2026", tidak lagi dianggap waktu terbit, sehingga berita lama tidak lagi terbaca "baru saja" dan naik ke atas daftar. Tanggal yang jatuh di masa depan juga diabaikan saat berita diambil.
 - Berita yang lebih tua dari batas cache tidak lagi diambil, jadi berita Republika dari 2023 dan 2024 tidak lagi diumumkan sebagai berita baru.
 - Tanda breaking hanya untuk bencana dan keadaan darurat: gempa, tsunami, erupsi, meletus, banjir bandang, longsor, kebakaran hutan, bencana, darurat, evakuasi, peringatan dini, bom, teroris, dan "breaking news". Kata "presiden", "waspada", "urgent", dan "breaking" dihapus. Dalam uji 506 judul, 21 dari 29 tanda breaking sebelumnya hanya karena kata "presiden".
 - Kata kunci breaking dan Disabilitas dicocokkan sebagai kata utuh. "tuli" tidak lagi cocok dengan "menulis". Kata yang punya arti lain juga dihapus dari daftar Disabilitas, yaitu "lumpuh", "cacat", "buta", "bisu", "inklusi", "inklusif", "aksesibilitas", "aksesibel", "gangguan jiwa", "panti sosial", dan "rehabilitasi sosial".
 
 ### Diubah
 
+- Satu format baca untuk semua tempat, dibuat oleh satu modul (`formatting.py`):
+  - Daftar berita: "Judul. Sumber, Kategori, waktu." lalu "Belum dibaca." di akhir untuk berita yang belum dibaca. Kata "Breaking." di depan judul hanya untuk berita breaking. Sebelumnya: "[Baru] [BREAKING] [Detik] judul", tanpa kategori dan waktu.
+  - Item terakhir daftar: "Muat 50 berita berikutnya", dengan angka sebanyak berita yang akan dimuat. Sebelumnya: "-- Muat Lebih Banyak --".
+  - Notifikasi satu berita: "Berita baru dari Detik: judul." atau "Breaking dari Antara: judul." Beberapa berita dalam mode langsung digabung menjadi satu pesan, supaya semuanya tampil di layar braille.
+  - Ringkasan: "NusaNews: 5 berita baru. Tekan NVDA+shift+/ untuk membuka." Nama tombol diambil dari NVDA, termasuk perubahan di Gestur Masukan. Jika tombolnya dihapus, pesan menyarankan menetapkannya di Gestur Masukan.
+  - Pembaca artikel: judul, lalu "Detik, kategori Nasional", lalu "Terbit 15 November 2026 pukul 06.09", lalu link, masing-masing di baris sendiri. Untuk berita tanpa waktu terbit dari situsnya, baris ketiga berbunyi "Ditemukan ..." dengan waktu add-on pertama kali menemukannya. Sebelumnya ada garis vertikal dan garis 60 tanda minus.
+  - Tombol Salin berita hanya menyalin judul dan isi berita.
+- Waktu ditampilkan "baru saja", "14 menit lalu", atau "3 jam lalu" untuk 24 jam terakhir, dan "13 November 2026 pukul 20.00" untuk yang lebih lama, dalam zona waktu komputer.
+- Daftar diurutkan menurut waktu terbit, yang terbaru di atas. Berita tanpa waktu terbit memakai waktu pertama kali ditemukan.
+- Tanda breaking pada berita yang tersimpan dari versi lama dihitung ulang dengan aturan baru.
 - Semua provider sekarang memakai satu kelas dasar yang sama. Setiap provider hanya berisi data: alamat RSS dan halaman per kategori, pola alamat artikel, dan bagian alamat yang menandai kategori.
 - Berita diambil dari RSS jika ada dan segar, yaitu CNN Indonesia, Detik, Liputan6, Republika, sebagian Antara, dan WinPoin. Kompas, Merdeka, dan kategori yang RSS-nya basi memakai halaman kategori. Jika RSS gagal atau berisi kurang dari 5 berita terbaru, berita dari halaman kategori ditambahkan, tanpa duplikat.
 - Olahraga Merdeka sekarang diambil dari kanal sepakbola dan sport, karena kanal bolasport dan olahraga sudah tidak diperbarui. Olahraga Republika diambil dari RSS sport.

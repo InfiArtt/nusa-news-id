@@ -9,6 +9,7 @@ import tones
 import ui
 
 from . import config
+from .formatting import digest_text, notification_text
 from .models import NewsItem
 
 
@@ -89,36 +90,44 @@ class NotificationManager:
 			logHandler.log.warning(f"NusaNews: Failed to play notification beep: {e}")
 
 	def _speak_summary(self, count: int):
-		"""Speaks a summary digest message instead of flooding."""
-		gesture_str = "NVDA+Shift+/"
-		try:
-			from . import addon_instance
-
-			if addon_instance and hasattr(addon_instance, "_gestureMap"):
-				for gesture, script_name in addon_instance._gestureMap.items():
-					if script_name == "openNewsReader":
-						clean = gesture
-						if clean.startswith("kb:"):
-							clean = clean[3:]
-						parts = []
-						for part in clean.split("+"):
-							if part.lower() == "nvda":
-								parts.append("NVDA")
-							elif part.lower() == "shift":
-								parts.append("Shift")
-							elif part.lower() == "control":
-								parts.append("Control")
-							elif part.lower() == "alt":
-								parts.append("Alt")
-							else:
-								parts.append(part.upper())
-						gesture_str = "+".join(parts)
-		except Exception:
-			pass
-		message = f"NusaNews: {count} berita baru tersedia. Tekan {gesture_str} untuk membuka."
-		ui.message(message)
+		"""One message for several stories, naming the key that opens the reader."""
+		ui.message(digest_text(count, reader_gesture_text()))
 
 	def _speak_immediate(self, items: list[NewsItem]):
-		"""Speaks each news item individually."""
-		for item in items:
-			ui.message(item.format_announcement())
+		"""Every story in one message, so a braille display shows them all, not only the last."""
+		ui.message(" ".join(notification_text(item) for item in items))
+
+
+SCRIPT_NAME = "openNewsReader"
+
+
+def reader_gesture_text() -> str | None:
+	"""The key that opens the reader now, as NVDA names it, including changes made in Input Gestures.
+
+	None when the user removed every key for it.
+	"""
+	try:
+		import inputCore
+
+		from . import GlobalPlugin, addon_instance
+
+		gestures = [
+			gesture
+			for gesture, script in (getattr(addon_instance, "_gestureMap", None) or {}).items()
+			if script == SCRIPT_NAME
+		]
+		for cls, gesture, script in inputCore.manager.userGestureMap.getScriptsForAllGestures():
+			if not issubclass(GlobalPlugin, cls) and cls is not GlobalPlugin:
+				continue
+			if script == SCRIPT_NAME:
+				gestures.append(gesture)
+			elif script is None and gesture in gestures:
+				gestures.remove(gesture)
+		for gesture in gestures:
+			try:
+				return inputCore.getDisplayTextForGestureIdentifier(gesture)[1]
+			except LookupError:
+				continue
+	except Exception:
+		logHandler.log.debugWarning("NusaNews: Could not find the reader's key.", exc_info=True)
+	return None
