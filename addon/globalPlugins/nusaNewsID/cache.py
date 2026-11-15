@@ -1,28 +1,19 @@
-# -*- coding: utf-8 -*-
 # cache.py
 #
-# Documentation Compliance Notes:
-# - Replaces sqlite3 with Python's standard json module since sqlite3 is omitted in standard NVDA Python bundles.
-# - Leverages standard file read/write APIs fully compatible with Python 3.13 and all NVDA releases.
-# Threading Notes:
-# - File operations (JSON load/dump) execute strictly on the main thread via CallAfter marshalling.
-# Lifecycle Notes:
-# - init_db() ensures the cache file exists on GlobalPlugin startup.
-# - Safely writes updates using temporary atomic replacements (os.replace) to prevent corruption if NVDA halts.
-# Design Explanation:
-# - Exposes the exact same public function signatures (init_db, save_news_items, get_news_items, etc.) 
-#   so the rest of the addon remains unchanged.
-# - Stores articles as a flat dictionary mapped by unique GUID for O(1) deduplication check times.
+# The JSON cache of news stories, keyed by guid. Runs on the main thread only.
 
-import os
-import json
+import contextlib
 import datetime
-import logHandler
+import json
+import os
+
 import globalVars
-from typing import List
+import logHandler
+
 from .models import NewsItem
 
 CACHE_FILE = "nusaNewsCache.json"
+
 
 def get_cache_dir() -> str:
 	"""Determines the absolute directory path to the NusaNews cache directory."""
@@ -38,11 +29,13 @@ def get_cache_dir() -> str:
 		path = os.path.dirname(path)
 	return os.path.join(path, "nusaNewsID")
 
+
 def get_cache_path() -> str:
 	"""Determines the absolute file path to the JSON cache file within NusaNews cache directory."""
 	cache_dir = get_cache_dir()
 	os.makedirs(cache_dir, exist_ok=True)
 	return os.path.join(cache_dir, CACHE_FILE)
+
 
 def init_db():
 	"""Ensures the cache file is initialized and handles migration from old root location."""
@@ -51,6 +44,7 @@ def init_db():
 		old_path = os.path.join(os.path.dirname(get_cache_dir()), CACHE_FILE)
 		if os.path.exists(old_path) and not os.path.exists(path):
 			import shutil
+
 			logHandler.log.info("NusaNews: Migrating old cache file to new directory.")
 			shutil.copy2(old_path, path)
 			os.remove(old_path)
@@ -60,17 +54,19 @@ def init_db():
 	if not os.path.exists(path):
 		_write_cache({})
 
+
 def _read_cache() -> dict:
 	"""Safely reads the dictionary from the JSON cache file."""
 	path = get_cache_path()
 	if not os.path.exists(path):
 		return {}
 	try:
-		with open(path, "r", encoding="utf-8") as f:
+		with open(path, encoding="utf-8") as f:
 			return json.load(f)
 	except Exception as e:
 		logHandler.log.error(f"NusaNews: Failed to read JSON cache: {e}")
 		return {}
+
 
 def _write_cache(data: dict):
 	"""Writes the dictionary to the JSON cache file using a safe atomic replace pattern."""
@@ -85,12 +81,11 @@ def _write_cache(data: dict):
 	except Exception as e:
 		logHandler.log.error(f"NusaNews: Failed to write JSON cache: {e}")
 		if os.path.exists(tmp_path):
-			try:
+			with contextlib.suppress(Exception):
 				os.remove(tmp_path)
-			except Exception:
-				pass
 
-def save_news_items(items: List[NewsItem]) -> List[NewsItem]:
+
+def save_news_items(items: list[NewsItem]) -> list[NewsItem]:
 	"""
 	Saves a batch of NewsItems to the JSON cache file.
 	Returns a list of items that were successfully added (indicating they are new, not duplicates).
@@ -99,7 +94,7 @@ def save_news_items(items: List[NewsItem]) -> List[NewsItem]:
 	new_items = []
 	now_str = datetime.datetime.now().isoformat()
 	cache_updated = False
-	
+
 	for item in items:
 		if item.guid not in cache_data:
 			cache_data[item.guid] = {
@@ -112,7 +107,7 @@ def save_news_items(items: List[NewsItem]) -> List[NewsItem]:
 				"published_at": item.published_at,
 				"is_breaking": item.is_breaking,
 				"seen": False,
-				"cached_at": now_str
+				"cached_at": now_str,
 			}
 			new_items.append(item)
 			cache_updated = True
@@ -125,24 +120,27 @@ def save_news_items(items: List[NewsItem]) -> List[NewsItem]:
 				existing_categories.append(item.category)
 				existing_entry["category"] = ", ".join(existing_categories)
 				cache_updated = True
-			
+
 	if cache_updated:
 		_write_cache(cache_data)
 	return new_items
 
-def get_news_items(enabled_sources: List[str], enabled_categories: List[str], filter_unread_only: bool = False) -> List[NewsItem]:
+
+def get_news_items(
+	enabled_sources: list[str], enabled_categories: list[str], filter_unread_only: bool = False
+) -> list[NewsItem]:
 	"""Retrieves cached news items filtered by active settings from the main thread."""
 	cache_data = _read_cache()
 	items = []
-	
+
 	for guid, val in cache_data.items():
 		source = val.get("source", "")
 		category_str = val.get("category", "")
 		seen = val.get("seen", False)
-		
+
 		if source not in enabled_sources:
 			continue
-			
+
 		# Check if any of the item's categories match the active filters
 		item_categories = [c.strip() for c in category_str.split(",") if c.strip()]
 		matched_category = None
@@ -150,33 +148,36 @@ def get_news_items(enabled_sources: List[str], enabled_categories: List[str], fi
 			if cat in enabled_categories:
 				matched_category = cat
 				break
-				
+
 		if not matched_category:
 			continue
-			
+
 		if filter_unread_only and seen:
 			continue
-			
-		items.append(NewsItem(
-			guid=guid,
-			title=val.get("title", ""),
-			source=source,
-			url=val.get("url", ""),
-			category=matched_category,
-			summary=val.get("summary"),
-			content=val.get("content"),
-			published_at=val.get("published_at"),
-			is_breaking=val.get("is_breaking", False),
-			seen=seen
-		))
-		
+
+		items.append(
+			NewsItem(
+				guid=guid,
+				title=val.get("title", ""),
+				source=source,
+				url=val.get("url", ""),
+				category=matched_category,
+				summary=val.get("summary"),
+				content=val.get("content"),
+				published_at=val.get("published_at"),
+				is_breaking=val.get("is_breaking", False),
+				seen=seen,
+			)
+		)
+
 	# Sort items by cache date descending
 	def get_sort_key(item: NewsItem):
 		val = cache_data.get(item.guid, {})
 		return val.get("cached_at", "") or item.published_at or ""
-		
+
 	items.sort(key=get_sort_key, reverse=True)
 	return items[:500]
+
 
 def mark_as_read(guid: str):
 	"""Marks a single article as read (seen = True)."""
@@ -185,16 +186,18 @@ def mark_as_read(guid: str):
 		cache_data[guid]["seen"] = True
 		_write_cache(cache_data)
 
+
 def mark_all_as_read():
 	"""Marks all currently cached articles as read."""
 	cache_data = _read_cache()
 	updated = False
-	for guid, val in cache_data.items():
+	for _guid, val in cache_data.items():
 		if not val.get("seen", False):
 			val["seen"] = True
 			updated = True
 	if updated:
 		_write_cache(cache_data)
+
 
 def get_unread_count() -> int:
 	"""Returns the total number of unread articles in the cache."""
@@ -205,12 +208,13 @@ def get_unread_count() -> int:
 			count += 1
 	return count
 
+
 def prune_cache(retention_days: int):
 	"""Deletes articles cached beyond the user's expiration policy."""
 	cache_data = _read_cache()
 	now = datetime.datetime.now()
 	cutoff = now - datetime.timedelta(days=retention_days)
-	
+
 	to_delete = []
 	for guid, val in cache_data.items():
 		cached_at_str = val.get("cached_at")
@@ -221,12 +225,14 @@ def prune_cache(retention_days: int):
 					to_delete.append(guid)
 			except Exception:
 				pass
-				
+
 	if to_delete:
 		for guid in to_delete:
 			del cache_data[guid]
 		_write_cache(cache_data)
-		logHandler.log.info(f"NusaNews: Pruned JSON cache, removed {len(to_delete)} items older than {retention_days} days.")
+		logHandler.log.info(
+			f"NusaNews: Pruned JSON cache, removed {len(to_delete)} items older than {retention_days} days."
+		)
 
 
 def update_article_content(guid: str, content: str):

@@ -1,24 +1,15 @@
-# -*- coding: utf-8 -*-
 # liputan6.py
 #
-# Documentation Compliance Notes:
-# - Inherits from BaseProvider and integrates with standard python packages.
-# Threading Notes:
-# - fetch_news() executes completely within the background MonitorThread context.
-# Lifecycle Notes:
-# - Executed sequentially during background news aggregation polls.
-# Design Explanation:
-# - Maps Liputan6 Indonesian news categories to their respective HTML endpoints.
-# - Parses feeds using htmlProvider, updating breaking news parameters and filtering disabilitas tag.
+# A news provider: the category pages of one site and the pattern of its article links.
 
-import logHandler
-from typing import List
+from ..models import NewsItem
 from .baseProvider import BaseProvider
 from .htmlProvider import parse_html_feed
-from ..models import NewsItem
+
 
 class Liputan6Provider(BaseProvider):
 	"""Provider implementation for Liputan6 News (liputan6.com)."""
+
 	source_name = "Liputan6"
 
 	# Endpoint URLs for HTML Fallbacks
@@ -30,16 +21,16 @@ class Liputan6Provider(BaseProvider):
 		"Ekonomi": "https://www.liputan6.com/bisnis",
 		"Olahraga": "https://www.liputan6.com/bola",
 		"Entertainment": "https://www.liputan6.com/showbiz",
-		"Disabilitas": "https://www.liputan6.com/tag/disabilitas"
+		"Disabilitas": "https://www.liputan6.com/tag/disabilitas",
 	}
 
 	# Regex matching absolute URLs of individual news articles (discarding menus/tags)
 	# Example: https://www.liputan6.com/news/read/5600293/judul-berita
 	html_regex = r"liputan6\.com/[a-zA-Z0-9\-]+/read/\d+/"
 
-	def fetch_news(self, category: str, bypass_ssl: bool = False) -> List[NewsItem]:
+	def fetch_news(self, category: str, bypass_ssl: bool = False) -> list[NewsItem]:
 		items = []
-		
+
 		# Trigger HTML Scraping
 		html_url = self.html_urls.get(category)
 		if html_url:
@@ -53,16 +44,18 @@ class Liputan6Provider(BaseProvider):
 			if category == "Disabilitas" and not self._is_disabilitas_relevant(item.title):
 				continue
 			is_breaking = self._check_breaking(item.title)
-			final_items.append(NewsItem(
-				title=item.title,
-				source=item.source,
-				url=item.url,
-				guid=item.guid,
-				category=item.category,
-				summary=item.summary,
-				content=item.content,
-				published_at=item.published_at,
-				is_breaking=is_breaking
-			))
-			
+			final_items.append(
+				NewsItem(
+					title=item.title,
+					source=item.source,
+					url=item.url,
+					guid=item.guid,
+					category=item.category,
+					summary=item.summary,
+					content=item.content,
+					published_at=item.published_at,
+					is_breaking=is_breaking,
+				)
+			)
+
 		return final_items

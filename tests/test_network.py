@@ -7,7 +7,6 @@ import time
 import urllib.error
 
 import pytest
-
 from nusaNewsID import networkUtils
 
 
@@ -44,7 +43,9 @@ def calls(monkeypatch):
 
 
 def test_certificate_error_is_not_retried(calls):
-	calls.outcomes = [urllib.error.URLError(ssl.SSLCertVerificationError("unable to get local issuer certificate"))]
+	calls.outcomes = [
+		urllib.error.URLError(ssl.SSLCertVerificationError("unable to get local issuer certificate"))
+	]
 	assert networkUtils.fetch_http_data("https://www.antaranews.com/nasional") is None
 	assert calls.count == 1
 

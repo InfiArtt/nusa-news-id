@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 # __init__.py
 #
 # The global plugin: starts the background MonitorThread that checks the news sites,
@@ -6,6 +5,7 @@
 # Network requests run only in the thread. Settings are read on the main thread and handed to it,
 # and everything that touches the cache, wx or speech runs on the main thread through wx.CallAfter.
 
+import contextlib
 import threading
 
 import globalPluginHandler
@@ -92,8 +92,9 @@ class GlobalPlugin(globalPluginHandler.GlobalPlugin):
 		cache.init_db()
 		cache.prune_cache(self.settings["cache_duration"])
 
-		from .gui import NusaNewsSettingsPanel
 		import gui
+
+		from .gui import NusaNewsSettingsPanel
 
 		gui.settingsDialogs.NVDASettingsDialog.categoryClasses.append(NusaNewsSettingsPanel)
 
@@ -108,13 +109,12 @@ class GlobalPlugin(globalPluginHandler.GlobalPlugin):
 			self.monitor_thread.join(timeout=1.0)
 			self.monitor_thread = None
 		if addon_instance is self:
-			from .gui import NusaNewsSettingsPanel
 			import gui
 
-			try:
+			from .gui import NusaNewsSettingsPanel
+
+			with contextlib.suppress(ValueError):
 				gui.settingsDialogs.NVDASettingsDialog.categoryClasses.remove(NusaNewsSettingsPanel)
-			except ValueError:
-				pass
 			addon_instance = None
 		super().terminate(*args, **kwargs)
 

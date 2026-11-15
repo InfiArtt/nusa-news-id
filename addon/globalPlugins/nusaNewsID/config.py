@@ -1,17 +1,6 @@
-# -*- coding: utf-8 -*-
 # config.py
 #
-# Documentation Compliance Notes:
-# - Integrates directly with NVDA's native configuration subsystem (config.conf) via custom configspec.
-# - Complies with profile-switching mechanisms, locking out write access during secure mode operations automatically.
-# Threading Notes:
-# - Read and write access to config.conf singleton must occur on the main thread.
-# - The background MonitorThread will retrieve active settings via atomic config reloads marshalled on settings save.
-# Lifecycle Notes:
-# - initialize_config() is called once on GlobalPlugin initialization.
-# - Configuration handles schema loading, validation, and auto-saves to nvda.ini when modified in panels.
-# Design Explanation:
-# - Defines standard default values and bounds using ConfigObj syntax. Provides direct property access.
+# The add-on's settings in NVDA's configuration, section nusaNewsID.
 
 import config
 
@@ -21,8 +10,14 @@ CONFIG_SECTION = "nusaNewsID"
 config_spec = {
 	"refresh_interval": "integer(default=5, min=2, max=1440)",
 	"notification_mode": "string(default='digest')",
-	"enabled_sources": "string_list(default=list('Detik', 'Kompas', 'Antara', 'Republika', 'Liputan6', 'Merdeka', 'CNN Indonesia', 'WinPoin', 'MacPoin'))",
-	"category_filter": "string_list(default=list('Nasional', 'Internasional', 'Teknologi', 'Politik', 'Ekonomi', 'Olahraga', 'Entertainment', 'Disabilitas'))",
+	"enabled_sources": (
+		"string_list(default=list('Detik', 'Kompas', 'Antara', 'Republika', 'Liputan6', 'Merdeka', "
+		"'CNN Indonesia', 'WinPoin', 'MacPoin'))"
+	),
+	"category_filter": (
+		"string_list(default=list('Nasional', 'Internasional', 'Teknologi', 'Politik', 'Ekonomi', "
+		"'Olahraga', 'Entertainment', 'Disabilitas'))"
+	),
 	"silent_hours_enabled": "boolean(default=false)",
 	"silent_hours_start": "string(default='22:00')",
 	"silent_hours_end": "string(default='06:00')",
@@ -34,6 +29,7 @@ config_spec = {
 	"max_display_count": "integer(default=50, min=20, max=100)",
 }
 
+
 def initialize_config():
 	"""Registers the NusaNews configuration specification dynamically in NVDA's core confspec."""
 	try:
@@ -41,7 +37,9 @@ def initialize_config():
 		config.conf.spec[CONFIG_SECTION] = config_spec
 	except Exception as e:
 		import logHandler
+
 		logHandler.log.error(f"NusaNews: Failed to register configuration spec: {e}")
+
 
 def get_config_val(key):
 	"""Reads a value from the core configuration system with fallback handling."""
@@ -51,7 +49,12 @@ def get_config_val(key):
 		# Explicitly cast to prevent type issues (e.g. unvalidated string configs)
 		if key in {"refresh_interval", "cache_duration", "max_display_count"}:
 			return int(val)
-		if key in {"silent_hours_enabled", "notification_tone", "breaking_news_preference", "bypass_ssl_verification"}:
+		if key in {
+			"silent_hours_enabled",
+			"notification_tone",
+			"breaking_news_preference",
+			"bypass_ssl_verification",
+		}:
 			if isinstance(val, str):
 				return val.lower() == "true"
 			return bool(val)
@@ -61,8 +64,27 @@ def get_config_val(key):
 		fallbacks = {
 			"refresh_interval": 5,
 			"notification_mode": "digest",
-			"enabled_sources": ["Detik", "Kompas", "Antara", "Republika", "Liputan6", "Merdeka", "CNN Indonesia", "WinPoin", "MacPoin"],
-			"category_filter": ["Nasional", "Internasional", "Teknologi", "Politik", "Ekonomi", "Olahraga", "Entertainment", "Disabilitas"],
+			"enabled_sources": [
+				"Detik",
+				"Kompas",
+				"Antara",
+				"Republika",
+				"Liputan6",
+				"Merdeka",
+				"CNN Indonesia",
+				"WinPoin",
+				"MacPoin",
+			],
+			"category_filter": [
+				"Nasional",
+				"Internasional",
+				"Teknologi",
+				"Politik",
+				"Ekonomi",
+				"Olahraga",
+				"Entertainment",
+				"Disabilitas",
+			],
 			"silent_hours_enabled": False,
 			"silent_hours_start": "22:00",
 			"silent_hours_end": "06:00",
@@ -74,6 +96,7 @@ def get_config_val(key):
 			"max_display_count": 50,
 		}
 		return fallbacks.get(key)
+
 
 def read_settings() -> dict:
 	"""Copy every setting into a plain dict, for the background thread. Call on the main thread only.
@@ -94,4 +117,5 @@ def set_config_val(key, val):
 		config.conf[CONFIG_SECTION][key] = val
 	except Exception as e:
 		import logHandler
+
 		logHandler.log.error(f"NusaNews: Failed to save config key {key}: {e}")

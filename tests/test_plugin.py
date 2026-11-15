@@ -3,10 +3,9 @@
 import sys
 from types import ModuleType
 
+import nusaNewsID
 import nvda_mocks
 import pytest
-
-import nusaNewsID
 from nusaNewsID import cache
 
 

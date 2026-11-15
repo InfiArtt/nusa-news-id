@@ -63,7 +63,7 @@ _module("wx", CallAfter=lambda function, *args, **kwargs: calledAfter.append((fu
 _module("globalPluginHandler", GlobalPlugin=GlobalPlugin)
 appArgs = SimpleNamespace(secure=False, configPath=None)
 _module("globalVars", appArgs=appArgs)
-_module("scriptHandler", script=lambda **kwargs: (lambda function: function))
+_module("scriptHandler", script=lambda **kwargs: lambda function: function)
 _module("config", conf=_Anything())
 settingsDialogs = _module(
 	"gui.settingsDialogs",

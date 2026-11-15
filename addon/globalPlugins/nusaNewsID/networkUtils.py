@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 # networkUtils.py
 #
 # HTTP downloads for the providers and the article reader. Runs only in background threads.
@@ -13,7 +12,8 @@ import urllib.request
 import logHandler
 
 USER_AGENT = (
-	"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/140.0 Safari/537.36"
+	"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) "
+	"Chrome/140.0 Safari/537.36"
 )
 RETRIES = 2
 FIRST_BACKOFF_SECONDS = 2.0
@@ -93,7 +93,9 @@ def fetch_http_data(
 			if isinstance(e, urllib.error.HTTPError) and 400 <= e.code < 500:
 				logHandler.log.warning(f"NusaNews: {url} answered HTTP {e.code}")
 				return None
-			logHandler.log.warning(f"NusaNews: Failed to retrieve {url} (attempt {attempt + 1}/{RETRIES + 1}): {e}")
+			logHandler.log.warning(
+				f"NusaNews: Failed to retrieve {url} (attempt {attempt + 1}/{RETRIES + 1}): {e}"
+			)
 			if attempt < RETRIES:
 				if stop_event is not None:
 					if stop_event.wait(backoff):

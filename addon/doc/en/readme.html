@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="stylesheet" type="text/css" href="../style.css" media="screen">
+<title>NusaNewsID - Indonesian News Reader 1.1.0</title>
+</head>
+<body>
+<h1>NusaNews - Indonesian News Reader for NVDA</h1>
+<p>The NusaNews add-on allows you to monitor and read the latest news directly and accessibly from various leading news portals in Indonesia using the NVDA screen reader. Featuring a robust <strong>Offline Reader Mode</strong>, you can read full article bodies offline inside a comfortable, screen-reader friendly text box without opening external web browsers which are often cluttered with advertisements, overlays, and accessibility barriers.</p>
+<h2>Key Features</h2>
+<ul>
+<li><strong>Single Keyboard Shortcut</strong>: Press <code>NVDA+Shift+/</code> from anywhere to summon the main news reader dialog.</li>
+<li><strong>Offline Reader Mode</strong>: Open and read full news articles offline inside a multi-line, read-only text control. Read articles line-by-line or paragraph-by-paragraph using standard screen review arrow keys.</li>
+<li><strong>9 Popular News Sources</strong>:<ul>
+<li><em>General News</em>: Detik.com, Kompas.com, Antara News, Republika, Liputan6, Merdeka.com, and CNN Indonesia.</li>
+<li><em>Technology News</em>: WinPoin (Windows/Microsoft news) and MacPoin (Apple/Mac news).</li>
+</ul>
+</li>
+<li><strong>Structured Categories</strong>: Nasional, Internasional, Teknologi, Politik, Ekonomi, Olahraga, Entertainment, and Disabilitas.</li>
+<li><strong>Disability Topic Filtering</strong>: When selecting the "Disabilitas" category, the add-on automatically filters articles from all portals using a comprehensive list of localized disability-related keywords. This ensures only articles highly relevant to disability issues in Indonesia are shown.</li>
+<li><strong>Smart Notification System</strong>:<ul>
+<li><em>Digest</em>: Announces the number of new articles fetched during background polling cycles.</li>
+<li><em>Immediate</em>: Speaks individual article titles as they are fetched (up to a maximum of 5 to prevent speech flooding).</li>
+</ul>
+</li>
+<li><strong>Do Not Disturb (Quiet Hours)</strong>: Silences automatic news notifications during configurable hours (e.g. at night) so your rest is never interrupted.</li>
+<li><strong>Display Limits &amp; Pagination</strong>: Restricts the initial number of news items displayed (20, 50, or 100) to keep dialog loading instantaneous, with an incremental <code>-- Muat Lebih Banyak --</code> (Load More) item at the bottom of the list to fetch more articles on the fly and focus automatically on the first new item.</li>
+<li><strong>Persistent Local Cache</strong>: Downloaded article contents are saved locally for instant retrieval.</li>
+<li><strong>Bypass SSL Verification</strong>: An emergency fallback option to skip SSL certificate verification if your local network connection encounters certificate validation errors.</li>
+</ul>
+<hr />
+<h2>Usage Guidelines and Keyboard Shortcuts</h2>
+<h3>1. Main News Reader Dialog</h3>
+<p>To open NusaNews, press <strong><code>NVDA+Shift+/</code></strong> from anywhere. The dialog will open and place focus directly on the news list box.
+*   <strong>Navigating the News</strong>: Use <strong>Up Arrow</strong> and <strong>Down Arrow</strong> keys to select an article from the list.
+*   <strong>Reading Articles</strong>: Press <strong>Enter</strong> or double-click on a selected article to open the offline <strong>Reader Mode</strong>.
+*   <strong>Copy Link (Alt+C)</strong>: Copies the selected news article URL to the clipboard.
+*   <strong>Mark Read (Alt+D)</strong>: Marks the selected news item as read (removing the <code>[Baru]</code> prefix).
+*   <strong>Mark All Read (Alt+M)</strong>: Marks all currently listed news items as read.
+*   <strong>Refresh (Alt+S)</strong>: Triggers a manual background check for new articles from all enabled sources immediately.
+*   <strong>Copy Link (Alt+L)</strong>: Copy the URL of the selected news.
+*   <strong>Close Dialog (Alt+T or Escape)</strong>: Closes the NusaNews dialog and returns to your previous application.
+*   <strong>Filtering by Source and Category</strong>: Use the <strong>Tab</strong> key to move to the Source or Category filter dropdowns, and use the <strong>Arrow</strong> keys to change selections. The news list will update instantly.</p>
+<h3>2. Offline Reader Mode Dialog</h3>
+<p>When you open an article, the offline reader dialog displays a read-only text control containing the cleaned text. NVDA will automatically focus on this text control so you can start reading immediately.
+*   <strong>Reviewing Text</strong>: Use standard text review keys (such as <strong>Down Arrow</strong>, <strong>Up Arrow</strong>, <strong>Page Down</strong>, etc.) to read the article.
+*   <strong>Open in Browser (Alt+B)</strong>: Opens the original article webpage in your default web browser.
+*   <strong>Copy Link (Alt+L)</strong>: Copies the current news article URL to the clipboard.
+*   <strong>Copy (Alt+S)</strong>: Copies the full article text (including title and metadata) to the system clipboard.
+*   <strong>Close Reader (Alt+T or Escape)</strong>: Closes the reader dialog and returns you to the main news list.</p>
+<hr />
+<h2>Configuring Settings</h2>
+<p>You can customize the add-on settings through NVDA's Preferences:
+1.  Press <strong><code>NVDA+N</code></strong> to open the NVDA Menu.
+2.  Go to <strong>Preferences</strong> -&gt; <strong>Settings...</strong>
+3.  In the Category list on the left, find and select <strong>nusaNewsID</strong>.
+4.  Use <strong>Tab</strong> to navigate through the following configuration controls:</p>
+<ul>
+<li><strong>Active News Sources</strong>: Check or uncheck news portals (Detik, Kompas, Antara, Republika, Liputan6, Merdeka, CNN Indonesia, WinPoin, MacPoin) to enable/disable them.</li>
+<li><strong>Refresh Interval (minutes)</strong>: Select how frequently the add-on polls for updates in the background (2, 5, 10, 15, 30, 60, or 120 minutes).</li>
+<li><strong>Notification Mode</strong>:<ul>
+<li><em>Digest</em>: NVDA speaks a summary count of new articles (e.g. <em>"NusaNews: 5 new articles available"</em>).</li>
+<li><em>Immediate</em>: NVDA announces individual article titles in succession.</li>
+</ul>
+</li>
+<li><strong>Play a notification tone when there is new news</strong>: Check to play a short beep sound whenever new news is fetched.</li>
+<li><strong>Prioritize breaking news</strong>: If enabled, articles labeled as breaking news are always announced immediately, overriding the general notification mode.</li>
+<li><strong>Enable Jam Sunyi (Do Not Disturb)</strong>: Check to silence automatic voice notifications during specified hours.</li>
+<li><strong>Quiet Hours Start / End (HH:MM)</strong>: Enter start and end times in 24-hour format (e.g. start <code>22:00</code> and end <code>06:00</code>).</li>
+<li><strong>Bypass SSL Verification</strong>: Check this option if you encounter SSL certificate validation errors from news sites (recommended to keep unchecked unless necessary).</li>
+<li><strong>Initial Display Limit</strong>: Set the initial number of news items loaded in the list (20, 50, or 100) to keep the interface fast.</li>
+<li><strong>Cache Retention Limit (Days)</strong>: Select how long downloaded article text should remain cached on disk (1 to 30 days). Expired cache items are cleaned up automatically when NVDA starts.</li>
+<li><strong>Clear All News Cache</strong>: Click this button to wipe all locally stored cache immediately. A confirmation dialog will appear.</li>
+</ul>
+<hr />
+<h2>Version History</h2>
+<p>The full history is in CHANGELOG.md in the repository https://github.com/InfiArtt/nusa-news-id.</p>
+<hr />
+<h2>Contributors</h2>
+<ul>
+<li><strong>Rexya Muhamad Rizki</strong> (Lead Developer)</li>
+<li><strong>NusaNews ID Team</strong></li>
+<li>Built specifically for the blind and screen reader community in Indonesia.</li>
+</ul>
+</body>
+</html>

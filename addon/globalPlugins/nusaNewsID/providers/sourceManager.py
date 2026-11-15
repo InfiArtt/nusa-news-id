@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 # sourceManager.py
 #
 # The registry of news providers, and the loop that asks each enabled provider for each enabled category.
@@ -33,7 +32,8 @@ PROVIDER_CLASSES: tuple[type[BaseProvider], ...] = (
 	MacPoinProvider,
 )
 
-# The source names that can be enabled. Names saved by older versions that are not here, such as Tempo, are ignored.
+# The source names that can be enabled.
+# Names saved by older versions that are not here, such as Tempo, are ignored.
 SOURCE_NAMES: tuple[str, ...] = tuple(provider.source_name for provider in PROVIDER_CLASSES)
 
 
