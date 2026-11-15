@@ -4,7 +4,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: nusaNewsID 1.1.0\n"
 "Report-Msgid-Bugs-To: 'nvda-translations@groups.io'\n"
-"POT-Creation-Date: 2026-11-15 16:59+0700\n"
+"POT-Creation-Date: 2026-11-15 19:55+0700\n"
 "PO-Revision-Date: 2026-11-15 16:00+0700\n"
 "Last-Translator: Rexya Muhamad Rizki <rexya2017@gmail.com>\n"
 "Language-Team: Indonesian\n"
@@ -247,9 +247,16 @@ msgstr "&Kategori:"
 msgid "&Unread only"
 msgstr "Hanya yang &belum dibaca"
 
+#. The list and the preview grow with the window, so each label is its own item above its control.
+#. The label makes NVDA name the list when it gets focus.
 #. Translators: label of the news list.
 msgid "News. Press Enter to read the selected story:"
 msgstr "Daftar berita. Tekan Enter untuk membaca:"
+
+#. Translators: label of the box under the news list that shows the selected story's
+#. whole title, source, category, time, author and summary.
+msgid "Selected story:"
+msgstr "Berita yang dipilih:"
 
 #. Translators: button that copies the web address of the selected story.
 msgid "Copy &link"
@@ -312,6 +319,28 @@ msgstr "&Salin berita"
 #. Translators: name of the group of buttons at the end of a story in the reader.
 msgid "Actions"
 msgstr "Tindakan"
+
+#. Translators: the description under a photo in the article reader, for example
+#. "Photo: Residents queue at the bus stop."
+#, python-brace-format
+msgid "Photo: {description}"
+msgstr "Foto: {description}"
+
+#. Translators: shown in the article reader where the story has a video.
+msgid "This story has a video. Press Open in browser to watch it."
+msgstr "Berita ini memuat video. Tekan Buka di browser untuk menontonnya."
+
+#. Translators: introduces a post from a social network quoted in a story, for example
+#. "Post on X by @SpaceX:".
+#, python-brace-format
+msgid "Post on {network} by {handle}:"
+msgstr "Unggahan {network} dari {handle}:"
+
+#. Translators: introduces a post from a social network quoted in a story, when the post does not
+#. name its account, for example "Post on Instagram:".
+#, python-brace-format
+msgid "Post on {network}:"
+msgstr "Unggahan {network}:"
 
 #. Translators: label of the text box with the story in the article reader.
 msgid "Story text:"
@@ -564,9 +593,19 @@ msgid ""
 "reader's text size from 100 to 400 percent, and the new setting \"Reader "
 "text size\" keeps it. The page uses the Windows colors, including contrast "
 "themes, with wider line spacing and lines of at most 70 characters.\n"
-"- Articles are cleaner. Ads, \"baca juga\" boxes, sidebars, copyright lines "
-"and office addresses are left out, and images appear with their "
-"descriptions.\n"
+"- Articles are cleaner. Ads, \"baca juga\" boxes and the links after labels "
+"such as \"Baca:\", \"Simak:\" or \"Pilihan Redaksi\", sidebars, copyright "
+"lines, office addresses and editors' codes such as \"(acd/acd)\" are left "
+"out. A photo has one description, without its credit or buttons such as "
+"\"Perbesar\". Where a story has a video, a line says so. Posts from X, "
+"Instagram and other networks are quoted with the account that posted them. A "
+"reporter's name at the top of an article becomes the \"Written by\" line. "
+"Video pages without text show their summary.\n"
+"- The reader opens in Internet Explorer 11 mode, and the size and place of "
+"the news list and the reader are remembered. Both can be maximized.\n"
+"- Under the news list, a box shows the selected story's whole title, its "
+"source, category, time and author, and its summary. The list and this box "
+"use the reader's text size.\n"
 "- A source with no saved stories yet, such as one you just turned on, or "
 "InfiArtt with its whole archive, is saved quietly as read instead of being "
 "announced story by story.\n"
@@ -644,9 +683,20 @@ msgstr ""
 "\"Ukuran teks pembaca\" menyimpannya. Halaman memakai warna Windows, "
 "termasuk tema kontras, dengan jarak baris lebih lega dan baris paling "
 "panjang 70 karakter.\n"
-"- Isi artikel lebih bersih. Iklan, kotak \"baca juga\", kotak samping, "
-"catatan hak cipta, dan alamat kantor redaksi tidak ikut, dan gambar tampil "
-"dengan keterangannya.\n"
+"- Isi artikel lebih bersih. Iklan, kotak \"baca juga\" dan tautan sesudah "
+"label seperti \"Baca:\", \"Simak:\", atau \"Pilihan Redaksi\", kotak "
+"samping, catatan hak cipta, alamat kantor redaksi, dan kode editor seperti "
+"\"(acd/acd)\" tidak ikut. Foto punya satu keterangan saja, tanpa kredit foto "
+"dan tanpa tombol seperti \"Perbesar\". Jika berita memuat video, ada satu "
+"baris yang memberi tahu. Unggahan X, Instagram, dan media sosial lain "
+"dikutip bersama akun pengunggahnya. Nama reporter di awal artikel menjadi "
+"baris \"Ditulis oleh\". Halaman video tanpa teks menampilkan ringkasannya.\n"
+"- Pembaca artikel berjalan dalam mode Internet Explorer 11, dan ukuran serta "
+"posisi daftar berita dan pembaca artikel diingat. Keduanya bisa "
+"dimaksimalkan.\n"
+"- Di bawah daftar berita ada kotak yang menampilkan judul lengkap berita "
+"yang dipilih, sumber, kategori, waktu, dan penulisnya, serta ringkasannya. "
+"Daftar dan kotak ini memakai ukuran teks pembaca.\n"
 "- Sumber yang belum punya berita tersimpan, misalnya sumber yang baru Anda "
 "aktifkan, atau InfiArtt dengan seluruh arsipnya, disimpan diam-diam sebagai "
 "sudah dibaca, bukan diumumkan satu per satu.\n"

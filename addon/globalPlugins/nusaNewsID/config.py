@@ -56,6 +56,8 @@ def get_config_val(key):
 			if isinstance(val, str):
 				return val.lower() == "true"
 			return bool(val)
+		if key in {"list_window", "reader_window"}:
+			return [int(part) for part in val]
 		return val
 	except Exception:
 		# Fallback defaults in case the spec is not loaded or registry fails
@@ -93,6 +95,8 @@ def get_config_val(key):
 			"max_display_count": 50,
 			"data_version": 0,
 			"reader_zoom": 100,
+			"list_window": [],
+			"reader_window": [],
 		}
 		return fallbacks.get(key)
 

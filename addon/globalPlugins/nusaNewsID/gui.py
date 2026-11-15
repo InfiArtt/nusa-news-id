@@ -3,6 +3,9 @@
 # The news list dialog, the article reader dialog and the settings panel.
 # Everything here runs on the main thread.
 
+import contextlib
+import os
+import pathlib
 import re
 import threading
 
@@ -17,7 +20,7 @@ from gui.settingsDialogs import SettingsPanel
 
 from . import cache, config, formatting, readerHtml
 from .models import NewsItem
-from .providers.articleContent import Article
+from .providers.articleContent import Article, blocks_text
 from .providers.sourceManager import ALWAYS_ON_SOURCES, CATEGORIES, SOURCE_NAMES
 
 addonHandler.initTranslation()
@@ -96,6 +99,39 @@ def _copy_to_clipboard(text: str, done_message: str) -> None:
 		wx.TheClipboard.Close()
 
 
+def _restore_place(window: wx.TopLevelWindow, key: str, default_size: tuple[int, int]) -> None:
+	"""Put a window where it was last (config key such as "list_window"), or centre it at default_size."""
+	saved = config.get_config_val(key) or []
+	if len(saved) == 5:
+		x, y, width, height, maximized = saved
+		# Only while that place is still on a screen: a second monitor may have been unplugged.
+		if (
+			width >= 200
+			and height >= 150
+			and wx.Display.GetFromPoint(wx.Point(x + 20, y + 20)) != wx.NOT_FOUND
+		):
+			window.SetSize(x, y, width, height)
+			if maximized:
+				window.Maximize()
+			return
+	window.SetSize(window.FromDIP(wx.Size(*default_size)))
+	window.Centre()
+
+
+def _save_place(window: wx.TopLevelWindow, key: str) -> None:
+	if window.IsIconized():
+		return
+	rect = window.GetRect()
+	config.set_config_val(key, [rect.x, rect.y, rect.width, rect.height, int(window.IsMaximized())])
+
+
+def _text_font(zoom: int) -> wx.Font:
+	"""Windows' font for dialogs, enlarged like the reader's text: zoom is the reader text size in percent."""
+	font = wx.SystemSettings.GetFont(wx.SYS_DEFAULT_GUI_FONT)
+	font.SetFractionalPointSize(font.GetFractionalPointSize() * zoom / 100)
+	return font
+
+
 class DonationDialog(wx.Dialog):
 	"""Dialog that displays read-only donation information."""
 
@@ -130,14 +166,15 @@ class NusaNewsDialog(wx.Dialog):
 			parent,
 			# Translators: title of the news list dialog.
 			title=_("NusaNews - Indonesian news reader"),
-			style=wx.DEFAULT_DIALOG_STYLE | wx.RESIZE_BORDER,
+			style=wx.DEFAULT_DIALOG_STYLE | wx.RESIZE_BORDER | wx.MAXIMIZE_BOX,
 		)
 		self.news_items: list[NewsItem] = []
 		self.sources = _listed_sources()
 		self.current_display_limit = config.get_config_val("max_display_count")
 		self._setup_ui()
 		self._bind_events()
-		self.Centre()
+		self.apply_text_size()
+		_restore_place(self, "list_window", (900, 680))
 		self.populate_list()
 		self.news_listbox.SetFocus()
 
@@ -165,14 +202,29 @@ class NusaNewsDialog(wx.Dialog):
 		# Translators: check box that shows only the stories not read yet.
 		self.unread_checkbox = sHelper.addItem(wx.CheckBox(self, label=_("&Unread only")))
 
-		# The label makes NVDA say "Daftar berita, list" when the list gets focus.
-		self.news_listbox = sHelper.addLabeledControl(
-			# Translators: label of the news list.
-			_("News. Press Enter to read the selected story:"),
-			wx.ListBox,
-			style=wx.LB_SINGLE | wx.LB_NEEDED_SB,
-			size=(700, 360),
+		# The list and the preview grow with the window, so each label is its own item above its control.
+		# The label makes NVDA name the list when it gets focus.
+		# Translators: label of the news list.
+		sHelper.addItem(wx.StaticText(self, label=_("News. Press Enter to read the selected story:")))
+		self.news_listbox = wx.ListBox(
+			self, style=wx.LB_SINGLE | wx.LB_NEEDED_SB, size=self.FromDIP(wx.Size(700, 300))
 		)
+		sHelper.sizer.Add(self.news_listbox, proportion=3, flag=wx.EXPAND)
+		# The whole title of the selected story, its details and summary, wrapped to the window's width.
+		sHelper.addItem(
+			wx.StaticText(
+				self,
+				# Translators: label of the box under the news list that shows the selected story's
+				# whole title, source, category, time, author and summary.
+				label=_("Selected story:"),
+			)
+		)
+		self.preview = wx.TextCtrl(
+			self,
+			style=wx.TE_MULTILINE | wx.TE_READONLY | wx.TE_RICH2,
+			size=self.FromDIP(wx.Size(700, 150)),
+		)
+		sHelper.sizer.Add(self.preview, proportion=2, flag=wx.EXPAND)
 
 		buttons = guiHelper.ButtonHelper(wx.HORIZONTAL)
 		# Translators: button that copies the web address of the selected story.
@@ -269,13 +321,23 @@ class NusaNewsDialog(wx.Dialog):
 				if fresh.guid == guid:
 					self.news_items[index] = fresh
 					self.news_listbox.SetString(index, formatting.list_item_text(fresh))
+					if index == self.news_listbox.GetSelection():
+						self.update_button_states()
 					break
 			return
 
 	def update_button_states(self):
-		has_story = self._selected_item() is not None
-		self.btn_mark_read.Enable(has_story)
-		self.btn_copy_link.Enable(has_story)
+		item = self._selected_item()
+		self.btn_mark_read.Enable(item is not None)
+		self.btn_copy_link.Enable(item is not None)
+		self.preview.ChangeValue(formatting.preview_text(item) if item else "")
+
+	def apply_text_size(self) -> None:
+		"""Show the list and the preview at the reader's text size, for low vision users."""
+		font = _text_font(config.get_config_val("reader_zoom"))
+		for control in (self.news_listbox, self.preview):
+			control.SetFont(font)
+		self.Layout()
 
 	def on_listbox_select(self, event):
 		self.update_button_states()
@@ -356,6 +418,7 @@ class NusaNewsDialog(wx.Dialog):
 	def on_close(self, event):
 		global active_dialog
 		active_dialog = None
+		_save_place(self, "list_window")
 		self.Destroy()
 
 	def reload_settings(self):
@@ -370,6 +433,7 @@ class NusaNewsDialog(wx.Dialog):
 		self.source_choice.Set([_all_label(), *self.sources])
 		index = self.sources.index(current_source) + 1 if current_source in self.sources else 0
 		self.source_choice.SetSelection(index)
+		self.apply_text_size()
 		self.populate_list(keep_guid=item.guid if item else None)
 
 
@@ -397,6 +461,17 @@ def _reader_labels() -> dict[str, str]:
 		"close": _("&Close"),
 		# Translators: name of the group of buttons at the end of a story in the reader.
 		"actions": _("Actions"),
+		# Translators: the description under a photo in the article reader, for example
+		# "Photo: Residents queue at the bus stop."
+		"image": _("Photo: {description}"),
+		# Translators: shown in the article reader where the story has a video.
+		"video": _("This story has a video. Press Open in browser to watch it."),
+		# Translators: introduces a post from a social network quoted in a story, for example
+		# "Post on X by @SpaceX:".
+		"social": _("Post on {network} by {handle}:"),
+		# Translators: introduces a post from a social network quoted in a story, when the post does not
+		# name its account, for example "Post on Instagram:".
+		"social_no_handle": _("Post on {network}:"),
 	}
 
 
@@ -420,12 +495,16 @@ class NusaNewsReaderDialog(wx.Dialog):
 		self.web = None
 		self.text_ctrl = None
 		self._zoom = config.get_config_val("reader_zoom")
+		# The page files of this reader. Each page shown gets a new file, as the engine may still be
+		# reading the previous one; they are removed when the reader closes.
+		self._page_dir = os.path.join(cache.get_cache_dir(), "reader")
+		self._page_files: list[str] = []
 
 		main_sizer = wx.BoxSizer(wx.VERTICAL)
 		if _webview_available():
 			from wx import html2
 
-			self.web = html2.WebView.New(self, backend=html2.WebViewBackendIE, size=(900, 650))
+			self.web = html2.WebView.New(self, backend=html2.WebViewBackendIE)
 			self.web.EnableContextMenu(False)
 			self.web.EnableHistory(False)
 			main_sizer.Add(self.web, 1, wx.EXPAND)
@@ -433,7 +512,6 @@ class NusaNewsReaderDialog(wx.Dialog):
 			self.web.Bind(html2.EVT_WEBVIEW_NEWWINDOW, self._on_new_window)
 			self.web.Bind(html2.EVT_WEBVIEW_LOADED, self._on_loaded)
 			self.SetSizer(main_sizer)
-			self.SetSize((900, 700))
 			self._bind_keys()
 		else:
 			sHelper = guiHelper.BoxSizerHelper(self, orientation=wx.VERTICAL)
@@ -458,7 +536,7 @@ class NusaNewsReaderDialog(wx.Dialog):
 			btn_copy_link.Bind(wx.EVT_BUTTON, self.on_copy_link)
 			btn_copy.Bind(wx.EVT_BUTTON, self.on_copy)
 			btn_close.Bind(wx.EVT_BUTTON, self.on_close)
-		self.Centre()
+		_restore_place(self, "reader_window", (900, 700))
 		self.Bind(wx.EVT_CLOSE, self.on_close)
 
 		# Opening a story marks it read.
@@ -502,11 +580,33 @@ class NusaNewsReaderDialog(wx.Dialog):
 				labels=_reader_labels(),
 				zoom=self._zoom,
 			)
-			self.web.SetPage(page, "")
+			self._load_page(page)
 		else:
-			body = "\n\n".join(part for part in (message, article.text if article else "") if part)
+			body = "\n\n".join(part for part in (message, self._article_text()) if part)
 			self.text_ctrl.SetValue(formatting.article_text(self.item, body))
 			self.text_ctrl.SetInsertionPoint(0)
+
+	def _article_text(self) -> str:
+		"""The article as plain text, with photos, videos and social posts described."""
+		return blocks_text(self.article.blocks, labels=_reader_labels()) if self.article else ""
+
+	def _load_page(self, page: str) -> None:
+		"""Show the page from a file rather than with SetPage.
+
+		Internet Explorer's engine shows a page given with SetPage in IE 8 mode; loaded from a file, the
+		page's X-UA-Compatible tag puts it in IE 11 mode. If the file cannot be written, SetPage still
+		works, with the IE 8 styles.
+		"""
+		path = os.path.join(self._page_dir, f"page{id(self)}-{len(self._page_files)}.html")
+		try:
+			os.makedirs(self._page_dir, exist_ok=True)
+			with open(path, "w", encoding="utf-8") as f:
+				f.write(page)
+			self._page_files.append(path)
+			self.web.LoadURL(pathlib.Path(path).as_uri())
+		except OSError:
+			logHandler.log.debugWarning("NusaNews: Writing the reader page failed.", exc_info=True)
+			self.web.SetPage(page, "")
 
 	def _bg_fetch(self, guid, source, url, bypass_ssl):
 		"""Runs in a background thread."""
@@ -520,8 +620,10 @@ class NusaNewsReaderDialog(wx.Dialog):
 		wx.CallAfter(self._on_fetch_complete, guid, article)
 
 	def _on_fetch_complete(self, guid, article):
-		if article:
-			cache.update_article(guid, article)
+		# A writer named in the article becomes the story's author; the page then names them.
+		if article and cache.update_article(guid, article):
+			fresh = cache.get_news_items([self.item.source], [self.item.category])
+			self.item = next((story for story in fresh if story.guid == guid), self.item)
 		if not self:
 			# The reader was closed while downloading; the article is saved for next time.
 			return
@@ -581,6 +683,8 @@ class NusaNewsReaderDialog(wx.Dialog):
 		self._zoom = zoom
 		self.web.RunScript(f'document.documentElement.style.fontSize = "{readerHtml.text_size(zoom)}";')
 		config.set_config_val("reader_zoom", zoom)
+		if self.list_dialog:
+			self.list_dialog.apply_text_size()
 		# Translators: said when the text size of the article reader changes,
 		# for example "Text size 150 percent".
 		ui.message(_("Text size {percent} percent").format(percent=zoom))
@@ -594,6 +698,17 @@ class NusaNewsReaderDialog(wx.Dialog):
 		elif url.startswith(("http://", "https://")):
 			event.Veto()
 			self._open_url(url)
+		elif not self._is_own_page(url):
+			# Nothing else loads in the reader, such as a javascript: or mailto: address.
+			event.Veto()
+
+	def _is_own_page(self, url: str) -> bool:
+		"""Whether url is one of this reader's page files. The engine names them by path or by file: URI."""
+		if url.startswith("about:"):
+			return True
+		pages = {os.path.normcase(path) for path in self._page_files}
+		pages.update(pathlib.Path(path).as_uri().casefold() for path in self._page_files)
+		return os.path.normcase(url) in pages or url.casefold() in pages
 
 	def _on_new_window(self, event):
 		self._open_url(event.GetURL())
@@ -608,8 +723,6 @@ class NusaNewsReaderDialog(wx.Dialog):
 
 	def _open_url(self, url: str) -> None:
 		try:
-			import os
-
 			os.startfile(url)
 		except Exception:
 			logHandler.log.exception(f"NusaNews: Opening {url} failed.")
@@ -623,14 +736,18 @@ class NusaNewsReaderDialog(wx.Dialog):
 		_copy_to_clipboard(self.item.url, _("Link copied."))
 
 	def on_copy(self, event):
-		body = self.article.text if self.article else ""
+		body = self._article_text()
 		# Translators: said after copying the title and text of a story.
 		_copy_to_clipboard(formatting.article_copy_text(self.item, body), _("Story copied."))
 
 	def on_close(self, event):
+		_save_place(self, "reader_window")
 		# Update the story's line before focus goes back to the list, so NVDA reads it once, as read.
 		if self.list_dialog:
 			self.list_dialog.update_item(self.item.guid)
+		for path in self._page_files:
+			with contextlib.suppress(OSError):
+				os.remove(path)
 		self.Destroy()
 
 

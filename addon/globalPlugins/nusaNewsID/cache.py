@@ -20,7 +20,13 @@ import logHandler
 
 from .formatting import parse_iso, story_time
 from .models import NewsItem
-from .providers.articleContent import Article, blocks_from_text, parse_blocks
+from .providers.articleContent import (
+	Article,
+	blocks_from_json,
+	blocks_from_text,
+	blocks_to_json,
+	parse_blocks,
+)
 from .providers.textUtils import is_breaking, parse_date
 
 CACHE_FILE = "nusaNewsCache.json"
@@ -323,11 +329,17 @@ def get_article(guid: str) -> Article | None:
 	try:
 		with open(_article_path(guid), encoding="utf-8") as f:
 			saved = json.load(f)
+		# Articles saved before blocks were kept have their HTML instead.
+		if isinstance(saved.get("blocks"), list):
+			blocks = blocks_from_json(saved["blocks"])
+		else:
+			blocks = parse_blocks(saved.get("html", ""), "", whole_document=True)
 		return Article(
-			blocks=parse_blocks(saved.get("html", ""), "", whole_document=True),
+			blocks=blocks,
 			language=saved.get("language") or "id",
 			locked_note=saved.get("locked_note"),
 			summary=saved.get("summary"),
+			author=saved.get("author"),
 		)
 	except FileNotFoundError:
 		pass
@@ -347,10 +359,11 @@ def get_article(guid: str) -> Article | None:
 def _write_article(guid: str, article: Article) -> None:
 	path = _article_path(guid)
 	saved = {
-		"html": article.html,
+		"blocks": blocks_to_json(article.blocks),
 		"language": article.language,
 		"locked_note": article.locked_note,
 		"summary": article.summary,
+		"author": article.author,
 	}
 	try:
 		os.makedirs(os.path.dirname(path), exist_ok=True)
@@ -362,10 +375,22 @@ def _write_article(guid: str, article: Article) -> None:
 		logHandler.log.exception("NusaNews: Saving an article failed.")
 
 
-def update_article(guid: str, article: Article) -> None:
-	"""Save a downloaded article, for reading it again without the network."""
-	if guid in _data():
-		_write_article(guid, article)
+def update_article(guid: str, article: Article) -> bool:
+	"""Save a downloaded article, for reading it again without the network.
+
+	A writer named in the article becomes the story's author when the story has none.
+	True when that changed the story.
+	"""
+	story = _data().get(guid)
+	if story is None:
+		return False
+	_write_article(guid, article)
+	if article.author and not story.get("author"):
+		with _lock:
+			story["author"] = article.author
+		_schedule_save()
+		return True
+	return False
 
 
 def clear_cache() -> None:

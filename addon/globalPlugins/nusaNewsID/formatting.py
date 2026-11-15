@@ -214,6 +214,15 @@ def article_detail_lines(item: NewsItem) -> list[str]:
 	return lines
 
 
+def preview_text(item: NewsItem) -> str:
+	"""The preview under the news list: the whole title, its details, and the summary when there is one."""
+	parts = [item.title, *article_detail_lines(item)]
+	summary = (item.summary or "").strip()
+	if summary and summary != item.title:
+		parts.extend(["", summary])
+	return "\n".join(parts)
+
+
 def article_text(item: NewsItem, body: str) -> str:
 	"""What the reader shows: the header, an empty line, then the article."""
 	return f"{article_header(item)}\n\n{body}"

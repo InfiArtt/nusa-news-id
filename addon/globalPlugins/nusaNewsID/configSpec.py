@@ -31,4 +31,7 @@ CONFIG_SPEC: dict[str, str] = {
 	"max_display_count": "integer(default=50, min=20, max=100)",
 	"data_version": "integer(default=0, min=0)",
 	"reader_zoom": "integer(default=100, min=50, max=400)",
+	# Where the news list and the reader were last: x, y, width, height and 1 when maximized.
+	"list_window": "int_list(default=list())",
+	"reader_window": "int_list(default=list())",
 }

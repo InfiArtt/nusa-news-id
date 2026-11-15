@@ -34,11 +34,11 @@ Stories must be easy to read with a screen reader and with low vision. Every cha
 - Language (3.1.1, 3.1.2): the page has NVDA's language, the article its own (`lang`), so NVDA can switch voices.
 - Colors (1.4.3, 1.4.11): only Windows system colors (Window, WindowText, Highlight, GrayText, ButtonFace, ButtonText); never fixed colors, so contrast themes work.
 - Size and spacing (1.4.4, 1.4.10, 1.4.12, 1.4.8): sizes in em or rem, never px; line height 1.5, space between paragraphs, lines at most 70ch and wrapping, text left aligned. Text size goes from 100 to 400 percent (Control+plus, Control+minus, Control+0, and the setting).
-- Images (1.1.1): only with a text alternative; images without one are left out.
+- Images (1.1.1): only with a description, shown once as visible text after the image ("Photo: ..."), so the image itself has `alt=""`; images without one, writers' photos and photo credits are left out. Videos become one note line, and embedded social posts a quote that names the network and account (`Block` kinds `image`, `video`, `social`).
 - Keyboard and focus (2.1.1, 2.4.7, 2.4.3): every action is a real button with a visible focus outline and the dialog's shortcut key; Escape closes. Lists and dialogs keep the focus order checked with `nvda_audit_focus_order`.
 - Names and status (4.1.2, 4.1.3, 3.3.1): every control has a label; results are announced with `ui.message`; errors say what is wrong and how to fix it. An empty list shows a line explaining why, never nothing.
-- Article content is rebuilt from an allow list in `providers/articleContent.py`; the site's own markup, styles and scripts never reach the page. Boilerplate (ads, "baca juga", addresses, copyright lines) is removed by `is_boilerplate`.
-- The reader uses Internet Explorer's engine, like NVDA's own HTML messages, so CSS and script stay within IE 11. Without a web engine it falls back to a plain text box with the same text.
+- Article content is rebuilt from an allow list in `providers/articleContent.py`; the site's own markup, styles and scripts never reach the page. Boilerplate (ads, "baca juga", addresses, copyright lines, editors' codes, player buttons such as "Perbesar") is removed by `is_boilerplate`; promotion labels ("Baca:", "Pilihan Redaksi", "Video:") take the link-only blocks and video after them along. Bylines ("Oleh X - Reporter") become `Article.author`. Check changes against the real sites with `tools/checkArticles.py`.
+- The reader uses Internet Explorer's engine, like NVDA's own HTML messages. It loads the page from a file in the cache folder so it runs in IE 11 mode (SetPage gives IE 8 mode), and the CSS still works in IE 8: landmarks are divs with ARIA roles, and every ch size has an em size before it. The engine reports the file as a plain path when navigating; only the reader's own files may load. Without a web engine it falls back to a plain text box with the same text.
 
 ## Project-specific notes
 

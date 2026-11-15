@@ -5,13 +5,15 @@
 # - 3.1.1 and 3.1.2: the page has the add-on's language, the article its own, so NVDA can switch voices.
 # - 1.4.3, 1.4.11 and 1.4.8: colors are Windows system colors (Window, WindowText, Highlight, GrayText,
 #   ButtonFace, ButtonText), so the page follows the Windows colors and its contrast themes; no fixed colors.
-# - 1.4.4, 1.4.10 and 1.4.12: sizes are in em and rem, lines are at most 70 characters wide and wrap,
+# - 1.4.4, 1.4.10 and 1.4.12: sizes are in em, lines are at most 70 characters wide and wrap,
 #   line height is 1.5 with space between paragraphs, and the text size can grow to 400 percent.
-# - 1.1.1: images are only shown with their text alternative.
+# - 1.1.1: images are only shown with a description, as visible text after the image (which then has an
+#   empty alt), so it is read once. Videos and social posts are introduced by a line saying what they are.
 # - 2.1.1, 2.4.7: every action is a real button with a visible focus outline; the dialog gives the same
 #   shortcut keys, and Escape closes.
-# The page is shown by Internet Explorer's engine, like NVDA's own HTML messages, so the CSS and script
-# stay within what IE 11 supports.
+# The page is shown by Internet Explorer's engine, like NVDA's own HTML messages. The reader loads it from a
+# file so it runs in IE 11 mode; the CSS and markup still work in the older IE 8 mode: landmarks are divs
+# with ARIA roles rather than HTML5 elements, and each size in ch has an em size before it.
 # The article itself comes from articleContent, which builds it from an allow list; nothing from the site
 # is copied as is. No NVDA imports, so the tests can use it directly.
 
@@ -33,8 +35,7 @@ body {
 	text-align: left;
 	word-wrap: break-word;
 }
-main { display: block; max-width: 70ch; margin: 0 auto; padding: 1rem 1.25rem 2rem; }
-article, nav, figure { display: block; }
+.main { max-width: 38em; max-width: 70ch; margin: 0 auto; padding: 1em 1.25em 2em; }
 h1 { font-size: 1.6em; line-height: 1.25; margin: 0 0 0.75em; }
 h2 { font-size: 1.35em; line-height: 1.3; margin: 1.5em 0 0.5em; }
 h3 { font-size: 1.2em; margin: 1.25em 0 0.5em; }
@@ -46,10 +47,12 @@ pre, code, kbd { font-family: Consolas, monospace; }
 pre { white-space: pre-wrap; }
 a { text-decoration: underline; }
 img { max-width: 100%; height: auto; }
-figure { margin: 1em 0; }
+.figure { margin: 1em 0; }
+.caption { margin: 0.25em 0 0; }
+blockquote .label { font-weight: bold; margin-bottom: 0.25em; }
 .details { margin: 0 0 0.25em; }
 .notice { padding: 0.75em 1em; border: 0.125em solid WindowText; }
-nav { margin-top: 2em; padding-top: 1em; border-top: 0.0625em solid GrayText; }
+.actions { margin-top: 2em; padding-top: 1em; border-top: 0.0625em solid GrayText; }
 button {
 	font: inherit;
 	color: ButtonText;
@@ -101,7 +104,8 @@ def build_page(
 
 	details are the lines under the title (source and category, time), in the add-on's language.
 	message replaces the article while it downloads or when it cannot be read.
-	labels has the button labels with their & shortcut, for each of ACTIONS, and "actions" for the group.
+	labels has the button labels with their & shortcut, for each of ACTIONS, "actions" for the group, and
+	the words for photos, videos and social posts (see articleContent.blocks_html).
 	zoom is the text size in percent.
 	"""
 	ui_language = _language(ui_language, "en")
@@ -115,21 +119,27 @@ def build_page(
 	# Some pages repeat the title as their own first heading; it is already the h1.
 	blocks = [block for block in (article.blocks if article else []) if not _repeats(block.text, title)]
 	if blocks:
-		parts.append(f'<div lang="{article_language}">{blocks_html(_heading_levels(blocks))}</div>')
+		parts.append(
+			f'<div lang="{article_language}">{blocks_html(_heading_levels(blocks), labels=labels)}</div>'
+		)
 	buttons = []
 	for action in ACTIONS:
 		label = labels[action]
 		buttons.append(
 			f'<button type="button" data-action="{action}">{html.escape(label.replace("&", ""))}</button>'
 		)
-	parts.append(f'<nav aria-label="{html.escape(labels["actions"])}">{"".join(buttons)}</nav>')
+	parts.append(
+		f'<div class="actions" role="navigation" aria-label="{html.escape(labels["actions"])}">'
+		f"{''.join(buttons)}</div>"
+	)
 	return (
 		"<!doctype html>\n"
 		f'<html lang="{ui_language}" style="font-size: {text_size(zoom)}">\n<head>\n<meta charset="utf-8">\n'
 		'<meta http-equiv="X-UA-Compatible" content="IE=edge">\n'
 		'<meta name="viewport" content="width=device-width, initial-scale=1">\n'
 		f"<title>{html.escape(title, quote=False)}</title>\n<style>{STYLE}</style>\n</head>\n"
-		f"<body>\n<main>\n<article>\n{chr(10).join(parts[:-1])}\n</article>\n{parts[-1]}\n</main>\n"
+		f'<body>\n<div class="main" role="main">\n<div role="article">\n{chr(10).join(parts[:-1])}\n</div>\n'
+		f"{parts[-1]}\n</div>\n"
 		f"<script>{SCRIPT}</script>\n</body>\n</html>\n"
 	)
 

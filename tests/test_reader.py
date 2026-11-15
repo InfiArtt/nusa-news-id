@@ -13,6 +13,10 @@ LABELS = {
 	"copy": "Copy &story",
 	"close": "&Close",
 	"actions": "Actions",
+	"image": "Photo: {description}",
+	"video": "This story has a video. Press Open in browser to watch it.",
+	"social": "Post on {network} by {handle}:",
+	"social_no_handle": "Post on {network}:",
 }
 
 ARTICLE_HTML = """
@@ -100,8 +104,23 @@ def test_nothing_unsafe_or_styled_from_the_site(article):
 
 def test_images_need_a_text_alternative(article):
 	_, parsed = _page(article)
+	# The description is visible text after the image, read once, so the image itself has an empty alt.
 	images = [attrs for tag, attrs in parsed.tags if tag == "img"]
-	assert images == [{"src": "https://news.example/a.jpg", "alt": "Foto pengguna kursi roda"}]
+	assert images == [{"src": "https://news.example/a.jpg", "alt": ""}]
+	assert "Photo: Foto pengguna kursi roda" in parsed.texts
+
+
+def test_videos_and_social_posts_are_introduced():
+	blocks = parse_blocks(
+		'<p>Isi berita.</p><video src="/v.mp4"></video>'
+		'<blockquote class="twitter-tweet"><p>Peluncuran berhasil https://t.co/abc</p>'
+		"&mdash; SpaceX (@SpaceX) November 14, 2026</blockquote>",
+		"https://news.example",
+		whole_document=True,
+	)
+	_, parsed = _page(Article(blocks=blocks))
+	assert LABELS["video"] in parsed.texts
+	assert "Post on X by @SpaceX:" in parsed.texts and "Peluncuran berhasil" in parsed.texts
 
 
 def test_colors_and_sizes_follow_the_system():
@@ -126,8 +145,9 @@ def test_actions_are_buttons_with_labels(article):
 	assert buttons == list(readerHtml.ACTIONS)
 	assert all(attrs.get("type") == "button" for tag, attrs in parsed.tags if tag == "button")
 	assert "Open in browser" in parsed.texts and "&" not in "".join(parsed.texts)
-	nav = next(attrs for tag, attrs in parsed.tags if tag == "nav")
+	nav = next(attrs for tag, attrs in parsed.tags if attrs.get("role") == "navigation")
 	assert nav["aria-label"] == "Actions"
+	assert any(attrs.get("role") == "main" for tag, attrs in parsed.tags)
 
 
 def test_message_while_downloading():

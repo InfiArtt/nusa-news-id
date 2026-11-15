@@ -45,6 +45,10 @@ Berita terbaru ada di atas. Daftar menampilkan 50 berita sekaligus, dan jumlah i
 
 Tekan Enter pada berita untuk membacanya.
 
+Di bawah daftar ada kotak "Berita yang dipilih". Kotak ini menampilkan judul lengkap berita yang sedang dipilih, sumber dan kategori, penulis, waktu terbit, dan ringkasannya. Tekan Tab dari daftar untuk membacanya, lalu Shift+Tab untuk kembali.
+
+Jendela daftar berita bisa diperbesar sampai penuh layar, dan ukuran serta posisinya diingat. Huruf daftar dan kotak itu mengikuti ukuran teks pembaca.
+
 Di atas daftar ada filter dan pilihan berikut:
 
 - Sumber (Alt+S): tampilkan berita dari satu sumber saja, atau Semua. InfiArtt ada tepat di bawah Semua.
@@ -75,7 +79,12 @@ Bagian atas halaman berisi:
 3. Waktu terbit, misalnya "Terbit 15 November 2026 pukul 06.09". Jika situs tidak mencantumkannya, baris ini berbunyi "Ditemukan ..." dengan waktu add-on pertama kali menemukan berita itu.
 4. Alamat web berita.
 
-Setelah itu isi berita, lengkap dengan judul bagian, daftar, kutipan, dan tautan dari artikel aslinya. Iklan, kotak "baca juga", kotak samping, dan catatan hak cipta dibuang. Gambar hanya tampil jika punya keterangan. Tautan dibuka di browser.
+Setelah itu isi berita, lengkap dengan judul bagian, daftar, kutipan, dan tautan dari artikel aslinya. Iklan, kotak "baca juga", label promosi seperti "Baca:" atau "Pilihan Redaksi" beserta tautannya, kotak samping, kode editor, dan catatan hak cipta dibuang. Tautan dibuka di browser.
+
+- Foto tampil hanya jika punya keterangan, dibacakan sekali seperti "Foto: Warga antre di halte.", tanpa kredit foto dan tanpa tombol seperti "Perbesar".
+- Jika berita memuat video, di tempat videonya ada baris "Berita ini memuat video. Tekan Buka di browser untuk menontonnya."
+- Unggahan media sosial ditampilkan sebagai kutipan, diawali misalnya "Unggahan X dari @SpaceX:".
+- Nama reporter di awal artikel dipindah ke baris "Ditulis oleh".
 
 Saat pertama kali dibuka, isi berita diunduh dulu. NVDA mengucapkan "Isi berita sudah dimuat." setelah selesai. Isi yang sudah diunduh disimpan, jadi bisa dibaca lagi tanpa internet selama berita itu masih tersimpan. Membuka berita juga menandainya sudah dibaca.
 

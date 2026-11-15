@@ -45,6 +45,10 @@ The newest stories come first. The list shows 50 stories at a time, and you can 
 
 Press Enter on a story to read it.
 
+Below the list is the "Selected story" box. It shows the whole title of the selected story, its source and category, author, publication time and summary. Press Tab from the list to read it, and Shift+Tab to go back.
+
+The news list window can be maximized, and its size and place are remembered. The list and the box use the reader's text size.
+
 Above the list are these filters:
 
 - Source (Alt+S): show one source only, or All. InfiArtt comes right after All.
@@ -75,7 +79,12 @@ The top of the page has:
 3. The publication time, such as "Published 15 November 2026, 06:09". If the site gives none, this line reads "Found ..." with the time the add-on first found the story.
 4. The story's web address.
 
-Then comes the story, with the headings, lists, quotes and links of the original article. Ads, "baca juga" boxes, sidebars and copyright lines are left out. Images appear only when they have a description. Links open in your browser.
+Then comes the story, with the headings, lists, quotes and links of the original article. Ads, "baca juga" boxes, promotion labels such as "Baca:" or "Pilihan Redaksi" with their links, sidebars, editors' codes and copyright lines are left out. Links open in your browser.
+
+- A photo appears only when it has a description, read once, such as "Photo: Residents queue at the bus stop.", without its credit or buttons such as "Perbesar".
+- Where a story has a video, a line says "This story has a video. Press Open in browser to watch it."
+- A post from a social network is shown as a quote that starts, for example, "Post on X by @SpaceX:".
+- A reporter's name at the top of an article moves to the "Written by" line.
 
 The first time you open a story, the add-on downloads its text, and NVDA says "Story loaded." when it is ready. The text is saved, so you can read the story again without the internet while it stays in storage. Opening a story also marks it read.
 
