@@ -1,0 +1,63 @@
+[project]
+name = "nusaNewsID"
+version = "1.1.0"
+requires-python = ">=3.13"
+
+[dependency-groups]
+build = [
+    "scons>=4.10.1",
+    "markdown",
+]
+lint = [
+    "ruff",
+]
+test = [
+    "pytest",
+]
+
+[tool.ruff]
+line-length = 110
+target-version = "py313"
+
+builtins = [
+	# translation lookup
+	"_",
+	"ngettext",
+	"pgettext",
+	"npgettext",
+]
+
+include = [
+	"*.py",
+	"sconstruct",
+]
+
+exclude = [
+	".git",
+	"__pycache__",
+	"site_scons",
+]
+
+[tool.ruff.format]
+indent-style = "tab"
+line-ending = "lf"
+
+[tool.ruff.lint]
+select = ["E", "F", "W", "I", "UP", "SIM", "B"]
+ignore = [
+	# indentation contains tabs
+	"W191",
+]
+
+[tool.ruff.lint.mccabe]
+max-complexity = 15
+
+[tool.ruff.lint.per-file-ignores]
+# sconstruct contains many inbuilt functions not recognised by the lint,
+# so ignore F821.
+"sconstruct" = ["F821", "E501"]
+# The changelog is a multi-line string shown as is in the Add-on Store.
+"buildVars.py" = ["E501"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
