@@ -1,0 +1,29 @@
+# Python
+*.pyc
+__pycache__/
+*.egg-info/
+.venv/
+.ruff_cache/
+.pytest_cache/
+
+# Build output
+*.nvda-addon
+*.pot
+*.mo
+dist/
+build/
+.sconsign.dblite
+
+# Secrets and local settings: never commit these
+.env
+.env.*
+*.pem
+*.key
+
+# Editors and operating systems
+.vscode/
+.idea/
+*.swp
+.DS_Store
+Thumbs.db
+desktop.ini
